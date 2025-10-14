@@ -1,0 +1,5921 @@
+{
+  "C6": {
+    "codi": "C6",
+    "nom": "Castellnou de Seana",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.6566,
+      "longitud": 0.95172
+    },
+    "emplacament": "Abocador comarcal",
+    "altitud": 264.0,
+    "municipi": {
+      "codi": "250680",
+      "variables": null,
+      "nom": "Castellnou de Seana",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 27,
+      "nom": "Pla d'Urgell"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-12-16T23:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "C7": {
+    "codi": "C7",
+    "nom": "Tàrrega",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.66695,
+      "longitud": 1.16234
+    },
+    "emplacament": "Abocador comarcal",
+    "altitud": 427.0,
+    "municipi": {
+      "codi": "252173",
+      "variables": null,
+      "nom": "Tàrrega",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 38,
+      "nom": "Urgell"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-11-06T18:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "C8": {
+    "codi": "C8",
+    "nom": "Cervera",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.67555,
+      "longitud": 1.29609
+    },
+    "emplacament": "Abocador comarcal",
+    "altitud": 554.0,
+    "municipi": {
+      "codi": "250729",
+      "variables": null,
+      "nom": "Cervera",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 32,
+      "nom": "Segarra"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-10-27T10:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "C9": {
+    "codi": "C9",
+    "nom": "Mas de Barberans",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.71825,
+      "longitud": 0.39988
+    },
+    "emplacament": "Abocador comarcal",
+    "altitud": 240.0,
+    "municipi": {
+      "codi": "430770",
+      "variables": null,
+      "nom": "Mas de Barberans",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 22,
+      "nom": "Montsià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1997-04-11T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CC": {
+    "codi": "CC",
+    "nom": "Orís",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.07398,
+      "longitud": 2.20862
+    },
+    "emplacament": "Abocador comarcal",
+    "altitud": 626.0,
+    "municipi": {
+      "codi": "081509",
+      "variables": null,
+      "nom": "Orís",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 24,
+      "nom": "Osona"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-11-15T10:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CD": {
+    "codi": "CD",
+    "nom": "la Seu d'Urgell - Bellestar",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.37083,
+      "longitud": 1.43277
+    },
+    "emplacament": "Abocador comarcal",
+    "altitud": 849.0,
+    "municipi": {
+      "codi": "252038",
+      "variables": null,
+      "nom": "La Seu d'Urgell",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 4,
+      "nom": "Alt Urgell"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-01-16T12:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CE": {
+    "codi": "CE",
+    "nom": "els Hostalets de Pierola",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.53109,
+      "longitud": 1.80813
+    },
+    "emplacament": "Abocador de residus",
+    "altitud": 316.0,
+    "municipi": {
+      "codi": "081629",
+      "variables": null,
+      "nom": "Els Hostalets de Pierola",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 6,
+      "nom": "Anoia"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-03-31T23:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CG": {
+    "codi": "CG",
+    "nom": "Molló - Fabert",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.37717,
+      "longitud": 2.41456
+    },
+    "emplacament": "Veïnat de Fabert",
+    "altitud": 1405.0,
+    "municipi": {
+      "codi": "171077",
+      "variables": null,
+      "nom": "Molló",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 31,
+      "nom": "Ripollès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-06-06T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CI": {
+    "codi": "CI",
+    "nom": "Sant Pau de Segúries",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.25839,
+      "longitud": 2.36429
+    },
+    "emplacament": "Estació meteorològica municipal",
+    "altitud": 852.0,
+    "municipi": {
+      "codi": "171772",
+      "variables": null,
+      "nom": "Sant Pau de Segúries",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 31,
+      "nom": "Ripollès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-11-24T15:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CJ": {
+    "codi": "CJ",
+    "nom": "Organyà",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.21624,
+      "longitud": 1.33132
+    },
+    "emplacament": "Càmping municipal",
+    "altitud": 566.5,
+    "municipi": {
+      "codi": "251556",
+      "variables": null,
+      "nom": "Organyà",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 4,
+      "nom": "Alt Urgell"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-01-16T10:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CL": {
+    "codi": "CL",
+    "nom": "Sant Salvador de Guardiola",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.67399,
+      "longitud": 1.76796
+    },
+    "emplacament": "Urbanització Miralda",
+    "altitud": 349.0,
+    "municipi": {
+      "codi": "080983",
+      "variables": null,
+      "nom": "Sant Salvador de Guardiola",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 7,
+      "nom": "Bages"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-02-02T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CP": {
+    "codi": "CP",
+    "nom": "Sant Romà d'Abella",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.13924,
+      "longitud": 1.03893
+    },
+    "emplacament": "Sant Romà d'Abella - el Tossal",
+    "altitud": 690.0,
+    "municipi": {
+      "codi": "251155",
+      "variables": null,
+      "nom": "Isona i Conca Dellà",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 25,
+      "nom": "Pallars Jussà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-05-20T14:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CQ": {
+    "codi": "CQ",
+    "nom": "Vilanova de Meià",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.99546,
+      "longitud": 1.02569
+    },
+    "emplacament": "Camp de fútbol",
+    "altitud": 594.0,
+    "municipi": {
+      "codi": "252509",
+      "variables": null,
+      "nom": "Vilanova de Meià",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 23,
+      "nom": "Noguera"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-04-01T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CR": {
+    "codi": "CR",
+    "nom": "la Quar",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.08032,
+      "longitud": 1.9624
+    },
+    "emplacament": "Sant Maurici",
+    "altitud": 873.0,
+    "municipi": {
+      "codi": "081770",
+      "variables": null,
+      "nom": "La Quar",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 14,
+      "nom": "Berguedà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-03-13T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CT": {
+    "codi": "CT",
+    "nom": "el Pont de Suert",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.39811,
+      "longitud": 0.74362
+    },
+    "emplacament": "Depuradora municipal",
+    "altitud": 823.0,
+    "municipi": {
+      "codi": "251734",
+      "variables": null,
+      "nom": "El Pont de Suert",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 5,
+      "nom": "Alta Ribagorça"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-02-14T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CW": {
+    "codi": "CW",
+    "nom": "l'Espluga de Francolí",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.39241,
+      "longitud": 1.09894
+    },
+    "emplacament": "Urb. Espluga Parc",
+    "altitud": 446.0,
+    "municipi": {
+      "codi": "430542",
+      "variables": null,
+      "nom": "L'Espluga de Francolí",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 16,
+      "nom": "Conca de Barberà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-02-23T21:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "CY": {
+    "codi": "CY",
+    "nom": "Muntanyola",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.87813,
+      "longitud": 2.17873
+    },
+    "emplacament": "Esglèsia de St. Quirze i Sta. Julita",
+    "altitud": 816.0,
+    "municipi": {
+      "codi": "081290",
+      "variables": null,
+      "nom": "Muntanyola",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 24,
+      "nom": "Osona"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-01-12T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "D1": {
+    "codi": "D1",
+    "nom": "Margalef",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.28521,
+      "longitud": 0.75383
+    },
+    "emplacament": "Dipòsit d'aigua",
+    "altitud": 404.0,
+    "municipi": {
+      "codi": "430751",
+      "variables": null,
+      "nom": "Margalef",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 29,
+      "nom": "Priorat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-01-14T17:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "D2": {
+    "codi": "D2",
+    "nom": "Vacarisses",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.59252,
+      "longitud": 1.915
+    },
+    "emplacament": "Planta potabilitzadora",
+    "altitud": 343.0,
+    "municipi": {
+      "codi": "082917",
+      "variables": null,
+      "nom": "Vacarisses",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 40,
+      "nom": "Vallès Occidental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-02-15T19:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "D3": {
+    "codi": "D3",
+    "nom": "Vallirana",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.38197,
+      "longitud": 1.93564
+    },
+    "emplacament": "C. Arquitecte Baldric",
+    "altitud": 252.0,
+    "municipi": {
+      "codi": "082956",
+      "variables": null,
+      "nom": "Vallirana",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 11,
+      "nom": "Baix Llobregat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-10-28T10:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "D4": {
+    "codi": "D4",
+    "nom": "Roses",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.27068,
+      "longitud": 3.18147
+    },
+    "emplacament": "Poliesportiu Municipal",
+    "altitud": 23.0,
+    "municipi": {
+      "codi": "171523",
+      "variables": null,
+      "nom": "Roses",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 2,
+      "nom": "Alt Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-02-07T12:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "D5": {
+    "codi": "D5",
+    "nom": "Barcelona - Observatori Fabra",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.41864,
+      "longitud": 2.12379
+    },
+    "emplacament": "Observatori Fabra",
+    "altitud": 411.0,
+    "municipi": {
+      "codi": "080193",
+      "variables": null,
+      "nom": "Barcelona",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 13,
+      "nom": "Barcelonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-11-03T18:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "D6": {
+    "codi": "D6",
+    "nom": "Portbou - coll dels Belitres",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.43515,
+      "longitud": 3.16622
+    },
+    "emplacament": "Punta de l'Aucell  (zona fronterera)",
+    "altitud": 196.0,
+    "municipi": {
+      "codi": "171387",
+      "variables": null,
+      "nom": "Portbou",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 2,
+      "nom": "Alt Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-03-25T16:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "D7": {
+    "codi": "D7",
+    "nom": "Vinebre",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.18499,
+      "longitud": 0.59376
+    },
+    "emplacament": "Partida de Mallols",
+    "altitud": 53.0,
+    "municipi": {
+      "codi": "431779",
+      "variables": null,
+      "nom": "Vinebre",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 30,
+      "nom": "Ribera d'Ebre"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-01-22T16:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "D8": {
+    "codi": "D8",
+    "nom": "Horta de Sant Joan",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.95134,
+      "longitud": 0.30565
+    },
+    "emplacament": "Les Forques",
+    "altitud": 515.0,
+    "municipi": {
+      "codi": "430712",
+      "variables": null,
+      "nom": "Horta de Sant Joan",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 37,
+      "nom": "Terra Alta"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-01-28T15:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "D9": {
+    "codi": "D9",
+    "nom": "el Vendrell",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.21553,
+      "longitud": 1.52121
+    },
+    "emplacament": "Instal·lacions esportives municipals",
+    "altitud": 59.0,
+    "municipi": {
+      "codi": "431634",
+      "variables": null,
+      "nom": "El Vendrell",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 12,
+      "nom": "Baix Penedès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-06-11T09:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "DB": {
+    "codi": "DB",
+    "nom": "el Perelló",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.87287,
+      "longitud": 0.71581
+    },
+    "emplacament": "Dipòsit d'aigua",
+    "altitud": 179.0,
+    "municipi": {
+      "codi": "431042",
+      "variables": null,
+      "nom": "El Perelló",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 9,
+      "nom": "Baix Ebre"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-02-05T16:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "DF": {
+    "codi": "DF",
+    "nom": "la Bisbal d'Empordà",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.97751,
+      "longitud": 3.03543
+    },
+    "emplacament": "Estació depuradora",
+    "altitud": 28.6,
+    "municipi": {
+      "codi": "170221",
+      "variables": null,
+      "nom": "La Bisbal d'Empordà",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 10,
+      "nom": "Baix Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-03-25T15:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "DG": {
+    "codi": "DG",
+    "nom": "Núria (1.971 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.39848,
+      "longitud": 2.15517
+    },
+    "emplacament": "Santuari de Núria",
+    "altitud": 1971.4,
+    "municipi": {
+      "codi": "170433",
+      "variables": null,
+      "nom": "Queralbs",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 31,
+      "nom": "Ripollès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-05-15T09:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "DI": {
+    "codi": "DI",
+    "nom": "Font-rubí",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.43292,
+      "longitud": 1.62386
+    },
+    "emplacament": "Masia Ca l'Amàlia - Montjuic",
+    "altitud": 415.0,
+    "municipi": {
+      "codi": "080850",
+      "variables": null,
+      "nom": "Font-rubí",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 3,
+      "nom": "Alt Penedès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-07-16T18:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "DJ": {
+    "codi": "DJ",
+    "nom": "Banyoles",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.11653,
+      "longitud": 2.78969
+    },
+    "emplacament": "Abocador comarcal de Puigpalter",
+    "altitud": 176.0,
+    "municipi": {
+      "codi": "170157",
+      "variables": null,
+      "nom": "Banyoles",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 28,
+      "nom": "Pla de l'Estany"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-10-11T15:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "DK": {
+    "codi": "DK",
+    "nom": "Torredembarra",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.14677,
+      "longitud": 1.41846
+    },
+    "emplacament": "Aiguamolls els Muntanyans",
+    "altitud": 2.0,
+    "municipi": {
+      "codi": "431536",
+      "variables": null,
+      "nom": "Torredembarra",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 36,
+      "nom": "Tarragonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-11-24T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "DL": {
+    "codi": "DL",
+    "nom": "Illa de Buda",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.70719,
+      "longitud": 0.83449
+    },
+    "emplacament": "Mas de Buda",
+    "altitud": 0.5,
+    "municipi": {
+      "codi": "439023",
+      "variables": null,
+      "nom": "Sant Jaume d'Enveja",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 22,
+      "nom": "Montsià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-07-14T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "DN": {
+    "codi": "DN",
+    "nom": "Anglès",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.96095,
+      "longitud": 2.63108
+    },
+    "emplacament": "Poliesportiu municipal",
+    "altitud": 150.0,
+    "municipi": {
+      "codi": "170084",
+      "variables": null,
+      "nom": "Anglès",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 34,
+      "nom": "Selva"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2001-05-10T16:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "DO": {
+    "codi": "DO",
+    "nom": "Castell d'Aro",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.80857,
+      "longitud": 3.03241
+    },
+    "emplacament": "Parc de Bombers",
+    "altitud": 14.0,
+    "municipi": {
+      "codi": "170486",
+      "variables": null,
+      "nom": "Castell d'Aro, Platja d'Aro i s'Agaró",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 10,
+      "nom": "Baix Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2001-05-10T10:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "DP": {
+    "codi": "DP",
+    "nom": "Das - Aeròdrom",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.38605,
+      "longitud": 1.8664
+    },
+    "emplacament": "Aeròdrom de la Cerdanya",
+    "altitud": 1097.0,
+    "municipi": {
+      "codi": "170617",
+      "variables": null,
+      "nom": "Das",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 15,
+      "nom": "Cerdanya"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2001-05-22T10:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "DQ": {
+    "codi": "DQ",
+    "nom": "Vila-rodona",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.30728,
+      "longitud": 1.36259
+    },
+    "emplacament": "Nova estació",
+    "altitud": 287.0,
+    "municipi": {
+      "codi": "431704",
+      "variables": null,
+      "nom": "Vila-rodona",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 1,
+      "nom": "Alt Camp"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2005-07-29T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "H1": {
+    "codi": "H1",
+    "nom": "Òdena",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.58642,
+      "longitud": 1.65306
+    },
+    "emplacament": "Aeròdrom d'Òdena",
+    "altitud": 333.0,
+    "municipi": {
+      "codi": "081430",
+      "variables": null,
+      "nom": "Òdena",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 6,
+      "nom": "Anoia"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-05-31T10:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "J5": {
+    "codi": "J5",
+    "nom": "Pantà de Darnius - Boadella",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.34215,
+      "longitud": 2.83423
+    },
+    "emplacament": "Presa del Pantà de Darnius - Boadella",
+    "altitud": 158.0,
+    "municipi": {
+      "codi": "170600",
+      "variables": null,
+      "nom": "Darnius",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 2,
+      "nom": "Alt Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-01-05T08:10Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "KE": {
+    "codi": "KE",
+    "nom": "Pantà de Sau",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.96867,
+      "longitud": 2.41404
+    },
+    "emplacament": "Central hidroelèctrica de Sau",
+    "altitud": 426.0,
+    "municipi": {
+      "codi": "083036",
+      "variables": null,
+      "nom": "Vilanova de Sau",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 24,
+      "nom": "Osona"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-01-05T07:15Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "KP": {
+    "codi": "KP",
+    "nom": "Fogars de la Selva",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.73894,
+      "longitud": 2.69436
+    },
+    "emplacament": "Can Simó",
+    "altitud": 36.0,
+    "municipi": {
+      "codi": "080826",
+      "variables": null,
+      "nom": "Fogars de la Selva",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 34,
+      "nom": "Selva"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-01-05T07:10Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "KX": {
+    "codi": "KX",
+    "nom": "la Roca del Vallès - ETAP Cardedeu",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.61865,
+      "longitud": 2.36114
+    },
+    "emplacament": "Planta tractament d'Aigües Ter - Llobregat",
+    "altitud": 156.0,
+    "municipi": {
+      "codi": "081810",
+      "variables": null,
+      "nom": "La Roca del Vallès",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 41,
+      "nom": "Vallès Oriental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-01-05T06:35Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "M6": {
+    "codi": "M6",
+    "nom": "Sant Joan de les Abadesses",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.22189,
+      "longitud": 2.2427
+    },
+    "emplacament": "Agrupació Esportiva del Ripollès",
+    "altitud": 730.0,
+    "municipi": {
+      "codi": "171674",
+      "variables": null,
+      "nom": "Sant Joan de les Abadesses",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 31,
+      "nom": "Ripollès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-01-13T12:50Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "MQ": {
+    "codi": "MQ",
+    "nom": "Cardona",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.92047,
+      "longitud": 1.69584
+    },
+    "emplacament": "Boca nord del túnel de desviament del Cardener",
+    "altitud": 401.0,
+    "municipi": {
+      "codi": "080478",
+      "variables": null,
+      "nom": "Cardona",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 7,
+      "nom": "Bages"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2003-01-16T09:55Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "MR": {
+    "codi": "MR",
+    "nom": "Pantà de Siurana",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.25079,
+      "longitud": 0.9106
+    },
+    "emplacament": "Pantà de Siurana - Xalet del Pantà",
+    "altitud": 500.0,
+    "municipi": {
+      "codi": "430496",
+      "variables": null,
+      "nom": "Cornudella de Montsant",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 29,
+      "nom": "Priorat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2010-11-08T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "MS": {
+    "codi": "MS",
+    "nom": "Castellar de n'Hug - el Clot del Moro",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.25945,
+      "longitud": 1.97609
+    },
+    "emplacament": "Aforament Castellar de n'Hug",
+    "altitud": 943.0,
+    "municipi": {
+      "codi": "080522",
+      "variables": null,
+      "nom": "Castellar de n'Hug",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 14,
+      "nom": "Berguedà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2010-01-26T16:15Z",
+        "dataFi": "2011-06-01T00:00Z"
+      },
+      {
+        "codi": 1,
+        "dataInici": "2011-06-01T00:00Z",
+        "dataFi": "2015-02-14T20:10Z"
+      },
+      {
+        "codi": 2,
+        "dataInici": "2015-02-14T20:10Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "MV": {
+    "codi": "MV",
+    "nom": "Guixers - Valls",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.13598,
+      "longitud": 1.67295
+    },
+    "emplacament": "Cal Teuler",
+    "altitud": 845.0,
+    "municipi": {
+      "codi": "251116",
+      "variables": null,
+      "nom": "Guixers",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 35,
+      "nom": "Solsonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2015-06-17T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "MW": {
+    "codi": "MW",
+    "nom": "Navès",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.00707,
+      "longitud": 1.65239
+    },
+    "emplacament": "el Garrigar",
+    "altitud": 545.0,
+    "municipi": {
+      "codi": "251462",
+      "variables": null,
+      "nom": "Navès",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 35,
+      "nom": "Solsonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2010-03-22T13:05Z",
+        "dataFi": "2011-05-27T23:10Z"
+      },
+      {
+        "codi": 1,
+        "dataInici": "2011-05-27T23:10Z",
+        "dataFi": "2015-07-28T00:00Z"
+      },
+      {
+        "codi": 2,
+        "dataInici": "2015-07-28T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "U2": {
+    "codi": "U2",
+    "nom": "Sant Pere Pescador",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.17716,
+      "longitud": 3.0968
+    },
+    "emplacament": "Mas Blanc, Mas Fages 17",
+    "altitud": 4.0,
+    "municipi": {
+      "codi": "171788",
+      "variables": null,
+      "nom": "Sant Pere Pescador",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 2,
+      "nom": "Alt Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1989-05-01T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "U3": {
+    "codi": "U3",
+    "nom": "Sant Martí Sarroca",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.37491,
+      "longitud": 1.63032
+    },
+    "emplacament": "Mas Rabell de Fontenac",
+    "altitud": 257.0,
+    "municipi": {
+      "codi": "082270",
+      "variables": null,
+      "nom": "Sant Martí Sarroca",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 3,
+      "nom": "Alt Penedès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1997-05-24T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "U4": {
+    "codi": "U4",
+    "nom": "Castellnou de Bages",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.83094,
+      "longitud": 1.84699
+    },
+    "emplacament": "Masia Can Vilaseca",
+    "altitud": 507.0,
+    "municipi": {
+      "codi": "080620",
+      "variables": null,
+      "nom": "Castellnou de Bages",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 7,
+      "nom": "Bages"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-01-22T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "U6": {
+    "codi": "U6",
+    "nom": "Vinyols i els Arcs - Cambrils",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.08017,
+      "longitud": 1.06661
+    },
+    "emplacament": "Casa Sant Josep - Escola la Salle",
+    "altitud": 29.0,
+    "municipi": {
+      "codi": "431785",
+      "variables": null,
+      "nom": "Vinyols i els Arcs",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 8,
+      "nom": "Baix Camp"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1989-05-17T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "U7": {
+    "codi": "U7",
+    "nom": "Aldover",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.85936,
+      "longitud": 0.50525
+    },
+    "emplacament": "Granges de Fabra",
+    "altitud": 52.0,
+    "municipi": {
+      "codi": "430069",
+      "variables": null,
+      "nom": "Aldover",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 9,
+      "nom": "Baix Ebre"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1994-12-31T22:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "U9": {
+    "codi": "U9",
+    "nom": "l'Aldea",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.76947,
+      "longitud": 0.61635
+    },
+    "emplacament": "Barranc del Mas Roig",
+    "altitud": 62.0,
+    "municipi": {
+      "codi": "439044",
+      "variables": null,
+      "nom": "L'Aldea",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 9,
+      "nom": "Baix Ebre"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1991-06-03T23:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UA": {
+    "codi": "UA",
+    "nom": "l'Ametlla de Mar",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.9091,
+      "longitud": 0.76943
+    },
+    "emplacament": "Caseta d'en Butxaca",
+    "altitud": 93.0,
+    "municipi": {
+      "codi": "430136",
+      "variables": null,
+      "nom": "L'Ametlla de Mar",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 9,
+      "nom": "Baix Ebre"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-08-29T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UB": {
+    "codi": "UB",
+    "nom": "la Tallada d'Empordà",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.05398,
+      "longitud": 3.06195
+    },
+    "emplacament": "Findació Mas Badia - Canet de la Tallada",
+    "altitud": 15.0,
+    "municipi": {
+      "codi": "171959",
+      "variables": null,
+      "nom": "La Tallada d'Empordà",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 10,
+      "nom": "Baix Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1989-05-01T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UE": {
+    "codi": "UE",
+    "nom": "Torroella de Montgrí",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.02306,
+      "longitud": 3.15719
+    },
+    "emplacament": "la Feixa Gata",
+    "altitud": 4.0,
+    "municipi": {
+      "codi": "171997",
+      "variables": null,
+      "nom": "Torroella de Montgrí",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 10,
+      "nom": "Baix Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-06-09T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UF": {
+    "codi": "UF",
+    "nom": "PN del Garraf - el Rascler",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.28832,
+      "longitud": 1.90775
+    },
+    "emplacament": "El Rascler - Centre de Repetidors Aeroport. Parc Natural del Garraf",
+    "altitud": 573.0,
+    "municipi": {
+      "codi": "080207",
+      "variables": null,
+      "nom": "Begues",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 11,
+      "nom": "Baix Llobregat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-02-29T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UG": {
+    "codi": "UG",
+    "nom": "Viladecans",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.29928,
+      "longitud": 2.03787
+    },
+    "emplacament": "Planters Gusi, ctra. antiga de València, km 14",
+    "altitud": 3.0,
+    "municipi": {
+      "codi": "083015",
+      "variables": null,
+      "nom": "Viladecans",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 11,
+      "nom": "Baix Llobregat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1993-04-29T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UH": {
+    "codi": "UH",
+    "nom": "el Montmell",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.34171,
+      "longitud": 1.48769
+    },
+    "emplacament": "Finca Vallflor - Aigua Viva",
+    "altitud": 545.0,
+    "municipi": {
+      "codi": "430901",
+      "variables": null,
+      "nom": "El Montmell",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 12,
+      "nom": "Baix Penedès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-07-13T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UI": {
+    "codi": "UI",
+    "nom": "Gisclareny",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.26477,
+      "longitud": 1.76218
+    },
+    "emplacament": "Coll de la Bena - Font del Cabrer",
+    "altitud": 1386.0,
+    "municipi": {
+      "codi": "080930",
+      "variables": null,
+      "nom": "Gisclareny",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 14,
+      "nom": "Berguedà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-03-12T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UJ": {
+    "codi": "UJ",
+    "nom": "Santa Coloma de Queralt",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.52879,
+      "longitud": 1.3683
+    },
+    "emplacament": "Partida la Cabana",
+    "altitud": 709.0,
+    "municipi": {
+      "codi": "431397",
+      "variables": null,
+      "nom": "Santa Coloma de Queralt",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 16,
+      "nom": "Conca de Barberà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-11-19T20:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UK": {
+    "codi": "UK",
+    "nom": "Sant Pere de Ribes - PN del Garraf",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.27861,
+      "longitud": 1.80479
+    },
+    "emplacament": "Granja escola Can Pere",
+    "altitud": 161.0,
+    "municipi": {
+      "codi": "082310",
+      "variables": null,
+      "nom": "Sant Pere de Ribes",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 17,
+      "nom": "Garraf"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-05-11T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UM": {
+    "codi": "UM",
+    "nom": "la Granadella",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.35991,
+      "longitud": 0.66789
+    },
+    "emplacament": "Horts de la Vall Major",
+    "altitud": 505.0,
+    "municipi": {
+      "codi": "251018",
+      "variables": null,
+      "nom": "La Granadella",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 18,
+      "nom": "Garrigues"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1992-01-30T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UN": {
+    "codi": "UN",
+    "nom": "Cassà de la Selva",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.87449,
+      "longitud": 2.92694
+    },
+    "emplacament": "Finca Mas Bassets",
+    "altitud": 171.0,
+    "municipi": {
+      "codi": "170448",
+      "variables": null,
+      "nom": "Cassà de la Selva",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 20,
+      "nom": "Gironès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1993-03-08T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UO": {
+    "codi": "UO",
+    "nom": "Fornells de la Selva",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.91461,
+      "longitud": 2.82069
+    },
+    "emplacament": "La Torre de Reset",
+    "altitud": 97.0,
+    "municipi": {
+      "codi": "170736",
+      "variables": null,
+      "nom": "Fornells de la Selva",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 20,
+      "nom": "Gironès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-11-10T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UP": {
+    "codi": "UP",
+    "nom": "Cabrils",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.51773,
+      "longitud": 2.37702
+    },
+    "emplacament": "IRTA Cabrils, crta. de Vilassar a Cabrils, s/n",
+    "altitud": 81.0,
+    "municipi": {
+      "codi": "080305",
+      "variables": null,
+      "nom": "Cabrils",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 21,
+      "nom": "Maresme"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-11-27T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UQ": {
+    "codi": "UQ",
+    "nom": "Dosrius - PN Montnegre Corredor",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.61991,
+      "longitud": 2.44532
+    },
+    "emplacament": "Parc Natural del Corredor. Masia Can Bosc",
+    "altitud": 460.0,
+    "municipi": {
+      "codi": "080752",
+      "variables": null,
+      "nom": "Dosrius",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 21,
+      "nom": "Maresme"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-08-09T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "US": {
+    "codi": "US",
+    "nom": "les Cases d'Alcanar",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.55786,
+      "longitud": 0.52329
+    },
+    "emplacament": "El Mas d'en Serra - Barranc de St. Jaume",
+    "altitud": 24.0,
+    "municipi": {
+      "codi": "430043",
+      "variables": null,
+      "nom": "Alcanar",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 22,
+      "nom": "Montsià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1991-05-06T15:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UU": {
+    "codi": "UU",
+    "nom": "Amposta",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.70776,
+      "longitud": 0.6321
+    },
+    "emplacament": "IRTA - Estació Exp. Ebre, ctra. de Balada, s/n",
+    "altitud": 3.0,
+    "municipi": {
+      "codi": "430141",
+      "variables": null,
+      "nom": "Amposta",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 22,
+      "nom": "Montsià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1992-02-06T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UW": {
+    "codi": "UW",
+    "nom": "els Alfacs",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.62725,
+      "longitud": 0.65922
+    },
+    "emplacament": "IRTA Centre d'Aqüicultura, crta. Poble Nou del Delta, km 5,5",
+    "altitud": 0.0,
+    "municipi": {
+      "codi": "431362",
+      "variables": null,
+      "nom": "La Ràpita",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 22,
+      "nom": "Montsià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1994-07-06T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UX": {
+    "codi": "UX",
+    "nom": "Ulldecona - els Valentins",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.62652,
+      "longitud": 0.37112
+    },
+    "emplacament": "Comunitat de regants del Pou Valentins",
+    "altitud": 210.0,
+    "municipi": {
+      "codi": "431567",
+      "variables": null,
+      "nom": "Ulldecona",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 22,
+      "nom": "Montsià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1990-11-15T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "UY": {
+    "codi": "UY",
+    "nom": "Os de Balaguer - el Monestir d'Avellanes",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.87912,
+      "longitud": 0.76103
+    },
+    "emplacament": "Quatre Vents - Monestir de les Avellanes",
+    "altitud": 576.0,
+    "municipi": {
+      "codi": "251569",
+      "variables": null,
+      "nom": "Os de Balaguer",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 23,
+      "nom": "Noguera"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-07-07T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "V1": {
+    "codi": "V1",
+    "nom": "Vallfogona de Balaguer",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.78487,
+      "longitud": 0.82939
+    },
+    "emplacament": "Escola de Cap. Agrària - Finca l'Empalme",
+    "altitud": 238.0,
+    "municipi": {
+      "codi": "252402",
+      "variables": null,
+      "nom": "Vallfogona de Balaguer",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 23,
+      "nom": "Noguera"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1990-10-17T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "V4": {
+    "codi": "V4",
+    "nom": "Montesquiu",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.11477,
+      "longitud": 2.21483
+    },
+    "emplacament": "Castell de Montesquiu",
+    "altitud": 684.0,
+    "municipi": {
+      "codi": "081311",
+      "variables": null,
+      "nom": "Montesquiu",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 24,
+      "nom": "Osona"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-12-02T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "V5": {
+    "codi": "V5",
+    "nom": "Perafita",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.03947,
+      "longitud": 2.11993
+    },
+    "emplacament": "Finca la Tria",
+    "altitud": 774.0,
+    "municipi": {
+      "codi": "081607",
+      "variables": null,
+      "nom": "Perafita",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 43,
+      "nom": "Lluçanès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-07-03T18:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "V8": {
+    "codi": "V8",
+    "nom": "el Poal",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.67279,
+      "longitud": 0.87741
+    },
+    "emplacament": "Finca el Molinet, c. Afores, s/n",
+    "altitud": 223.0,
+    "municipi": {
+      "codi": "251689",
+      "variables": null,
+      "nom": "El Poal",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 27,
+      "nom": "Pla d'Urgell"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1989-09-14T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VA": {
+    "codi": "VA",
+    "nom": "Ascó",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.1964,
+      "longitud": 0.51101
+    },
+    "emplacament": "Camí de la Serra de les Moncas",
+    "altitud": 256.0,
+    "municipi": {
+      "codi": "430192",
+      "variables": null,
+      "nom": "Ascó",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 30,
+      "nom": "Ribera d'Ebre"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-06-15T10:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VB": {
+    "codi": "VB",
+    "nom": "Benissanet",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.06289,
+      "longitud": 0.63517
+    },
+    "emplacament": "Grup Fruiter Benissanet, crta. de Mora, s/n",
+    "altitud": 32.0,
+    "municipi": {
+      "codi": "430265",
+      "variables": null,
+      "nom": "Benissanet",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 30,
+      "nom": "Ribera d'Ebre"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1993-07-14T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VC": {
+    "codi": "VC",
+    "nom": "Pantà de Riba-roja",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.24415,
+      "longitud": 0.43266
+    },
+    "emplacament": "Presa de Riba-roja",
+    "altitud": 69.0,
+    "municipi": {
+      "codi": "431251",
+      "variables": null,
+      "nom": "Riba-roja d'Ebre",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 30,
+      "nom": "Ribera d'Ebre"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-11-18T18:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VD": {
+    "codi": "VD",
+    "nom": "el Canós",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.68939,
+      "longitud": 1.20381
+    },
+    "emplacament": "Camí de la Figuerosa",
+    "altitud": 429.0,
+    "municipi": {
+      "codi": "259118",
+      "variables": null,
+      "nom": "Els Plans de Sió",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 32,
+      "nom": "Segarra"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1988-10-22T03:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VH": {
+    "codi": "VH",
+    "nom": "Gimenells",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.65825,
+      "longitud": 0.3932
+    },
+    "emplacament": "IRTA - Estació de Gimenells",
+    "altitud": 260.0,
+    "municipi": {
+      "codi": "259123",
+      "variables": null,
+      "nom": "Gimenells i el Pla de la Font",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 33,
+      "nom": "Segrià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-12-10T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VK": {
+    "codi": "VK",
+    "nom": "Raimat",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.68328,
+      "longitud": 0.4487
+    },
+    "emplacament": "Finca Montserrat - Raimat",
+    "altitud": 286.0,
+    "municipi": {
+      "codi": "251207",
+      "variables": null,
+      "nom": "Lleida",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 33,
+      "nom": "Segrià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1988-08-31T19:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VM": {
+    "codi": "VM",
+    "nom": "Vilanova de Segrià",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.7145,
+      "longitud": 0.62839
+    },
+    "emplacament": "Partida lo Sort",
+    "altitud": 222.0,
+    "municipi": {
+      "codi": "252516",
+      "variables": null,
+      "nom": "Vilanova de Segrià",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 33,
+      "nom": "Segrià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1997-09-17T15:00Z",
+        "dataFi": "2003-02-24T21:00Z"
+      },
+      {
+        "codi": 3,
+        "dataInici": "2003-02-24T21:00Z",
+        "dataFi": "2004-12-03T12:00Z"
+      },
+      {
+        "codi": 2,
+        "dataInici": "2004-12-03T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VO": {
+    "codi": "VO",
+    "nom": "Lladurs",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.08745,
+      "longitud": 1.42792
+    },
+    "emplacament": "Masia el Pla - Montpol",
+    "altitud": 785.0,
+    "municipi": {
+      "codi": "251240",
+      "variables": null,
+      "nom": "Lladurs",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 35,
+      "nom": "Solsonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-05-05T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VP": {
+    "codi": "VP",
+    "nom": "Pinós",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.80483,
+      "longitud": 1.53853
+    },
+    "emplacament": "Masia Can Caselles",
+    "altitud": 659.0,
+    "municipi": {
+      "codi": "251673",
+      "variables": null,
+      "nom": "Pinós",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 35,
+      "nom": "Solsonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1995-07-03T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VQ": {
+    "codi": "VQ",
+    "nom": "Constantí",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.1713,
+      "longitud": 1.16774
+    },
+    "emplacament": "IRTA - Centre de Mas Bové. Apt. correus 415",
+    "altitud": 112.0,
+    "municipi": {
+      "codi": "430477",
+      "variables": null,
+      "nom": "Constantí",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 36,
+      "nom": "Tarragonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1990-05-29T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VS": {
+    "codi": "VS",
+    "nom": "Lac Redon (2.247 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.63835,
+      "longitud": 0.77889
+    },
+    "emplacament": "Lac Redon - Tuc deth Pòrt de Vielha",
+    "altitud": 2247.0,
+    "municipi": {
+      "codi": "252430",
+      "variables": null,
+      "nom": "Vielha e Mijaran",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 39,
+      "nom": "Val d'Aran"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-07-15T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VU": {
+    "codi": "VU",
+    "nom": "Rellinars",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.63286,
+      "longitud": 1.91718
+    },
+    "emplacament": "Puig de la Ballesta",
+    "altitud": 421.0,
+    "municipi": {
+      "codi": "081799",
+      "variables": null,
+      "nom": "Rellinars",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 40,
+      "nom": "Vallès Occidental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-02-18T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VV": {
+    "codi": "VV",
+    "nom": "Sant Llorenç Savall",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.68129,
+      "longitud": 2.02647
+    },
+    "emplacament": "Masia Can Brossa",
+    "altitud": 528.0,
+    "municipi": {
+      "codi": "082233",
+      "variables": null,
+      "nom": "Sant Llorenç Savall",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 40,
+      "nom": "Vallès Occidental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-03-25T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VX": {
+    "codi": "VX",
+    "nom": "Tagamanent - PN del Montseny",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.74761,
+      "longitud": 2.30291
+    },
+    "emplacament": "Can Bellver - Serrat de Bellver. Parc Natural del Montseny",
+    "altitud": 1030.0,
+    "municipi": {
+      "codi": "082763",
+      "variables": null,
+      "nom": "Tagamanent",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 41,
+      "nom": "Vallès Oriental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1996-01-04T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VY": {
+    "codi": "VY",
+    "nom": "Nulles",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.25095,
+      "longitud": 1.29863
+    },
+    "emplacament": "Cooperativa agrària",
+    "altitud": 240.0,
+    "municipi": {
+      "codi": "430982",
+      "variables": null,
+      "nom": "Nulles",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 1,
+      "nom": "Alt Camp"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2000-09-18T12:00Z",
+        "dataFi": "2008-10-20T08:00Z"
+      },
+      {
+        "codi": 3,
+        "dataInici": "2008-10-20T08:00Z",
+        "dataFi": "2009-05-18T11:00Z"
+      },
+      {
+        "codi": 2,
+        "dataInici": "2009-05-18T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "VZ": {
+    "codi": "VZ",
+    "nom": "Espolla",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.38443,
+      "longitud": 3.00736
+    },
+    "emplacament": "Llaurants. Ref. Cadastral: Pol. 5, parc.195",
+    "altitud": 83.0,
+    "municipi": {
+      "codi": "170643",
+      "variables": null,
+      "nom": "Espolla",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 2,
+      "nom": "Alt Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2000-06-07T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "W1": {
+    "codi": "W1",
+    "nom": "Castelló d'Empúries",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.24726,
+      "longitud": 3.09021
+    },
+    "emplacament": "Can Garriga - Mas Bellesguard",
+    "altitud": 2.0,
+    "municipi": {
+      "codi": "170470",
+      "variables": null,
+      "nom": "Castelló d'Empúries",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 2,
+      "nom": "Alt Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2000-03-14T10:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "W4": {
+    "codi": "W4",
+    "nom": "Vilafranca del Penedès - la Granada",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.36619,
+      "longitud": 1.72857
+    },
+    "emplacament": "Rasa de Sagols",
+    "altitud": 240.0,
+    "municipi": {
+      "codi": "083054",
+      "variables": null,
+      "nom": "Vilafranca del Penedès",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 3,
+      "nom": "Alt Penedès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-12-25T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "W5": {
+    "codi": "W5",
+    "nom": "Oliana",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.07683,
+      "longitud": 1.31489
+    },
+    "emplacament": "Partida Esclotes",
+    "altitud": 490.0,
+    "municipi": {
+      "codi": "251497",
+      "variables": null,
+      "nom": "Oliana",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 4,
+      "nom": "Alt Urgell"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2000-06-22T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "W8": {
+    "codi": "W8",
+    "nom": "Blancafort",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.44237,
+      "longitud": 1.15998
+    },
+    "emplacament": "Cooperativa vinícola, pl.del Sindicat",
+    "altitud": 438.0,
+    "municipi": {
+      "codi": "430290",
+      "variables": null,
+      "nom": "Blancafort",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 16,
+      "nom": "Conca de Barberà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2000-01-18T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "W9": {
+    "codi": "W9",
+    "nom": "la Vall d'en Bas",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.14557,
+      "longitud": 2.45451
+    },
+    "emplacament": "Escola Verntallat",
+    "altitud": 461.0,
+    "municipi": {
+      "codi": "172076",
+      "variables": null,
+      "nom": "La Vall d'en Bas",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 19,
+      "nom": "Garrotxa"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2000-03-16T15:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WA": {
+    "codi": "WA",
+    "nom": "Oliola",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.87694,
+      "longitud": 1.1541
+    },
+    "emplacament": "Partida l'Era",
+    "altitud": 443.0,
+    "municipi": {
+      "codi": "251500",
+      "variables": null,
+      "nom": "Oliola",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 23,
+      "nom": "Noguera"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2001-03-26T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WB": {
+    "codi": "WB",
+    "nom": "Albesa",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.76036,
+      "longitud": 0.67022
+    },
+    "emplacament": "Partida l'Eral, camí del Torricó",
+    "altitud": 267.0,
+    "municipi": {
+      "codi": "250083",
+      "variables": null,
+      "nom": "Albesa",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 23,
+      "nom": "Noguera"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-06-21T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WC": {
+    "codi": "WC",
+    "nom": "Golmés",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.63642,
+      "longitud": 0.92446
+    },
+    "emplacament": "Partida Fogones",
+    "altitud": 261.0,
+    "municipi": {
+      "codi": "250997",
+      "variables": null,
+      "nom": "Golmés",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 27,
+      "nom": "Pla d'Urgell"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2000-08-08T11:00Z",
+        "dataFi": "2014-01-02T09:00Z"
+      },
+      {
+        "codi": 3,
+        "dataInici": "2014-01-02T09:00Z",
+        "dataFi": "2014-03-12T11:00Z"
+      },
+      {
+        "codi": 2,
+        "dataInici": "2014-03-12T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WG": {
+    "codi": "WG",
+    "nom": "Algerri",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.80104,
+      "longitud": 0.64804
+    },
+    "emplacament": "Comunitat de regants d'Algerri, ctra. d'Albesa, s/n",
+    "altitud": 301.0,
+    "municipi": {
+      "codi": "250156",
+      "variables": null,
+      "nom": "Algerri",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 23,
+      "nom": "Noguera"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2000-12-13T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WI": {
+    "codi": "WI",
+    "nom": "Maials",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.35741,
+      "longitud": 0.4809
+    },
+    "emplacament": "Paratge d'Argelagar",
+    "altitud": 350.0,
+    "municipi": {
+      "codi": "251333",
+      "variables": null,
+      "nom": "Maials",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 33,
+      "nom": "Segrià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2000-12-20T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WJ": {
+    "codi": "WJ",
+    "nom": "el Masroig",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.1223,
+      "longitud": 0.72182
+    },
+    "emplacament": "Finca Terranova",
+    "altitud": 141.0,
+    "municipi": {
+      "codi": "430825",
+      "variables": null,
+      "nom": "El Masroig",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 29,
+      "nom": "Priorat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2000-06-20T10:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WK": {
+    "codi": "WK",
+    "nom": "Alfarràs",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.81949,
+      "longitud": 0.57768
+    },
+    "emplacament": "Escola de Capacitació Agrària d'Alfarràs(de 1997 a 2001, és Almenar)",
+    "altitud": 268.0,
+    "municipi": {
+      "codi": "250138",
+      "variables": null,
+      "nom": "Alfarràs",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 33,
+      "nom": "Segrià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1997-09-17T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WL": {
+    "codi": "WL",
+    "nom": "Sant Martí de Riucorb",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.57236,
+      "longitud": 1.0882
+    },
+    "emplacament": "Camí de les Comes, pol. 2, parc. 137",
+    "altitud": 413.0,
+    "municipi": {
+      "codi": "259025",
+      "variables": null,
+      "nom": "Sant Martí de Riucorb",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 38,
+      "nom": "Urgell"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2002-02-05T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WM": {
+    "codi": "WM",
+    "nom": "Santuari de Queralt",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.10736,
+      "longitud": 1.8267
+    },
+    "emplacament": "Santuari de la Mare de Déu de Queralt",
+    "altitud": 1167.0,
+    "municipi": {
+      "codi": "080229",
+      "variables": null,
+      "nom": "Berga",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 14,
+      "nom": "Berguedà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2002-01-23T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WN": {
+    "codi": "WN",
+    "nom": "Montserrat - Sant Dimes",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.59539,
+      "longitud": 1.83751
+    },
+    "emplacament": "Ermita de Sant Dimes",
+    "altitud": 916.0,
+    "municipi": {
+      "codi": "081271",
+      "variables": null,
+      "nom": "Monistrol de Montserrat",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 7,
+      "nom": "Bages"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2003-01-02T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WO": {
+    "codi": "WO",
+    "nom": "la Bisbal del Penedès",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.27151,
+      "longitud": 1.46717
+    },
+    "emplacament": "Fondo de Cal Sumoi",
+    "altitud": 185.0,
+    "municipi": {
+      "codi": "430287",
+      "variables": null,
+      "nom": "La Bisbal del Penedès",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 12,
+      "nom": "Baix Penedès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2002-05-16T10:00Z",
+        "dataFi": "2006-07-07T11:00Z"
+      },
+      {
+        "codi": 3,
+        "dataInici": "2006-07-07T11:00Z",
+        "dataFi": "2007-07-25T08:00Z"
+      },
+      {
+        "codi": 2,
+        "dataInici": "2007-07-25T08:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WP": {
+    "codi": "WP",
+    "nom": "Canaletes",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.48518,
+      "longitud": 1.69337
+    },
+    "emplacament": "Camp del Roure - Can Feixes",
+    "altitud": 325.0,
+    "municipi": {
+      "codi": "081228",
+      "variables": null,
+      "nom": "Mediona",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 3,
+      "nom": "Alt Penedès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2002-05-17T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WQ": {
+    "codi": "WQ",
+    "nom": "Montsec d'Ares (1.572 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.0513,
+      "longitud": 0.72952
+    },
+    "emplacament": "Serra de la Corona - Centre d'Observació de l'Univers",
+    "altitud": 1572.0,
+    "municipi": {
+      "codi": "251961",
+      "variables": null,
+      "nom": "Sant Esteve de la Sarga",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 25,
+      "nom": "Pallars Jussà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2003-06-17T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WR": {
+    "codi": "WR",
+    "nom": "Torroja del Priorat",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.2163,
+      "longitud": 0.79748
+    },
+    "emplacament": "Ref.cadastral: Pol. 3, parc. 38",
+    "altitud": 300.0,
+    "municipi": {
+      "codi": "431541",
+      "variables": null,
+      "nom": "Torroja del Priorat",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 29,
+      "nom": "Priorat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2003-11-27T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WS": {
+    "codi": "WS",
+    "nom": "Viladrau",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.84008,
+      "longitud": 2.41877
+    },
+    "emplacament": "Mas Vilarmau",
+    "altitud": 953.0,
+    "municipi": {
+      "codi": "172207",
+      "variables": null,
+      "nom": "Viladrau",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 24,
+      "nom": "Osona"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2005-03-17T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WT": {
+    "codi": "WT",
+    "nom": "Malgrat de Mar",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.64707,
+      "longitud": 2.75658
+    },
+    "emplacament": "Camí de la Pomereda",
+    "altitud": 2.0,
+    "municipi": {
+      "codi": "081108",
+      "variables": null,
+      "nom": "Malgrat de Mar",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 21,
+      "nom": "Maresme"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2005-05-04T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WU": {
+    "codi": "WU",
+    "nom": "Badalona - Museu",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.45215,
+      "longitud": 2.24757
+    },
+    "emplacament": "Museu",
+    "altitud": 42.0,
+    "municipi": {
+      "codi": "080155",
+      "variables": null,
+      "nom": "Badalona",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 13,
+      "nom": "Barcelonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2005-09-21T10:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WV": {
+    "codi": "WV",
+    "nom": "Guardiola de Berguedà",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.23414,
+      "longitud": 1.87485
+    },
+    "emplacament": "Monestir de Sant Llorenç prop Bagà",
+    "altitud": 788.0,
+    "municipi": {
+      "codi": "080996",
+      "variables": null,
+      "nom": "Guardiola de Berguedà",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 14,
+      "nom": "Berguedà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2005-11-28T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WW": {
+    "codi": "WW",
+    "nom": "Artés",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.79423,
+      "longitud": 1.9368
+    },
+    "emplacament": "Artés",
+    "altitud": 278.0,
+    "municipi": {
+      "codi": "080109",
+      "variables": null,
+      "nom": "Artés",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 7,
+      "nom": "Bages"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2006-02-16T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WX": {
+    "codi": "WX",
+    "nom": "Camarasa",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.9178,
+      "longitud": 0.88175
+    },
+    "emplacament": "Camarasa",
+    "altitud": 668.0,
+    "municipi": {
+      "codi": "250621",
+      "variables": null,
+      "nom": "Camarasa",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 23,
+      "nom": "Noguera"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2006-03-07T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "WZ": {
+    "codi": "WZ",
+    "nom": "Cunit",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.20187,
+      "longitud": 1.63346
+    },
+    "emplacament": "-",
+    "altitud": 17.0,
+    "municipi": {
+      "codi": "430516",
+      "variables": null,
+      "nom": "Cunit",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 12,
+      "nom": "Baix Penedès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2006-06-27T13:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "X1": {
+    "codi": "X1",
+    "nom": "Falset",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.15374,
+      "longitud": 0.81953
+    },
+    "emplacament": "Abocador comarcal. Crta de Porrera",
+    "altitud": 359.0,
+    "municipi": {
+      "codi": "430555",
+      "variables": null,
+      "nom": "Falset",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 29,
+      "nom": "Priorat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2006-12-20T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "X3": {
+    "codi": "X3",
+    "nom": "Alguaire",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.74281,
+      "longitud": 0.5358
+    },
+    "emplacament": "Aeròdrom",
+    "altitud": 370.0,
+    "municipi": {
+      "codi": "250169",
+      "variables": null,
+      "nom": "Alguaire",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 33,
+      "nom": "Segrià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2006-06-02T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "X4": {
+    "codi": "X4",
+    "nom": "Barcelona - el Raval",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.3839,
+      "longitud": 2.16775
+    },
+    "emplacament": "Facultat de Geografia i Història. c. Montalegre nº6, 6a",
+    "altitud": 33.0,
+    "municipi": {
+      "codi": "080193",
+      "variables": null,
+      "nom": "Barcelona",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 13,
+      "nom": "Barcelonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2006-10-11T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "X5": {
+    "codi": "X5",
+    "nom": "PN dels Ports",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 40.79705,
+      "longitud": 0.31822
+    },
+    "emplacament": "Montpublic 21 sector Cova Avellanes",
+    "altitud": 1055.0,
+    "municipi": {
+      "codi": "431331",
+      "variables": null,
+      "nom": "Roquetes",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 9,
+      "nom": "Baix Ebre"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2007-01-04T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "X6": {
+    "codi": "X6",
+    "nom": "Baldomar",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.92173,
+      "longitud": 1.02901
+    },
+    "emplacament": "Baldomar",
+    "altitud": 366.0,
+    "municipi": {
+      "codi": "250349",
+      "variables": null,
+      "nom": "Artesa de Segre",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 23,
+      "nom": "Noguera"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2006-10-24T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "X7": {
+    "codi": "X7",
+    "nom": "Torres de Segre",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.51909,
+      "longitud": 0.55314
+    },
+    "emplacament": "Torres de Segre",
+    "altitud": 215.0,
+    "municipi": {
+      "codi": "252326",
+      "variables": null,
+      "nom": "Torres de Segre",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 33,
+      "nom": "Segrià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2007-07-02T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "X8": {
+    "codi": "X8",
+    "nom": "Barcelona - Zona Universitària",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.37919,
+      "longitud": 2.1054
+    },
+    "emplacament": "Pistes UB",
+    "altitud": 79.0,
+    "municipi": {
+      "codi": "080193",
+      "variables": null,
+      "nom": "Barcelona",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 13,
+      "nom": "Barcelonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2008-04-17T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "X9": {
+    "codi": "X9",
+    "nom": "Caldes de Montbui",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.61265,
+      "longitud": 2.16836
+    },
+    "emplacament": "Torre Marimon",
+    "altitud": 176.0,
+    "municipi": {
+      "codi": "080333",
+      "variables": null,
+      "nom": "Caldes de Montbui",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 41,
+      "nom": "Vallès Oriental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2007-03-08T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XA": {
+    "codi": "XA",
+    "nom": "la Panadella",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.60257,
+      "longitud": 1.4007
+    },
+    "emplacament": "La Creu del Vent",
+    "altitud": 785.0,
+    "municipi": {
+      "codi": "081332",
+      "variables": null,
+      "nom": "Montmaneu",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 6,
+      "nom": "Anoia"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2008-12-18T13:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XB": {
+    "codi": "XB",
+    "nom": "la Llacuna",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.4779,
+      "longitud": 1.53529
+    },
+    "emplacament": "Cal Mateu",
+    "altitud": 584.0,
+    "municipi": {
+      "codi": "081043",
+      "variables": null,
+      "nom": "La Llacuna",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 6,
+      "nom": "Anoia"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2008-03-19T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XC": {
+    "codi": "XC",
+    "nom": "Castellbisbal",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.47892,
+      "longitud": 1.97546
+    },
+    "emplacament": "Turó de la Verdalaga",
+    "altitud": 147.0,
+    "municipi": {
+      "codi": "080543",
+      "variables": null,
+      "nom": "Castellbisbal",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 40,
+      "nom": "Vallès Occidental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2008-03-18T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XD": {
+    "codi": "XD",
+    "nom": "Ulldemolins",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.32,
+      "longitud": 0.8857
+    },
+    "emplacament": "Pigrossos",
+    "altitud": 687.0,
+    "municipi": {
+      "codi": "431573",
+      "variables": null,
+      "nom": "Ulldemolins",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 29,
+      "nom": "Priorat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2008-04-17T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XE": {
+    "codi": "XE",
+    "nom": "Tarragona - Complex Educatiu",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.10393,
+      "longitud": 1.201
+    },
+    "emplacament": "Complex Educatiu",
+    "altitud": 5.0,
+    "municipi": {
+      "codi": "431482",
+      "variables": null,
+      "nom": "Tarragona",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 36,
+      "nom": "Tarragonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2009-02-05T15:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XF": {
+    "codi": "XF",
+    "nom": "Sabadell - Parc Agrari",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.56568,
+      "longitud": 2.06952
+    },
+    "emplacament": "Parc Agrari",
+    "altitud": 258.0,
+    "municipi": {
+      "codi": "081878",
+      "variables": null,
+      "nom": "Sabadell",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 40,
+      "nom": "Vallès Occidental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2008-10-23T15:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XG": {
+    "codi": "XG",
+    "nom": "Parets del Vallès",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.56734,
+      "longitud": 2.22619
+    },
+    "emplacament": "CEIP Pau Vila",
+    "altitud": 123.0,
+    "municipi": {
+      "codi": "081593",
+      "variables": null,
+      "nom": "Parets del Vallès",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 41,
+      "nom": "Vallès Oriental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2008-10-30T16:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XH": {
+    "codi": "XH",
+    "nom": "Sort",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.40533,
+      "longitud": 1.12993
+    },
+    "emplacament": "Escola de Piragüisme",
+    "altitud": 679.0,
+    "municipi": {
+      "codi": "252094",
+      "variables": null,
+      "nom": "Sort",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 26,
+      "nom": "Pallars Sobirà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2009-07-31T15:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XI": {
+    "codi": "XI",
+    "nom": "Mollerussa",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.61817,
+      "longitud": 0.87182
+    },
+    "emplacament": "-",
+    "altitud": 247.0,
+    "municipi": {
+      "codi": "251370",
+      "variables": null,
+      "nom": "Mollerussa",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 27,
+      "nom": "Pla d'Urgell"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2010-01-20T15:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XJ": {
+    "codi": "XJ",
+    "nom": "Girona",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.98223,
+      "longitud": 2.80686
+    },
+    "emplacament": "Horts de Santa Eugènia",
+    "altitud": 72.0,
+    "municipi": {
+      "codi": "170792",
+      "variables": null,
+      "nom": "Girona",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 20,
+      "nom": "Gironès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2010-09-15T15:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XK": {
+    "codi": "XK",
+    "nom": "Puig Sesolles (1.668 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.77362,
+      "longitud": 2.43774
+    },
+    "emplacament": "Puig Sesolles (Massís del Montseny)",
+    "altitud": 1668.0,
+    "municipi": {
+      "codi": "080811",
+      "variables": null,
+      "nom": "Fogars de Montclús",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 41,
+      "nom": "Vallès Oriental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2010-09-22T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XL": {
+    "codi": "XL",
+    "nom": "el Prat de Llobregat",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.34045,
+      "longitud": 2.08022
+    },
+    "emplacament": "Camí de la Ribera s/n",
+    "altitud": 8.0,
+    "municipi": {
+      "codi": "081691",
+      "variables": null,
+      "nom": "El Prat de Llobregat",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 11,
+      "nom": "Baix Llobregat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2011-03-22T13:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XM": {
+    "codi": "XM",
+    "nom": "els Alamús",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.59522,
+      "longitud": 0.73507
+    },
+    "emplacament": "-",
+    "altitud": 235.0,
+    "municipi": {
+      "codi": "250045",
+      "variables": null,
+      "nom": "Els Alamús",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 33,
+      "nom": "Segrià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2011-06-22T16:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XN": {
+    "codi": "XN",
+    "nom": "Seròs",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.46379,
+      "longitud": 0.42765
+    },
+    "emplacament": "EDAR Aitona-Seròs",
+    "altitud": 89.0,
+    "municipi": {
+      "codi": "252043",
+      "variables": null,
+      "nom": "Seròs",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 33,
+      "nom": "Segrià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2011-12-15T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XO": {
+    "codi": "XO",
+    "nom": "Vic",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.93497,
+      "longitud": 2.23987
+    },
+    "emplacament": "Vic",
+    "altitud": 499.0,
+    "municipi": {
+      "codi": "082981",
+      "variables": null,
+      "nom": "Vic",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 24,
+      "nom": "Osona"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2011-12-22T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XP": {
+    "codi": "XP",
+    "nom": "Gandesa",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.06564,
+      "longitud": 0.43006
+    },
+    "emplacament": "IRTA UETA Gandesa",
+    "altitud": 350.0,
+    "municipi": {
+      "codi": "430640",
+      "variables": null,
+      "nom": "Gandesa",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 37,
+      "nom": "Terra Alta"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2011-11-30T08:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XQ": {
+    "codi": "XQ",
+    "nom": "Tremp",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.16252,
+      "longitud": 0.88814
+    },
+    "emplacament": "Conillera de Joncar",
+    "altitud": 473.0,
+    "municipi": {
+      "codi": "252347",
+      "variables": null,
+      "nom": "Tremp",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 25,
+      "nom": "Pallars Jussà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2012-10-22T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XR": {
+    "codi": "XR",
+    "nom": "Prades",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.31481,
+      "longitud": 0.98161
+    },
+    "emplacament": "La Comanda",
+    "altitud": 926.0,
+    "municipi": {
+      "codi": "431166",
+      "variables": null,
+      "nom": "Prades",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 8,
+      "nom": "Baix Camp"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2013-01-31T16:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XS": {
+    "codi": "XS",
+    "nom": "Santa Coloma de Farners",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.86489,
+      "longitud": 2.66446
+    },
+    "emplacament": "Dipòsit d'aigua",
+    "altitud": 162.0,
+    "municipi": {
+      "codi": "171805",
+      "variables": null,
+      "nom": "Santa Coloma de Farners",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 34,
+      "nom": "Selva"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2013-03-26T13:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XT": {
+    "codi": "XT",
+    "nom": "Solsona",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.98766,
+      "longitud": 1.51165
+    },
+    "emplacament": "Magatzem Municipal",
+    "altitud": 691.0,
+    "municipi": {
+      "codi": "252075",
+      "variables": null,
+      "nom": "Solsona",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 35,
+      "nom": "Solsonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2012-07-12T14:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XU": {
+    "codi": "XU",
+    "nom": "Canyelles",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.28801,
+      "longitud": 1.72195
+    },
+    "emplacament": "Cementiri",
+    "altitud": 148.0,
+    "municipi": {
+      "codi": "080431",
+      "variables": null,
+      "nom": "Canyelles",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 17,
+      "nom": "Garraf"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2013-07-16T15:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XV": {
+    "codi": "XV",
+    "nom": "Sant Cugat del Vallès - CAR",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.48311,
+      "longitud": 2.07956
+    },
+    "emplacament": "Centre d'Alt Rendiment",
+    "altitud": 158.0,
+    "municipi": {
+      "codi": "082055",
+      "variables": null,
+      "nom": "Sant Cugat del Vallès",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 40,
+      "nom": "Vallès Occidental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2013-08-08T13:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XX": {
+    "codi": "XX",
+    "nom": "Anglesola - Tornabous",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.68835,
+      "longitud": 1.04476
+    },
+    "emplacament": "Masia Mingot",
+    "altitud": 291.0,
+    "municipi": {
+      "codi": "250273",
+      "variables": null,
+      "nom": "Anglesola",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 38,
+      "nom": "Urgell"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2013-08-06T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XY": {
+    "codi": "XY",
+    "nom": "Alcarràs",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.56509,
+      "longitud": 0.55027
+    },
+    "emplacament": "Central del revés",
+    "altitud": 122.0,
+    "municipi": {
+      "codi": "250117",
+      "variables": null,
+      "nom": "Alcarràs",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 33,
+      "nom": "Segrià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2013-07-31T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "XZ": {
+    "codi": "XZ",
+    "nom": "Torroella de Fluvià",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.18139,
+      "longitud": 3.06202
+    },
+    "emplacament": " ",
+    "altitud": 7.0,
+    "municipi": {
+      "codi": "171984",
+      "variables": null,
+      "nom": "Torroella de Fluvià",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 2,
+      "nom": "Alt Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2014-04-08T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "Y4": {
+    "codi": "Y4",
+    "nom": "Alinyà",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.17426,
+      "longitud": 1.42775
+    },
+    "emplacament": "Tossal de Salamó",
+    "altitud": 1162.0,
+    "municipi": {
+      "codi": "259084",
+      "variables": null,
+      "nom": "Fígols i Alinyà",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 4,
+      "nom": "Alt Urgell"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2014-07-01T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "Y5": {
+    "codi": "Y5",
+    "nom": "Navata",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.22793,
+      "longitud": 2.86295
+    },
+    "emplacament": "Can Tries",
+    "altitud": 152.0,
+    "municipi": {
+      "codi": "171117",
+      "variables": null,
+      "nom": "Navata",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 2,
+      "nom": "Alt Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2014-08-26T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "Y6": {
+    "codi": "Y6",
+    "nom": "Tivissa",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.04343,
+      "longitud": 0.74032
+    },
+    "emplacament": "-",
+    "altitud": 317.0,
+    "municipi": {
+      "codi": "431508",
+      "variables": null,
+      "nom": "Tivissa",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 30,
+      "nom": "Ribera d'Ebre"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2015-03-26T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "Y7": {
+    "codi": "Y7",
+    "nom": "Port de Barcelona - Bocana Sud",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.31725,
+      "longitud": 2.16537
+    },
+    "emplacament": "Port de Barcelona",
+    "altitud": 3.0,
+    "municipi": {
+      "codi": "081691",
+      "variables": null,
+      "nom": "El Prat de Llobregat",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 11,
+      "nom": "Baix Llobregat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2015-04-08T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YA": {
+    "codi": "YA",
+    "nom": "Puigcerdà",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.44013,
+      "longitud": 1.93482
+    },
+    "emplacament": "Poliesportiu municipal",
+    "altitud": 1213.0,
+    "municipi": {
+      "codi": "171411",
+      "variables": null,
+      "nom": "Puigcerdà",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 15,
+      "nom": "Cerdanya"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2016-03-22T16:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YB": {
+    "codi": "YB",
+    "nom": "Olot",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.18813,
+      "longitud": 2.47097
+    },
+    "emplacament": "Pla de Dalt",
+    "altitud": 433.0,
+    "municipi": {
+      "codi": "171143",
+      "variables": null,
+      "nom": "Olot",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 19,
+      "nom": "Garrotxa"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2016-07-21T14:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YC": {
+    "codi": "YC",
+    "nom": "la Pobla de Segur",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.24388,
+      "longitud": 0.96802
+    },
+    "emplacament": "Horta de les Feixes",
+    "altitud": 508.0,
+    "municipi": {
+      "codi": "251713",
+      "variables": null,
+      "nom": "La Pobla de Segur",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 25,
+      "nom": "Pallars Jussà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2016-11-18T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YD": {
+    "codi": "YD",
+    "nom": "les Borges Blanques",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.51124,
+      "longitud": 0.8561
+    },
+    "emplacament": "Escola Agrària de les Borges Blanques",
+    "altitud": 283.0,
+    "municipi": {
+      "codi": "250582",
+      "variables": null,
+      "nom": "Les Borges Blanques",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 18,
+      "nom": "Garrigues"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2017-01-25T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YE": {
+    "codi": "YE",
+    "nom": "Massoteres",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.79409,
+      "longitud": 1.305756
+    },
+    "emplacament": "la Creu de Massoteres",
+    "altitud": 513.0,
+    "municipi": {
+      "codi": "251327",
+      "variables": null,
+      "nom": "Massoteres",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 32,
+      "nom": "Segarra"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2017-05-17T14:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YF": {
+    "codi": "YF",
+    "nom": "Miami Platja",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.02066,
+      "longitud": 0.9345
+    },
+    "emplacament": "Plana dels Penyals",
+    "altitud": 43.0,
+    "municipi": {
+      "codi": "430923",
+      "variables": null,
+      "nom": "Mont-roig del Camp",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 8,
+      "nom": "Baix Camp"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2017-12-20T09:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YG": {
+    "codi": "YG",
+    "nom": "Tírvia",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.51881,
+      "longitud": 1.24244
+    },
+    "emplacament": "Heliport de Tírvia",
+    "altitud": 954.0,
+    "municipi": {
+      "codi": "252213",
+      "variables": null,
+      "nom": "Tírvia",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 26,
+      "nom": "Pallars Sobirà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2018-01-11T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YH": {
+    "codi": "YH",
+    "nom": "Pujalt",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.71734,
+      "longitud": 1.42403
+    },
+    "emplacament": "Observatori de Pujalt",
+    "altitud": 747.0,
+    "municipi": {
+      "codi": "081764",
+      "variables": null,
+      "nom": "Pujalt",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 6,
+      "nom": "Anoia"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2018-04-06T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YJ": {
+    "codi": "YJ",
+    "nom": "Lleida - la Femosa",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.58449,
+      "longitud": 0.64217
+    },
+    "emplacament": "la Gabarrera",
+    "altitud": 170.0,
+    "municipi": {
+      "codi": "251207",
+      "variables": null,
+      "nom": "Lleida",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 33,
+      "nom": "Segrià"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2018-08-21T10:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YK": {
+    "codi": "YK",
+    "nom": "Terrassa",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.55361,
+      "longitud": 1.99005
+    },
+    "emplacament": "Can Poal",
+    "altitud": 313.0,
+    "municipi": {
+      "codi": "082798",
+      "variables": null,
+      "nom": "Terrassa",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 40,
+      "nom": "Vallès Occidental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2018-12-20T12:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YL": {
+    "codi": "YL",
+    "nom": "Riudecanyes",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.1227,
+      "longitud": 0.96951
+    },
+    "emplacament": "els Gorgs",
+    "altitud": 170.0,
+    "municipi": {
+      "codi": "431270",
+      "variables": null,
+      "nom": "Riudecanyes",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 8,
+      "nom": "Baix Camp"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2019-02-06T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YM": {
+    "codi": "YM",
+    "nom": "Granollers",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.60922,
+      "longitud": 2.29841
+    },
+    "emplacament": "Parc del Puig de les Tres Torres",
+    "altitud": 210.0,
+    "municipi": {
+      "codi": "080961",
+      "variables": null,
+      "nom": "Granollers",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 41,
+      "nom": "Vallès Oriental"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2019-09-17T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YN": {
+    "codi": "YN",
+    "nom": "Vielha - Elipòrt",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.69737,
+      "longitud": 0.80198
+    },
+    "emplacament": "Elipòrt de VIelha",
+    "altitud": 1027.0,
+    "municipi": {
+      "codi": "252430",
+      "variables": null,
+      "nom": "Vielha e Mijaran",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 39,
+      "nom": "Val d'Aran"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2021-03-11T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YO": {
+    "codi": "YO",
+    "nom": "Sant Sadurní d'Anoia",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.43531,
+      "longitud": 1.79324
+    },
+    "emplacament": "Camp de civada entre vinyes",
+    "altitud": 155.0,
+    "municipi": {
+      "codi": "082401",
+      "variables": null,
+      "nom": "Sant Sadurní d'Anoia",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 3,
+      "nom": "Alt Penedès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2021-05-07T11:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YP": {
+    "codi": "YP",
+    "nom": "Palafrugell",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.90694,
+      "longitud": 3.16073
+    },
+    "emplacament": "Horts urbans",
+    "altitud": 35.0,
+    "municipi": {
+      "codi": "171175",
+      "variables": null,
+      "nom": "Palafrugell",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 10,
+      "nom": "Baix Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2021-12-02T16:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YQ": {
+    "codi": "YQ",
+    "nom": "Port de Barcelona - ZAL Prat",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.31928,
+      "longitud": 2.1372
+    },
+    "emplacament": "Port de Barcelona",
+    "altitud": 6.0,
+    "municipi": {
+      "codi": "081691",
+      "variables": null,
+      "nom": "El Prat de Llobregat",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 11,
+      "nom": "Baix Llobregat"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2021-12-02T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YR": {
+    "codi": "YR",
+    "nom": "Vilanova i la Geltrú",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.23575,
+      "longitud": 1.73148
+    },
+    "emplacament": "Circuit de ciclisme",
+    "altitud": 31.0,
+    "municipi": {
+      "codi": "083073",
+      "variables": null,
+      "nom": "Vilanova i la Geltrú",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 17,
+      "nom": "Garraf"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2023-04-13T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YS": {
+    "codi": "YS",
+    "nom": "Cabanes",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.32038,
+      "longitud": 2.956401
+    },
+    "emplacament": "Futura deixalleria",
+    "altitud": 32.0,
+    "municipi": {
+      "codi": "170307",
+      "variables": null,
+      "nom": "Cabanes",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 2,
+      "nom": "Alt Empordà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2024-05-13T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YT": {
+    "codi": "YT",
+    "nom": "Bonabé (1.693 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.75089,
+      "longitud": 1.07527
+    },
+    "emplacament": "Pista de la Mina",
+    "altitud": 1693.0,
+    "municipi": {
+      "codi": "250241",
+      "variables": null,
+      "nom": "Alt Àneu",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 26,
+      "nom": "Pallars Sobirà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2024-09-19T17:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YU": {
+    "codi": "YU",
+    "nom": "Cantonigròs",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.04265,
+      "longitud": 2.40472
+    },
+    "emplacament": "Àrea d'autocaravanes",
+    "altitud": 925.0,
+    "municipi": {
+      "codi": "082541",
+      "variables": null,
+      "nom": "l'Esquirol",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 24,
+      "nom": "Osona"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2025-02-18T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YV": {
+    "codi": "YV",
+    "nom": "Mataró",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.54517,
+      "longitud": 2.43322
+    },
+    "emplacament": "Parc de Rafael Alberti, Estació MeteoMar",
+    "altitud": 87.0,
+    "municipi": {
+      "codi": "081213",
+      "variables": null,
+      "nom": "Mataró",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 21,
+      "nom": "Maresme"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2025-06-11T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "YX": {
+    "codi": "YX",
+    "nom": "Batea",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 41.08307,
+      "longitud": 0.31688
+    },
+    "emplacament": "Turó estació transferència",
+    "altitud": 400.0,
+    "municipi": {
+      "codi": "430228",
+      "variables": null,
+      "nom": "Batea",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 37,
+      "nom": "Terra Alta"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2025-07-30T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "Z1": {
+    "codi": "Z1",
+    "nom": "Bonaigua (2.266 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.64691,
+      "longitud": 0.98486
+    },
+    "emplacament": "Port de la Bonaigua",
+    "altitud": 2266.0,
+    "municipi": {
+      "codi": "250241",
+      "variables": null,
+      "nom": "Alt Àneu",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 26,
+      "nom": "Pallars Sobirà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1997-11-06T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "Z2": {
+    "codi": "Z2",
+    "nom": "Boí (2.535 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.46602,
+      "longitud": 0.88405
+    },
+    "emplacament": "Vall de Boí",
+    "altitud": 2535.0,
+    "municipi": {
+      "codi": "250432",
+      "variables": null,
+      "nom": "La Vall de Boí",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 5,
+      "nom": "Alta Ribagorça"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1998-11-13T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "Z3": {
+    "codi": "Z3",
+    "nom": "Malniu (2.230 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.46605,
+      "longitud": 1.7785
+    },
+    "emplacament": "Estany de Malniu",
+    "altitud": 2230.0,
+    "municipi": {
+      "codi": "170998",
+      "variables": null,
+      "nom": "Meranges",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 15,
+      "nom": "Cerdanya"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "1999-11-03T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "Z5": {
+    "codi": "Z5",
+    "nom": "Certascan (2.400 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.70029,
+      "longitud": 1.27201
+    },
+    "emplacament": "Certascan",
+    "altitud": 2400.0,
+    "municipi": {
+      "codi": "251235",
+      "variables": null,
+      "nom": "Lladorre",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 26,
+      "nom": "Pallars Sobirà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2000-11-11T00:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "Z6": {
+    "codi": "Z6",
+    "nom": "Sasseuva (2.228 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.77011,
+      "longitud": 0.73198
+    },
+    "emplacament": "Sasseuva",
+    "altitud": 2228.0,
+    "municipi": {
+      "codi": "250313",
+      "variables": null,
+      "nom": "Arres",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 39,
+      "nom": "Val d'Aran"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2001-09-20T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "Z7": {
+    "codi": "Z7",
+    "nom": "Espot (2.519 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.53412,
+      "longitud": 1.05476
+    },
+    "emplacament": "Espot",
+    "altitud": 2519.0,
+    "municipi": {
+      "codi": "250827",
+      "variables": null,
+      "nom": "Espot",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 26,
+      "nom": "Pallars Sobirà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2002-03-01T17:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "Z9": {
+    "codi": "Z9",
+    "nom": "Cadí Nord (2.143 m) - Prat d'Aguiló",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.29265,
+      "longitud": 1.71498
+    },
+    "emplacament": "Cadí Nord - Prat d'Aguiló",
+    "altitud": 2143.0,
+    "municipi": {
+      "codi": "251399",
+      "variables": null,
+      "nom": "Montellà i Martinet",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 15,
+      "nom": "Cerdanya"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2003-11-06T13:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "ZB": {
+    "codi": "ZB",
+    "nom": "Salòria (2.451 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.51939,
+      "longitud": 1.36597
+    },
+    "emplacament": "Salòria",
+    "altitud": 2451.0,
+    "municipi": {
+      "codi": "250175",
+      "variables": null,
+      "nom": "Alins",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 26,
+      "nom": "Pallars Sobirà"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2004-09-30T12:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "ZC": {
+    "codi": "ZC",
+    "nom": "Ulldeter (2.413 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.42102,
+      "longitud": 2.24593
+    },
+    "emplacament": "Ulldeter",
+    "altitud": 2413.0,
+    "municipi": {
+      "codi": "171925",
+      "variables": null,
+      "nom": "Setcases",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 31,
+      "nom": "Ripollès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2011-09-28T10:30Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "ZD": {
+    "codi": "ZD",
+    "nom": "la Tosa d'Alp (2.478 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.32211,
+      "longitud": 1.89716
+    },
+    "emplacament": "Tosa d'Alp",
+    "altitud": 2478.0,
+    "municipi": {
+      "codi": "170062",
+      "variables": null,
+      "nom": "Alp",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 15,
+      "nom": "Cerdanya"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2014-09-04T11:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  },
+  "ZE": {
+    "codi": "ZE",
+    "nom": "el Port del Comte (2.290 m)",
+    "tipus": "A",
+    "coordenades": {
+      "latitud": 42.19088,
+      "longitud": 1.53207
+    },
+    "emplacament": "Port del Comte - Estivella",
+    "altitud": 2290.0,
+    "municipi": {
+      "codi": "251636",
+      "variables": null,
+      "nom": "La Coma i la Pedra",
+      "slug": null,
+      "coordenades": null,
+      "comarca": null
+    },
+    "comarca": {
+      "codi": 35,
+      "nom": "Solsonès"
+    },
+    "estats": [
+      {
+        "codi": 2,
+        "dataInici": "2023-09-21T16:00Z",
+        "dataFi": null
+      }
+    ],
+    "variables": null
+  }
+}
