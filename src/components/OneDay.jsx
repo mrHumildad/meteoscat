@@ -2,11 +2,9 @@ import React from 'react';
 import { useState } from 'react'
 import stations from '../../stations.json'
 import { getAverage } from '../logic/utils'
-import { refineData } from '../logic/refineData'
-const data = refineData()
-const days = Object.keys(data)
 
-const OneDay = () => {
+const OneDay = ({data}) => {
+  const days = Object.keys(data)
   const [selectedDay, setSelectedDay] = useState(days[0])
     const [valueShowed, setValueShowed] = useState("temperatura")
     const daysButtons= days.map(day => (
@@ -29,9 +27,9 @@ const OneDay = () => {
               .map(station => (
               <tr key={station} >
                 <td>{stations.find(s => s.codi === station).nom}</td>
-                <td>{getAverage(data[selectedDay][station].temperatura)}</td>
-                <td>{getAverage(data[selectedDay][station].humitat)}</td>
-                <td>{getAverage(data[selectedDay][station].precipitacio)}</td>
+                <td>{data[selectedDay][station].calcs.temperatura.average}</td>
+                <td>{data[selectedDay][station].calcs.humitat.average}</td>
+                <td>{data[selectedDay][station].calcs.precipitacio.total}</td>
                 
               </tr>
             ))}

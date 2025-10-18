@@ -1,16 +1,12 @@
 import React, { useState, useMemo } from 'react'
 import stations from '../../stations.json'
 import { getAverage } from '../logic/utils'
-import { refineData } from '../logic/refineData'
 import { formatNumber, toNumberSafe } from '../logic/utils'
 
 
-const data = refineData()
-const days = Object.keys(data)
 
-
-
-const AllDays = () => {
+const AllDays = ({data}) => {
+  const days = Object.keys(data)
   const [valueShowed, setValueShowed] = useState('temperatura')
   const [startIndex, setStartIndex] = useState(0)
   const [endIndex, setEndIndex] = useState(days.length - 1)

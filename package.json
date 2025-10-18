@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vis.gl/react-maplibre": "^8.1.0",
+    "maplibre-gl": "^5.9.0",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "react-map-gl": "^8.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
