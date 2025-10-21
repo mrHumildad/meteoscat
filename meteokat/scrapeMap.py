@@ -22,9 +22,9 @@ for date_str in dates:
         try:
             data = json.loads(data_str)
             full_data[date_str[:10]] = data
-            with open(f"dades_{date_str[:10]}.json", "w", encoding="utf-8") as f:
+            """ with open(f"dades_{date_str[:10]}.json", "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
-            print(f"Saved 'dades' to dades_{date_str[:10]}.json")
+            print(f"Saved 'dades' to dades_{date_str[:10]}.json") """
         except Exception as e:
             print("Could not parse 'dades' as JSON:", e)
     else:

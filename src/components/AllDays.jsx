@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react'
 import stations from '../../stations.json'
 import { getAverage } from '../logic/utils'
 import { formatNumber, toNumberSafe } from '../logic/utils'
-
+import Map from '@vis.gl/react-maplibre'
 
 
 const AllDays = ({data}) => {
@@ -51,12 +51,12 @@ const AllDays = ({data}) => {
 
   return (
     <div>
-      <div style={{ marginBottom: '10px' }}>
+      <div >
         <button onClick={() => setValueShowed('temperatura')}>Temperatura</button>
         <button onClick={() => setValueShowed('precipitacio')}>Precipitació</button>
         <button onClick={() => setValueShowed('humitat')}>Humitat</button>
       </div>
-
+      <Map data={data} valueShowed={valueShowed} selectedDays={selectedDays} />
       {/* 🗓️ Range selectors */}
       <div style={{ marginBottom: '15px' }}>
         <label>

@@ -13,6 +13,7 @@
     "@vis.gl/react-maplibre": "^8.1.0",
     "maplibre-gl": "^5.9.0",
     "react": "^19.1.1",
+    "react-day-picker": "^9.11.1",
     "react-dom": "^19.1.1",
     "react-map-gl": "^8.1.0"
   },

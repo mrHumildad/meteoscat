@@ -15,7 +15,7 @@ function App() {
   const [tab, setTab] = useState("map")
   return (
     <div className="App">
-      <Header tab={tab} setTab={setTab}/>
+      {/* <Header tab={tab} setTab={setTab}/> */}
         <div className="tabs">
           {tab === "oneday" && <OneDay data={data}/>}
           {tab === "alldays" && <AllDays data={data}/>}
