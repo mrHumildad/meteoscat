@@ -27,8 +27,7 @@ export const refineData = () => {
         alturaSensorVent: [],
         ratxaMaximaVent: [],
         direccioRatxaMaximaVent: [],
-        // reserve calcs space (will compute later)
-        calcs: {}
+
       }
     })
     const hours = Object.keys(raw[day] || {})
@@ -57,27 +56,24 @@ export const refineData = () => {
       const safeMax = arr => (Array.isArray(arr) && arr.length ? Math.max(...arr) : null)
       const safeSum = arr => (Array.isArray(arr) && arr.length ? arr.reduce((a, b) => a + b, 0) : 0)
 
-      s.calcs = {
-        temperatura: {
-          average: safeAvg(s.temperatura),
-          min: safeMin(s.temperatura),
-          max: safeMax(s.temperatura)
-        },
-        humitat: {
-          average: safeAvg(s.humitat),
-          min: safeMin(s.humitat),
-          max: safeMax(s.humitat)
-        },
-        precipitacio: {
-          total: safeMax(s.precipitacio)
-        },
+      
+      s.tempAvg = safeAvg(s.temperatura),
+      s.tempMin = safeMin(s.temperatura),
+      s.tempMax = safeMax(s.temperatura)
+
+
+      s.humAvg = safeAvg(s.humitat),
+      s.humMin = safeMin(s.humitat),
+      s.humMax = safeMax(s.humitat)
+
+      s.precAcc = safeMax(s.precipitacio)
 /*         velocitatVent: {
           average: safeAvg(s.velocitatVent),
           min: safeMin(s.velocitatVent),
           max: safeMax(s.velocitatVent)
         }, */
         // add other calcs as needed
-      }
+      
     })
   })
   console.log('Refined data ready', refinedData)

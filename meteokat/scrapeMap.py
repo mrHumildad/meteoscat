@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 base_url = 'https://www.meteo.cat/observacions/xema?dia={date}'
 
 today = datetime.now(datetime.utcnow().astimezone().tzinfo)
-dates = [(today - timedelta(days=i)).strftime('%Y-%m-%dT00:00Z') for i in range(30)]
+dates = [(today - timedelta(days=i)).strftime('%Y-%m-%dT00:00Z') for i in range(10)]
 full_data = {}
 
 for date_str in dates:

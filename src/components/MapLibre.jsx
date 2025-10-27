@@ -17,7 +17,7 @@ const MapLibre = ({data})  => {
   const [selectedVariable, setSelectedVariable] = useState('temperature');
   const mapRef = useRef(null);                // <-- add map ref
   const [stationsGeo, setStationsGeo] = useState(null);
-
+  const [geoWithData, setGeoWithData] = useState(null);
   const STYLES = [
     { name: 'Default (MapLibre demo)', url: 'https://demotiles.maplibre.org/style.json' },
     { name: 'CARTO Dark Matter', url: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json' },
@@ -122,6 +122,7 @@ const MapLibre = ({data})  => {
       const coords = f.geometry.coordinates.slice();
       const code = f.properties?.codi ?? 'unknown';
       console.log('Clicked station', code, f.properties);
+      setSelectedStation({...stationsGeo.features.find(s => s.properties?.codi === code), data: data.map(d => d?.[code] || null),  });   
       map.flyTo({ center: coords, zoom: Math.max(map.getZoom(), 12) });
     });
 
@@ -152,31 +153,65 @@ const MapLibre = ({data})  => {
   };
 
   // build a geojson clone with properties.avg for selected variable & range
+  // build a geojson clone with properties.avg for selected variable & range
   const computeGeoWithAverages = (variable, daysInRange) => {
+    console.log('Computing geo with averages for', variable, 'over days', daysInRange);
     if (!stationsGeo || !Array.isArray(stationsGeo.features)) return null;
+    
     const features = stationsGeo.features.map(f => {
       const code = f.properties?.codi;
-      let allVals = [];
+      
       if (code && daysInRange.length) {
+        let temperatures = [];
+        let humidities = [];
+        let precAccum = 0;
+        
         for (const dayKey of daysInRange) {
-          const stationObj = data[dayKey] && data[dayKey][code];
-          if (stationObj && Array.isArray(stationObj[variable])) {
-            allVals = allVals.concat(stationObj[variable].map(v => (v === null ? NaN : Number(v))));
+          // Check if data exists for the day and station before accessing
+          const stationData = data[dayKey]?.[code]?.calcs; 
+          
+          if (stationData) {
+            precAccum += stationData.precipitacio?.total ?? 0;
+            temperatures.push(stationData.temperatura?.average);
+            humidities.push(stationData.humitat?.average);
           }
         }
-      }
-      const avg = safeAvg(allVals);
-      // clone feature and attach avg (rounded to 1 decimal or null)
-      return {
-        ...f,
-        properties: {
-          ...f.properties,
-          avg: avg === null ? null : Math.round(avg*10)/10
+
+        const temperatureAvg = safeAvg(temperatures);
+        const humidityAvg = safeAvg(humidities);
+        const precipAccumRounded = precAccum === null ? null : Math.round(precAccum * 10) / 10;
+        const temperatureAvgRounded = temperatureAvg === null ? null : Math.round(temperatureAvg * 10) / 10;
+        const humidityAvgRounded = humidityAvg === null ? null : Math.round(humidityAvg * 10) / 10;
+
+        // Determine the single 'avg' property to use for color/radius expressions
+        let avgValue = null;
+        if (variable === 'temperatura') {
+          avgValue = temperatureAvgRounded;
+        } else if (variable === 'humitat') {
+          avgValue = humidityAvgRounded;
+        } else if (variable === 'precipitacio') {
+          avgValue = precipAccumRounded;
         }
-      };
+        console.log(`Station ${code}: avg ${variable} =`, avgValue);
+        // clone feature and attach avg (rounded to 1 decimal or null)
+        return {
+          ...f,
+          properties: {
+            ...f.properties,
+            // 'avg' is the one the MapLibre expressions will use
+            //avg: avgValue, 
+            precAccum: precipAccumRounded,
+            temperaturaAvg: temperatureAvgRounded,
+            humitatAvg: humidityAvgRounded,
+          }
+        };
+      }
+      // Return the feature unchanged if no data or no days selected
+      return f;
     });
+
     return { type: 'FeatureCollection', features };
-  };
+  }; // <<< The function closure was missing in the original code
 
   // update map source and style when daysRange/selectedVariable/stationsGeo change
   useEffect(() => {
@@ -185,23 +220,29 @@ const MapLibre = ({data})  => {
     const from = daysRange?.from ?? null;
     const to = daysRange?.to ?? from;
     const daysInRange = getDaysInRange(from, to);
-    const geoWithAvg = computeGeoWithAverages(selectedVariable, daysInRange);
+    setGeoWithData(computeGeoWithAverages(selectedVariable, daysInRange));
 
     // update source data
     try {
       if (map.getSource('stations')) {
-        map.getSource('stations').setData(geoWithAvg || stationsGeo);
-      } else if (geoWithAvg) {
-        map.addSource('stations', { type: 'geojson', data: geoWithAvg });
+        map.getSource('stations').setData(geoWithData || stationsGeo);
+      } else if (geoWithData) {
+        map.addSource('stations', { type: 'geojson', data: geoWithData });
       }
     } catch (e) {
       console.warn('Error updating stations source data', e);
     }
 
     // compute min/max of avg for scale (ignore nulls)
-    const avgs = (geoWithAvg?.features || []).map(f => f.properties?.avg).filter(v => v !== null && typeof v === 'number');
-    const min = avgs.length ? Math.min(...avgs) : 0;
-    const max = avgs.length ? Math.max(...avgs) : 1;
+    //const avgs = (geoWithData?.features || []).map(f => f.properties?.avg).filter(v => v !== null && typeof v === 'number');
+    const values = (geoWithData?.features || []).map(f => {
+      if (selectedVariable === 'temperatura') return f.properties?.c;
+      if (selectedVariable === 'humitat') return f.properties?.humitatAvg;
+      if (selectedVariable === 'precipitacio') return f.properties?.precAccum;
+      return null;
+    }).filter(v => v !== null && typeof v === 'number');  
+    const min = values.length ? Math.min(...values) : 0;
+    const max = values.length ? Math.max(...values) : 1;
 
     // build color/radius expressions using MapLibre style expressions
     // color: gray for null, otherwise interpolate between green->yellow->red
@@ -246,7 +287,8 @@ const MapLibre = ({data})  => {
   })();
 
   const log = `dades de ${daysCount} dies i ${stationsCodes.length} estacions loaded. Variable mostrada: ${selectedVariable}. Selected: ${fmt(daysRange?.from)} -> ${fmt(daysRange?.to)}`;
-
+  console.log(stationsGeo);
+  
   // clamp selection to min/max
   const handleSelect = (range) => {
     if (!range) { setDaysRange(null); return; }
@@ -289,6 +331,21 @@ const MapLibre = ({data})  => {
         mapStyle={styleUrl}
         onLoad={onMapLoad}
       />
+    <div className="station-panel">
+      {selectedStation ? (
+        <div>
+          <h3>Estació: {selectedStation.properties?.nom || selectedStation.properties?.codi}</h3>
+          <p>Codi: {selectedStation.properties?.codi}</p>
+          <p>Lat: {selectedStation.geometry?.coordinates[1]}, Lon: {selectedStation.geometry?.coordinates[0]}</p>
+          <p>Temperatura mitjana: {selectedStation.properties?.temperaturaAvg ?? 'N/A'} °C</p>
+          <p>Humitat mitjana: {selectedStation.properties?.humitatAvg ?? 'N/A'} %</p>
+          <p>Precipitació acumulada: {selectedStation.properties?.precAccum ?? 'N/A'} mm</p>
+          <button onClick={() => setSelectedStation(null)}>Tancar</button>
+        </div>
+      ) : (
+        <p>Feu clic a una estació al mapa per veure detalls.</p>
+      )}
+    </div>
     </div>
   );
 }
