@@ -13,6 +13,17 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange }) => {
       </div>
     );
   }
+  // global min/max from dayStats
+const globalStats = useMemo(() => {
+  const validDays = Object.values(data || {}).filter(d => d.dayStats);
+  const precMax = Math.max(...validDays.map(d => d.dayStats.precMax ?? 0), 0);
+  const precMin = Math.min(...validDays.map(d => d.dayStats.precMin ?? 0), 0);
+  const humMax = Math.max(...validDays.map(d => d.dayStats.humMax ?? 0), 0);
+  const humMin = Math.min(...validDays.map(d => d.dayStats.humMin ?? 0), 0);
+  const tempMax = Math.max(...validDays.map(d => d.dayStats.tempMax ?? -100), -100);
+  const tempMin = Math.min(...validDays.map(d => d.dayStats.tempMin ?? 100), 100);
+  return { precMin, precMax, humMin, humMax, tempMin, tempMax };
+}, [data]);
 
   // generate day data
   const chartData = useMemo(() => {
@@ -46,60 +57,109 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange }) => {
   console.log(chartData);
   return (
     <div className={`station-panel ${isOpen ? "open" : "closed"}`}>
-      <div className="station-close" onClick={() => {setSelectedStation(null); setIsOpen(false);}}>
+      <div
+        className="station-close"
+        onClick={() => {
+          setSelectedStation(null);
+          setIsOpen(false);
+        }}
+      >
         <FontAwesomeIcon icon={faRightFromBracket} />
       </div>
       <div className="st-header">
-        <span className='st-name'>{station.properties?.nom.toUpperCase() || station.properties?.codi}</span>
-        <span className='st-altitud'>{station.properties?.altitud} m</span>
-        <span className='st-comarca'>{station.properties?.comarca}</span>
+        <span className="st-name">
+          {station.properties?.nom.toUpperCase() || station.properties?.codi}
+        </span>
+        <span className="st-altitud">{station.properties?.altitud} m</span>
+        <span className="st-comarca">{station.properties?.comarca}</span>
       </div>
       <div className="st-block">
         <div className="block-left">
-          <span className="st-block-icon"><FontAwesomeIcon icon={faDroplet} /></span>
-          <span className="st-block-value">TOT {station.properties?.precAcc ?? 'N/A'} mm</span>
+          <span className="st-block-icon">
+            <FontAwesomeIcon icon={faDroplet} />
+          </span>
+          <span className="st-block-value">
+            TOT {station.properties?.precAcc ?? "N/A"} mm
+          </span>
         </div>
         <div className="block-right">
           <div className="bars horizontal">
             {chartData.map((d, i) => (
-              <div key={i} className="bar rain" 
-                style={{ height: `${(d.precAcc / maxRain) * 100}%` }}
-                title={`${d.day}: ${d.precAcc} mm`} />
+              <div
+                key={i}
+                className="bar rain"
+                style={{
+                  height: `${
+                    ((d.precAcc - globalStats.precMin) /
+                      (globalStats.precMax - globalStats.precMin || 1)) *
+                    100
+                  }%`,
+                }}
+                title={`${d.day}: ${d.precAcc} mm`}
+              />
             ))}
           </div>
         </div>
       </div>
       <div className="st-block">
         <div className="block-left">
-          <span className="st-block-icon"><FontAwesomeIcon icon={faSeedling} /></span>
-          <span className="st-block-value">MITJANA {station.properties?.humAvg ?? 'N/A'} %</span>
+          <span className="st-block-icon">
+            <FontAwesomeIcon icon={faSeedling} />
+          </span>
+          <span className="st-block-value">
+            MITJANA {station.properties?.humAvg ?? "N/A"} %
+          </span>
         </div>
         <div className="block-right">
           <div className="bars horizontal">
             {chartData.map((d, i) => (
-              <div key={i} className="bar humidity"
-                style={{ height: `${(d.humAvg / maxHum) * 100}%` }}
-                title={`${d.day}: ${d.humAvg}%`} />
+              <div
+                key={i}
+                className="bar humidity"
+                style={{ height: <div
+  key={i}
+  className="bar humidity"
+  style={{
+    height: `${
+      ((d.humAvg - globalStats.humMin) /
+        (globalStats.humMax - globalStats.humMin || 1)) * 100
+    }%`
+  }}
+  title={`${d.day}: ${d.humAvg}%`}
+/>
+ }}
+                title={`${d.day}: ${d.humAvg}%`}
+              />
             ))}
           </div>
         </div>
       </div>
       <div className="st-block">
         <div className="block-left">
-          <span className="st-block-icon"><FontAwesomeIcon icon={faTemperatureLow} /></span>
-          <span className="st-block-value">MITJANA {station.properties?.tempAvg ?? 'N/A'} °C</span>
+          <span className="st-block-icon">
+            <FontAwesomeIcon icon={faTemperatureLow} />
+          </span>
+          <span className="st-block-value">
+            MITJANA {station.properties?.tempAvg ?? "N/A"} °C
+          </span>
         </div>
         <div className="block-right">
           <div className="bars horizontal">
             {chartData.map((d, i) => (
-              <div key={i} className="bar temp"
-                style={{ height: `${(d.tempAvg / maxTemp) * 100}%` }}
-                title={`${d.day}: ${d.tempAvg} °C`} />
+              <div
+                key={i}
+                className="bar temp"
+                style={{ height: `${
+      ((d.tempAvg - globalStats.tempMin) /
+        (globalStats.tempMax - globalStats.tempMin || 1)) * 100
+    }%` }}
+                title={`${d.day}: ${d.tempAvg} °C`}
+              />
             ))}
           </div>
         </div>
       </div>
-      <div id="st-days" className="bars horizontal" >
+      <div id="st-days" className="bars horizontal">
         {chartData.map((d, i) => (
           <div key={i} className="bar day">
             {fmtDayCat(d.day)}

@@ -23,10 +23,13 @@ const App = ()  => {
   const [styleUrl, setStyleUrl] = React.useState('https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json');
   const [selectedStation, setSelectedStation] = useState(null);
   const [daysRange, setDaysRange] = useState(minDate ? { from: minDate, to: maxDate } : null);
-  const [selectedVariable, setSelectedVariable] = useState('precAcc');
+  const [selectedVariable, setSelectedVariable] = useState('humAvg');
   const [stationsGeo, setStationsGeo] = useState(null);
   const [geoWithData, setGeoWithData] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [rangeLimits, setRangeLimits] = useState({
+    tempMin: -100, tempMax: 100, rainMin: 0, rainMax: 1000000, humMin: 0, humMax: 100
+  });
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -142,6 +145,27 @@ const App = ()  => {
     const daysInRange = getDaysInRange(data, from, to);
     const computed = computeGeoValues(stationsGeo, data, daysInRange);
     setGeoWithData(computed);
+    setRangeLimits(prev => {
+      const allTemps = [];
+      const allRains = [];
+      const allHums = [];
+      computed.features.forEach(f => {
+        const temp = f.properties?.tempAvg;
+        const rain = f.properties?.precAcc;
+        const hum = f.properties?.humAvg;
+        if (typeof temp === 'number') allTemps.push(temp);
+        if (typeof rain === 'number') allRains.push(rain);
+        if (typeof hum === 'number') allHums.push(hum);
+      });
+      return {
+        tempMin: allTemps.length ? Math.min(...allTemps) : prev.tempMin,
+        tempMax: allTemps.length ? Math.max(...allTemps) : prev.tempMax,
+        rainMin: allRains.length ? Math.min(...allRains) : prev.rainMin,
+        rainMax: allRains.length ? Math.max(...allRains) : prev.rainMax,
+        humMin: allHums.length ? Math.min(...allHums) : prev.humMin,
+        humMax: allHums.length ? Math.max(...allHums) : prev.humMax,
+      };
+    });
   }, [daysRange, stationsGeo, selectedVariable]);
 
   // 2️⃣ Update map once geoWithData is ready
@@ -233,7 +257,7 @@ const App = ()  => {
   const stationObj = selectedStation
   ? geoWithData?.features?.find(f => f.properties.codi === selectedStation)
   : null;
-
+  console.log(rangeLimits)
   return (
     <div className='app'>
       <img  className='logo' src={logo} alt="MetoSeps" />
@@ -252,6 +276,7 @@ const App = ()  => {
         maxDate={maxDate}
         showCalendar={showCalendar} 
         setShowCalendar={setShowCalendar}
+        rangeLimits={rangeLimits}
       /> 
       <Map
         key={styleUrl}
