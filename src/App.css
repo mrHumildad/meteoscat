@@ -1,5 +1,4 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
   text-align: center;
 }
@@ -17,19 +16,37 @@
   background-color: red;
   border: 3px solid white;
   overflow: hidden;
+  font-family: "Chivo Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .logo {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 1vh;
+  left: 1vh;
   width: max(10vw, 10vh);
   height: max(10vw, 10vh);
   pointer-events: none;
   z-index: 10;
   border-radius: 50%;
+  border: 3px solid white;
 }
-
+.app-header {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  z-index: 10;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: max(2vw, 2vh);
+}
 .selectors {
   position: absolute;
   top: 0;
@@ -38,26 +55,60 @@
   padding: 10px;
   z-index: 10;
   display: flex;
+  
+  gap: 10px;
+}
+.sel-buttons {
+  display: flex;
   flex-direction: column;
   gap: 10px;
-}
-.buttons {
-  display: flex;
-  gap: 10px;
-}
 
+}
+.sel-button {
+    width: max(5vw, 5vh);
+  height: max(5vw, 5vh);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 25%;
+  color: black;
+  font-size: max(4vw, 4vh);
+}
 .station-panel {
   position: absolute;
   bottom: 0;
   width: 100%;
   color: white;
   background-color: rgba(0, 0, 0, 0.8);
-  padding: 10px;
+  padding: 0;
   z-index: 10;
   overflow-y: auto;
+  transform: translateY(100%); /* hidden by default */
+  transition: transform 0.5s ease;
+  overflow-y: auto;
+}
+.station-panel.open {
+  transform: translateY(0);
 }
 
-
+/* Closed state */
+.station-panel.closed {
+  transform: translateY(100%);
+}
+.station-close {
+  position: absolute;
+  top: max(1vw, 1vh);
+  right: max(1vw, 1vh);
+  font-size: max(3vw, 3vh);
+  color: white;
+  background-color: black;
+  cursor: pointer;
+}
+.st-header {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
 
 
 
@@ -99,11 +150,11 @@
   color: #fff;
 }
 
-.bars.horizontal {
+.bars {
   display: flex;
   align-items: flex-end; /* ✅ bars align bottom */
-  justify-content: flex-start;
-  height: 10vh;
+  justify-content: center;
+  height: 8vh;
   width: 100%;
   gap: 3px;
   padding: 5px 0;
@@ -119,14 +170,27 @@
   background-color: limegreen;
 }
 
-.bar.rain {
+.rain {
   background-color: #4aa3ff;
 }
 
-.bar.humidity {
-  background-color: #8ad0ff;
+.humidity {
+  background-color: #8aff9d;
 }
 
-.bar.temp {
+.temp {
   background-color: #ff7575;
+}
+.calendar {
+  background-color: white;
+}
+#st-days {
+  margin-top: 1vh;
+  height: 2vh;
+  background-color: transparent;
+}
+.day {
+  background-color: black;
+  color: white;
+  font-size: 0.7rem;
 }

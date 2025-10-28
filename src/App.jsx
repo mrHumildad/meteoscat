@@ -4,14 +4,13 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import logo from './assets/logo.png';
 import { useState, useEffect, useRef } from 'react';
 import { refineData } from './logic/refineData.js'
-import { getDaysInRange, fmt, daysCount} from './logic/utils.js';
+import { getDaysInRange, fmt, daysCount, fmtDayCat} from './logic/utils.js';
 import './App.css'
 import { computeGeoValues } from './logic/computeGeoValues.js';
 import Selectors from './comps/Selectors.jsx';
 import StationPanel from './comps/StationPanel.jsx';
 const data = refineData()
 const days = Object.keys(data);
-const stationsCodes = Object.keys(data[days[0]] || {})
 const maxDate = days.length ? new Date(days[0]) : null;
 const minDate = days.length ? new Date(days[days.length - 1]) : null;
 
@@ -23,10 +22,11 @@ const maxZoom = 15;
 const App = ()  => {
   const [styleUrl, setStyleUrl] = React.useState('https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json');
   const [selectedStation, setSelectedStation] = useState(null);
-  const [daysRange, setDaysRange] = useState(minDate ? { from: minDate } : null);
+  const [daysRange, setDaysRange] = useState(minDate ? { from: minDate, to: maxDate } : null);
   const [selectedVariable, setSelectedVariable] = useState('precAcc');
   const [stationsGeo, setStationsGeo] = useState(null);
   const [geoWithData, setGeoWithData] = useState(null);
+  const [showCalendar, setShowCalendar] = useState(false);
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -208,9 +208,15 @@ const App = ()  => {
     }
   }, [geoWithData, selectedVariable]);
 
-  const daysNum = daysCount(daysRange);
-  const log = `dades de ${daysNum} dies i ${stationsCodes.length} estacions loaded. Variable mostrada: ${selectedVariable}. Selected: ${fmt(daysRange?.from)} -> ${fmt(daysRange?.to)}`;
-  console.log(geoWithData)
+  //const daysNum = daysCount(daysRange);
+  //const log = `dades de ${daysNum} dies i ${stationsCodes.length} estacions loaded. Variable mostrada: ${selectedVariable}. Selected: ${fmtDayCat(daysRange?.from)} -> ${fmtDayCat(daysRange?.to)}`;
+  let headerdays = fmtDayCat(daysRange?.from)
+  if (daysRange?.to && daysRange.to.getTime() !== daysRange.from.getTime()) {
+    headerdays += ` - ${fmtDayCat(daysRange?.to)}`;
+  }
+  const headerDayCount = daysCount(daysRange) > 1 ? ` (${daysCount(daysRange)} dies)` : '';
+
+  //console.log(geoWithData)
 
   const handleSelect = (range) => {
     if (!range) { setDaysRange(null); return; }
@@ -231,6 +237,11 @@ const App = ()  => {
   return (
     <div className='app'>
       <img  className='logo' src={logo} alt="MetoSeps" />
+      {!showCalendar && <div className="app-header">
+        <span className='header-title'>MeteoSeps</span>
+        <span className='header-days'>{headerdays}</span>
+        <span className='header-count'>{headerDayCount}</span>
+      </div>}
       {/* {log} */}
       <Selectors
         selectedVariable={selectedVariable}
@@ -239,6 +250,8 @@ const App = ()  => {
         handleSelect={handleSelect}
         minDate={minDate}
         maxDate={maxDate}
+        showCalendar={showCalendar} 
+        setShowCalendar={setShowCalendar}
       /> 
       <Map
         key={styleUrl}

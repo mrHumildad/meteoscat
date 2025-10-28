@@ -1,7 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { fmt } from '../logic/utils.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDroplet, faSeedling, faTemperatureLow, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { fmtDayCat } from '../logic/utils.js';
 
 const StationPanel = ({ station, setSelectedStation, data, daysRange }) => {
+   const [isOpen, setIsOpen] = useState(true);
   if (!station) {
     return (
       <div className="station-panel">
@@ -41,55 +45,67 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange }) => {
   console.log(maxRain, maxHum, maxTemp);
   console.log(chartData);
   return (
-    <div className="station-panel">
+    <div className={`station-panel ${isOpen ? "open" : "closed"}`}>
+      <div className="station-close" onClick={() => {setSelectedStation(null); setIsOpen(false);}}>
+        <FontAwesomeIcon icon={faRightFromBracket} />
+      </div>
       <div className="st-header">
-        <span className='st-name'>{station.properties?.nom || station.properties?.codi}</span>
-        <span className='st-altitud'>{station.properties?.altitud}</span>
+        <span className='st-name'>{station.properties?.nom.toUpperCase() || station.properties?.codi}</span>
+        <span className='st-altitud'>{station.properties?.altitud} m</span>
         <span className='st-comarca'>{station.properties?.comarca}</span>
       </div>
-
-      <div className="st-main">
-        <div className="st-main-right">
-          <span>Temperatura mitjana: {station.properties?.tempAvg ?? 'N/A'} °C</span>
-          <span>Humitat mitjana: {station.properties?.humAvg ?? 'N/A'} %</span>
-          <span>Precipitació acumulada: {station.properties?.precAcc ?? 'N/A'} mm</span>
+      <div className="st-block">
+        <div className="block-left">
+          <span className="st-block-icon"><FontAwesomeIcon icon={faDroplet} /></span>
+          <span className="st-block-value">TOT {station.properties?.precAcc ?? 'N/A'} mm</span>
         </div>
-
-        <div className="st-main-left">
-  <div className="chart-block">
-    <div className="bars horizontal">
-      {chartData.map((d, i) => (
-        <div key={i} className="bar rain" 
-          style={{ height: `${(d.precAcc / maxRain) * 100}%` }}
-          title={`${d.day}: ${d.precAcc} mm`} />
-      ))}
-    </div>
-  </div>
-
-  <div className="chart-block">
-    <div className="bars horizontal">
-      {chartData.map((d, i) => (
-        <div key={i} className="bar humidity"
-          style={{ height: `${(d.humAvg / maxHum) * 100}%` }}
-          title={`${d.day}: ${d.humAvg}%`} />
-      ))}
-    </div>
-  </div>
-
-  <div className="chart-block">
-    <div className="bars horizontal">
-      {chartData.map((d, i) => (
-        <div key={i} className="bar temp"
-          style={{ height: `${(d.tempAvg / maxTemp) * 100}%` }}
-          title={`${d.day}: ${d.tempAvg} °C`} />
-      ))}
-    </div>
-  </div>
-</div>
-
+        <div className="block-right">
+          <div className="bars horizontal">
+            {chartData.map((d, i) => (
+              <div key={i} className="bar rain" 
+                style={{ height: `${(d.precAcc / maxRain) * 100}%` }}
+                title={`${d.day}: ${d.precAcc} mm`} />
+            ))}
+          </div>
+        </div>
       </div>
-
-      <button onClick={() => setSelectedStation(null)}>Tancar</button>
+      <div className="st-block">
+        <div className="block-left">
+          <span className="st-block-icon"><FontAwesomeIcon icon={faSeedling} /></span>
+          <span className="st-block-value">MITJANA {station.properties?.humAvg ?? 'N/A'} %</span>
+        </div>
+        <div className="block-right">
+          <div className="bars horizontal">
+            {chartData.map((d, i) => (
+              <div key={i} className="bar humidity"
+                style={{ height: `${(d.humAvg / maxHum) * 100}%` }}
+                title={`${d.day}: ${d.humAvg}%`} />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="st-block">
+        <div className="block-left">
+          <span className="st-block-icon"><FontAwesomeIcon icon={faTemperatureLow} /></span>
+          <span className="st-block-value">MITJANA {station.properties?.tempAvg ?? 'N/A'} °C</span>
+        </div>
+        <div className="block-right">
+          <div className="bars horizontal">
+            {chartData.map((d, i) => (
+              <div key={i} className="bar temp"
+                style={{ height: `${(d.tempAvg / maxTemp) * 100}%` }}
+                title={`${d.day}: ${d.tempAvg} °C`} />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div id="st-days" className="bars horizontal" >
+        {chartData.map((d, i) => (
+          <div key={i} className="bar day">
+            {fmtDayCat(d.day)}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

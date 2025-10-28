@@ -27,6 +27,37 @@ export const safeAvg = arr => {
   if (!nums.length) return null;
   return nums.reduce((a,b) => a+b,0) / nums.length;
 };
+export const isToday = (dateInput) => {
+  const d = new Date(dateInput);
+  const today = new Date();
+  return d.getDate() === today.getDate() &&
+         d.getMonth() === today.getMonth() &&
+         d.getFullYear() === today.getFullYear();
+}
+export function fmtDayCat(dateInput) {
+  const d = new Date(dateInput);
+  if (isNaN(d)) return '';
+  const today = new Date();
+  if (d.getDate() === today.getDate() &&
+      d.getMonth() === today.getMonth() &&
+      d.getFullYear() === today.getFullYear()) {
+    return 'AVUI';
+  }
+  if (d.getDate() === today.getDate() - 1 &&
+      d.getMonth() === today.getMonth() &&
+      d.getFullYear() === today.getFullYear()) {
+    return 'AHIR';
+  }
+  const daysCat = ['DG', 'DL', 'DM', 'DC', 'DJ', 'DV', 'DS'];
+  const dayAbbrev = daysCat[d.getDay()];
+  const dayNum = d.getDate();
+
+  return `${dayAbbrev} ${dayNum}`;
+}
+
+
+
+
 
 
 

@@ -76,6 +76,57 @@ export const refineData = () => {
       
     })
   })
+  //calculate global stat for each day
+  refinedData = Object.fromEntries(
+    Object.entries(refinedData).map(([day, stationsData]) => {
+      const dayStats = {
+        tempAvg: null,
+        tempMin: null,
+        tempMax: null,
+        humAvg: null,
+        humMin: null,
+        humMax: null,
+        precAcc: 0
+      }
+      const tempAvgs = []
+      const tempMins = []
+      const tempMaxs = []
+      const humAvgs = []
+      const humMins = []
+      const humMaxs = []
+      const precAccs = []
+
+      Object.values(stationsData).forEach(s => {
+        if (s.tempAvg !== null) tempAvgs.push(s.tempAvg)
+        if (s.tempMin !== null) tempMins.push(s.tempMin)
+        if (s.tempMax !== null) tempMaxs.push(s.tempMax)
+        if (s.humAvg !== null) humAvgs.push(s.humAvg)
+        if (s.humMin !== null) humMins.push(s.humMin)
+        if (s.humMax !== null) humMaxs.push(s.humMax)
+        if (s.precAcc !== null) precAccs.push(s.precAcc)
+      })
+
+      const safeAvg = arr => {
+        if (!Array.isArray(arr) || arr.length === 0) return null
+        const sum = arr.reduce((a, b) => a + Number(b), 0)
+        return parseFloat((sum / arr.length).toFixed(1))
+      }
+
+      dayStats.tempAvg = safeAvg(tempAvgs)
+      dayStats.tempMin = tempMins.length ? Math.min(...tempMins) : null
+      dayStats.tempMax = tempMaxs.length ? Math.max(...tempMaxs) : null
+
+      dayStats.humAvg = safeAvg(humAvgs)
+      dayStats.humMin = humMins.length ? Math.min(...humMins) : null
+      dayStats.humMax = humMaxs.length ? Math.max(...humMaxs) : null
+
+      dayStats.precMin = 0
+      dayStats.precMax = precAccs.length ? Math.max(...precAccs) : null
+      dayStats.precAcc = precAccs.length ? precAccs.reduce((a, b) => a + b, 0) : 0
+
+      return [day, { ...stationsData, dayStats }]
+    })
+  )
   console.log('Refined data ready', refinedData)
 
   return refinedData
