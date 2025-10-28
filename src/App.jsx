@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Map from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
-
+import logo from './assets/logo.png';
 import { useState, useEffect, useRef } from 'react';
 import { refineData } from './logic/refineData.js'
 import { getDaysInRange, fmt, daysCount} from './logic/utils.js';
@@ -229,18 +229,17 @@ const App = ()  => {
   : null;
 
   return (
-    <div>
-      {log}
+    <div className='app'>
+      <img  className='logo' src={logo} alt="MetoSeps" />
+      {/* {log} */}
       <Selectors
-        styleUrl={styleUrl}
-        setStyleUrl={setStyleUrl}
         selectedVariable={selectedVariable}
         setSelectedVariable={setSelectedVariable}
         daysRange={daysRange}
         handleSelect={handleSelect}
         minDate={minDate}
         maxDate={maxDate}
-      />  
+      /> 
       <Map
         key={styleUrl}
         initialViewState={{
@@ -248,15 +247,17 @@ const App = ()  => {
           latitude: center[1],
           zoom: minZoom + 1
         }}
-        style={{ width: '90vw', height: '80vh' }}
+        style={{ width: '100%', height: '100%' }}
         mapStyle={styleUrl}
         onLoad={onMapLoad}
+        
       />
-      <StationPanel
+      {selectedStation && <StationPanel
         station={stationObj}
         daysRange={daysRange}
         data={data}
-      />
+        setSelectedStation={setSelectedStation}
+      />}
     </div>
   );
 }

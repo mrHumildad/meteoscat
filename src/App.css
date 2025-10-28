@@ -1,11 +1,132 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
 .vert-text {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
+}
+
+.app {
+  position: relative;
+  width: 100dvw;
+  height: 100dvh;
+  box-sizing: border-box;
+  background-color: red;
+  border: 3px solid white;
+  overflow: hidden;
+}
+
+.logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: max(10vw, 10vh);
+  height: max(10vw, 10vh);
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 50%;
+}
+
+.selectors {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.station-panel {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  z-index: 10;
+  overflow-y: auto;
+}
+
+
+
+
+
+.st-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.st-main-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+
+
+
+.st-main-left {
+  display: flex;
+  flex-direction: column; /* ✅ stack charts vertically */
+  gap: 1rem;
+  width: 100%;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.chart-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.chart-block h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.bars.horizontal {
+  display: flex;
+  align-items: flex-end; /* ✅ bars align bottom */
+  justify-content: flex-start;
+  height: 10vh;
+  width: 100%;
+  gap: 3px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.bar {
+  flex: 1;
+  min-width: 6px;
+  max-width: 10vw;
+  border-radius: 2px;
+  transition: height 0.3s ease;
+  background-color: limegreen;
+}
+
+.bar.rain {
+  background-color: #4aa3ff;
+}
+
+.bar.humidity {
+  background-color: #8ad0ff;
+}
+
+.bar.temp {
+  background-color: #ff7575;
 }
