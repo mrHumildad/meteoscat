@@ -27,6 +27,7 @@ const App = ()  => {
   const [stationsGeo, setStationsGeo] = useState(null);
   const [geoWithData, setGeoWithData] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [filteredStationsCodes, setFilteredStationsCodes] = useState([]);
   const [rangeLimits, setRangeLimits] = useState({
     tempMin: -100, tempMax: 100, rainMin: 0, rainMax: 1000000, humMin: 0, humMax: 100
   });
@@ -150,20 +151,22 @@ const App = ()  => {
       const allRains = [];
       const allHums = [];
       computed.features.forEach(f => {
-        const temp = f.properties?.tempAvg;
-        const rain = f.properties?.precAcc;
-        const hum = f.properties?.humAvg;
-        if (typeof temp === 'number') allTemps.push(temp);
-        if (typeof rain === 'number') allRains.push(rain);
-        if (typeof hum === 'number') allHums.push(hum);
+        const temp = Number(f.properties?.tempAvg);
+        const rain = Number(f.properties?.precAcc);
+        const hum  = Number(f.properties?.humAvg);
+            
+        if (!isNaN(temp) && temp !== 0) allTemps.push(temp);
+        if (!isNaN(rain)) allRains.push(rain);
+        if (!isNaN(hum) && hum !== 0) allHums.push(hum);
       });
+      
       return {
-        tempMin: allTemps.length ? Math.min(...allTemps) : prev.tempMin,
-        tempMax: allTemps.length ? Math.max(...allTemps) : prev.tempMax,
-        rainMin: allRains.length ? Math.min(...allRains) : prev.rainMin,
-        rainMax: allRains.length ? Math.max(...allRains) : prev.rainMax,
-        humMin: allHums.length ? Math.min(...allHums) : prev.humMin,
-        humMax: allHums.length ? Math.max(...allHums) : prev.humMax,
+        tempMin: Math.min(...allTemps),
+        tempMax: Math.max(...allTemps),
+        rainMin: Math.min(...allRains),
+        rainMax: Math.max(...allRains),
+        humMin: Math.min(...allHums),
+        humMax: Math.max(...allHums),
       };
     });
   }, [daysRange, stationsGeo, selectedVariable]);
@@ -277,6 +280,8 @@ const App = ()  => {
         showCalendar={showCalendar} 
         setShowCalendar={setShowCalendar}
         rangeLimits={rangeLimits}
+        filteredStationsCodes={filteredStationsCodes}
+        setFilteredStationsCodes={setFilteredStationsCodes}
       /> 
       <Map
         key={styleUrl}

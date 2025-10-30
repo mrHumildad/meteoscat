@@ -58,6 +58,12 @@
   
   gap: 10px;
 }
+
+.sel-block {
+  display : flex;
+  gap: 2vw;
+}
+
 .sel-buttons {
   display: flex;
   flex-direction: column;
@@ -65,7 +71,7 @@
 
 }
 .sel-button {
-    width: max(5vw, 5vh);
+  width: max(5vw, 5vh);
   height: max(5vw, 5vh);
   display: flex;
   justify-content: center;
@@ -194,3 +200,6 @@
   color: white;
   font-size: 0.7rem;
 }
+
+
+
