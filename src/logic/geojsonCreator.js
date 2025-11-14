@@ -48,7 +48,7 @@ async function runCli() {
 
   const root = path.resolve(__dirname, '..', '..');
   const inPath = path.join(root, 'stations.json');
-  const outDir = path.join(root, 'public', 'data');
+  const outDir = path.join(root, 'src', 'logic');
   const outPath = path.join(outDir, 'stations.geojson');
 
   console.log('geojsonCreator: start');

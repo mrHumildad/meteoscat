@@ -34,7 +34,7 @@ const MapLibre = ({data})  => {
   // load stations geojson (existing useEffect) ...
   useEffect(() => {
     let mounted = true;
-    const path = '/data/stations.geojson';
+    const path = '../logic/stations.geojson';
     fetch(path)
       .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then(geo => { if (mounted) setStationsGeo(geo); })

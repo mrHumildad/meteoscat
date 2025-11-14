@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import { refineData } from './logic/refineData.js'
 import { getDaysInRange, fmt, daysCount, fmtDayCat} from './logic/utils.js';
 import './App.css'
+
 import { computeGeoValues } from './logic/computeGeoValues.js';
 import Selectors from './comps/Selectors.jsx';
 import StationPanel from './comps/StationPanel.jsx';
@@ -22,7 +23,11 @@ const center = [1.9, 41.9];
 const minZoom = 7;
 const maxZoom = 15;
 const App = ()  => {
-  const [styleUrl, setStyleUrl] = React.useState('https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json');
+  // Use a public style on GH Pages to avoid provider 401s
+  const defaultStyle = import.meta.env.PROD
+    ? 'https://demotiles.maplibre.org/style.json'   // public, no key
+    : 'https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json';
+  const [styleUrl, setStyleUrl] = React.useState(defaultStyle);
   const [selectedStation, setSelectedStation] = useState(null);
   const [daysRange, setDaysRange] = useState({ from: minDate, to: minDate });
   const [selectedVariable, setSelectedVariable] = useState('humAvg');
@@ -43,11 +48,20 @@ const App = ()  => {
 
   useEffect(() => {
     let mounted = true;
-    const path = '/data/stations.geojson';
+    const base = import.meta.env.BASE_URL || '/';
+    const path = `${base}logic/stations.geojson`;
+    console.log('fetching stations geojson from', path);
     fetch(path)
-      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const ct = (r.headers.get('content-type') || '').toLowerCase();
+        if (!ct.includes('application/json') && !ct.includes('geo+json') && !ct.includes('text/json')) {
+          throw new Error(`Unexpected content-type: ${ct}`);
+        }
+        return r.json();
+      })
       .then(geo => { if (mounted) setStationsGeo(geo); })
-      .catch(err => { console.warn('Could not load stations.geojson', err); });
+      .catch(err => { console.error('Could not load stations.geojson:', err.message); });
     return () => { mounted = false };
   }, []);
 
@@ -62,15 +76,15 @@ const App = ()  => {
     map.setMaxZoom(maxZoom);
     map.jumpTo({ center, zoom: minZoom + 1 });
 
-    // add source & layers but don't rely on avg yet
-    if (stationsGeo) {
-      if (!map.getSource('stations')) {
-        map.addSource('stations', { type: 'geojson', data: stationsGeo });
-      } else {
-        map.getSource('stations').setData(stationsGeo);
-      }
+    // ensure a 'stations' source exists immediately (empty fallback)
+    const emptyGeo = { type: 'FeatureCollection', features: [] };
+    if (!map.getSource('stations')) {
+      map.addSource('stations', { type: 'geojson', data: stationsGeo || emptyGeo });
+    } else if (stationsGeo) {
+      map.getSource('stations').setData(stationsGeo);
     }
 
+    // layers can now be safely added (source guaranteed)
     if (!map.getLayer('stations-circle')) {
       map.addLayer({
         id: 'stations-circle',
@@ -182,66 +196,20 @@ const App = ()  => {
   // 2️⃣ Update map once geoWithData is ready
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !geoWithData) return;
-
+    if (!map) return;
     try {
+      // prefer geoWithData (computed averages) when available
+      const dataToSet = geoWithData || stationsGeo;
+      if (!dataToSet) return;
       if (map.getSource('stations')) {
-        map.getSource('stations').setData(geoWithData);
+        map.getSource('stations').setData(dataToSet);
       } else {
-        map.addSource('stations', { type: 'geojson', data: geoWithData });
+        map.addSource('stations', { type: 'geojson', data: dataToSet });
       }
     } catch (e) {
-      console.warn('Error updating stations source data', e);
+      console.warn('Error updating stations source after load', e);
     }
-
-    const values = (geoWithData?.features || [])
-      .map(f => f.properties?.[selectedVariable])
-      .filter(v => v !== null && typeof v === 'number');
-
-    const min = values.length ? Math.min(...values) : 0;
-    const max = values.length ? Math.max(...values) : 1;
-
-    const colorExpr = [
-      'case',
-      ['==', ['get', selectedVariable], null], '#999',
-      ['interpolate', ['linear'], ['get', selectedVariable],
-        min, '#2ca02c',
-        (min + max) / 2, '#ffcc00',
-        max, '#d62728'
-      ]
-    ];
-
-    const radiusExpr = [
-      'case',
-      ['==', ['get', selectedVariable], null], 4,
-      ['interpolate', ['linear'], ['get', selectedVariable],
-        min, 4,
-        max, 12
-      ]
-    ];
-
-    if (map.getLayer('stations-value')) {
-      try {
-        map.setLayoutProperty('stations-value', 'text-field', [
-          'case',
-          ['==', ['get', selectedVariable], null],
-          '',
-          ['to-string', ['get', selectedVariable]]
-        ]);
-      } catch (e) {
-        console.warn('Could not update text-field for stations-value', e);
-      }
-    }
-
-    if (map.getLayer('stations-circle')) {
-      try {
-        map.setPaintProperty('stations-circle', 'circle-color', colorExpr);
-        map.setPaintProperty('stations-circle', 'circle-radius', radiusExpr);
-      } catch (e) {
-        console.warn('Could not set paint properties', e);
-      }
-    }
-  }, [geoWithData, selectedVariable]);
+  }, [stationsGeo, geoWithData]);
 
   //const daysNum = daysCount(daysRange);
   //const log = `dades de ${daysNum} dies i ${stationsCodes.length} estacions loaded. Variable mostrada: ${selectedVariable}. Selected: ${fmtDayCat(daysRange?.from)} -> ${fmtDayCat(daysRange?.to)}`;

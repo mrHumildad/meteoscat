@@ -1,16 +1,52 @@
-# React + Vite
+# MeteoSCat
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Lightweight React + Vite app to visualise meteorological station averages on a MapLibre map.
 
-Currently, two official plugins are available:
+Quick start
+- npm ci
+- npm run dev
+- npm run build
+- npm run preview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Deploy (GitHub Pages)
+- Keep `vite.config.js` base = '/meteoscat/' for production.
+- Put `public/logic/stations.geojson` before build so Vite copies it to `dist/logic/stations.geojson`.
+- Use `gh-pages` or GitHub Actions to publish `dist`.
 
-## React Compiler
+How it works (short)
+- Select a day range in the calendar.
+- App computes per-station average for the chosen variable and sets `properties.avg` on the GeoJSON.
+- Map reads `properties.avg` for color and the numeric label inside the circle.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Scraper (short)
+- Run this to fetch `dades` from meteocat for the last 30 days and save JSON.
 
-## Expanding the ESLint configuration
+```python
+# filepath: /home/mbridas/Dev/python/meteoSCat/meteokat/scrapeMap.py
+import requests, re, json
+from datetime import datetime, timedelta
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+base = 'https://www.meteo.cat/observacions/xema?dia={}'
+today = datetime.utcnow()
+out = {}
+
+for i in range(30):
+    d = (today - timedelta(days=i)).strftime('%Y-%m-%dT00:00Z')
+    print('fetch', d)
+    r = requests.get(base.format(d))
+    m = re.search(r'var\s+dades\s*=\s*(\{.*?\});', r.text, re.S)
+    if not m:
+        continue
+    try:
+        out[d[:10]] = json.loads(m.group(1))
+    except Exception as e:
+        print('parse error', d, e)
+
+# save to public so Vite copies it
+with open('public/logic/stations_raw.json', 'w', encoding='utf8') as f:
+    json.dump(out, f, ensure_ascii=False, indent=2)
+```
+
+Notes
+- Keep the final GeoJSON used by the app at `public/logic/stations.geojson`.
+- For GH Pages use a public map style (no API key) or host your own style/tiles.
