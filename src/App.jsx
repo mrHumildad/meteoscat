@@ -13,6 +13,8 @@ const data = refineData()
 const days = Object.keys(data);
 const maxDate = days.length ? new Date(days[0]) : null;
 const minDate = days.length ? new Date(days[days.length - 1]) : null;
+const stationsCodes = Object.values(data[days[0]] || {}).map(st => st.codi);
+console.log(`Data loaded: ${days.length} days, from ${fmt(minDate)} to ${fmt(maxDate)}, ${stationsCodes.length} stations.`);
 
 // Catalonia bounding box (west,south) , (east,north)
 const bounds = [[-1.0, 40.0], [4.0, 44.0]];
@@ -22,14 +24,20 @@ const maxZoom = 15;
 const App = ()  => {
   const [styleUrl, setStyleUrl] = React.useState('https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json');
   const [selectedStation, setSelectedStation] = useState(null);
-  const [daysRange, setDaysRange] = useState(minDate ? { from: minDate, to: maxDate } : null);
+  const [daysRange, setDaysRange] = useState({ from: minDate, to: minDate });
   const [selectedVariable, setSelectedVariable] = useState('humAvg');
   const [stationsGeo, setStationsGeo] = useState(null);
   const [geoWithData, setGeoWithData] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [filteredStationsCodes, setFilteredStationsCodes] = useState([]);
   const [rangeLimits, setRangeLimits] = useState({
-    tempMin: -100, tempMax: 100, rainMin: 0, rainMax: 1000000, humMin: 0, humMax: 100
+    tempMin: data[days[0]].dayStats.tempMin, 
+    tempMax: data[days[0]].dayStats.tempMax, 
+    rainMin: 0, 
+    rainMax: data[days[0]].dayStats.rainMax, 
+    humMin: data[days[0]].dayStats.humMin, 
+    humMax: data[days[0]].dayStats.humMax
   });
   const mapRef = useRef(null);
 
