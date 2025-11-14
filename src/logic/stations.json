@@ -1,0 +1,1892 @@
+[
+  {
+    "codi": "C6",
+    "nom": "Castellnou de Seana",
+    "altitud": 264.0,
+    "comarca": "Pla d'Urgell",
+    "coordenades": {
+      "latitud": 41.6566,
+      "longitud": 0.95172
+    }
+  },
+  {
+    "codi": "C7",
+    "nom": "Tàrrega",
+    "altitud": 427.0,
+    "comarca": "Urgell",
+    "coordenades": {
+      "latitud": 41.66695,
+      "longitud": 1.16234
+    }
+  },
+  {
+    "codi": "C8",
+    "nom": "Cervera",
+    "altitud": 554.0,
+    "comarca": "Segarra",
+    "coordenades": {
+      "latitud": 41.67555,
+      "longitud": 1.29609
+    }
+  },
+  {
+    "codi": "C9",
+    "nom": "Mas de Barberans",
+    "altitud": 240.0,
+    "comarca": "Montsià",
+    "coordenades": {
+      "latitud": 40.71825,
+      "longitud": 0.39988
+    }
+  },
+  {
+    "codi": "CC",
+    "nom": "Orís",
+    "altitud": 626.0,
+    "comarca": "Osona",
+    "coordenades": {
+      "latitud": 42.07398,
+      "longitud": 2.20862
+    }
+  },
+  {
+    "codi": "CD",
+    "nom": "la Seu d'Urgell - Bellestar",
+    "altitud": 849.0,
+    "comarca": "Alt Urgell",
+    "coordenades": {
+      "latitud": 42.37083,
+      "longitud": 1.43277
+    }
+  },
+  {
+    "codi": "CE",
+    "nom": "els Hostalets de Pierola",
+    "altitud": 316.0,
+    "comarca": "Anoia",
+    "coordenades": {
+      "latitud": 41.53109,
+      "longitud": 1.80813
+    }
+  },
+  {
+    "codi": "CG",
+    "nom": "Molló - Fabert",
+    "altitud": 1405.0,
+    "comarca": "Ripollès",
+    "coordenades": {
+      "latitud": 42.37717,
+      "longitud": 2.41456
+    }
+  },
+  {
+    "codi": "CI",
+    "nom": "Sant Pau de Segúries",
+    "altitud": 852.0,
+    "comarca": "Ripollès",
+    "coordenades": {
+      "latitud": 42.25839,
+      "longitud": 2.36429
+    }
+  },
+  {
+    "codi": "CJ",
+    "nom": "Organyà",
+    "altitud": 566.5,
+    "comarca": "Alt Urgell",
+    "coordenades": {
+      "latitud": 42.21624,
+      "longitud": 1.33132
+    }
+  },
+  {
+    "codi": "CL",
+    "nom": "Sant Salvador de Guardiola",
+    "altitud": 349.0,
+    "comarca": "Bages",
+    "coordenades": {
+      "latitud": 41.67399,
+      "longitud": 1.76796
+    }
+  },
+  {
+    "codi": "CP",
+    "nom": "Sant Romà d'Abella",
+    "altitud": 690.0,
+    "comarca": "Pallars Jussà",
+    "coordenades": {
+      "latitud": 42.13924,
+      "longitud": 1.03893
+    }
+  },
+  {
+    "codi": "CQ",
+    "nom": "Vilanova de Meià",
+    "altitud": 594.0,
+    "comarca": "Noguera",
+    "coordenades": {
+      "latitud": 41.99546,
+      "longitud": 1.02569
+    }
+  },
+  {
+    "codi": "CR",
+    "nom": "la Quar",
+    "altitud": 873.0,
+    "comarca": "Berguedà",
+    "coordenades": {
+      "latitud": 42.08032,
+      "longitud": 1.9624
+    }
+  },
+  {
+    "codi": "CT",
+    "nom": "el Pont de Suert",
+    "altitud": 823.0,
+    "comarca": "Alta Ribagorça",
+    "coordenades": {
+      "latitud": 42.39811,
+      "longitud": 0.74362
+    }
+  },
+  {
+    "codi": "CW",
+    "nom": "l'Espluga de Francolí",
+    "altitud": 446.0,
+    "comarca": "Conca de Barberà",
+    "coordenades": {
+      "latitud": 41.39241,
+      "longitud": 1.09894
+    }
+  },
+  {
+    "codi": "CY",
+    "nom": "Muntanyola",
+    "altitud": 816.0,
+    "comarca": "Osona",
+    "coordenades": {
+      "latitud": 41.87813,
+      "longitud": 2.17873
+    }
+  },
+  {
+    "codi": "D1",
+    "nom": "Margalef",
+    "altitud": 404.0,
+    "comarca": "Priorat",
+    "coordenades": {
+      "latitud": 41.28521,
+      "longitud": 0.75383
+    }
+  },
+  {
+    "codi": "D2",
+    "nom": "Vacarisses",
+    "altitud": 343.0,
+    "comarca": "Vallès Occidental",
+    "coordenades": {
+      "latitud": 41.59252,
+      "longitud": 1.915
+    }
+  },
+  {
+    "codi": "D3",
+    "nom": "Vallirana",
+    "altitud": 252.0,
+    "comarca": "Baix Llobregat",
+    "coordenades": {
+      "latitud": 41.38197,
+      "longitud": 1.93564
+    }
+  },
+  {
+    "codi": "D4",
+    "nom": "Roses",
+    "altitud": 23.0,
+    "comarca": "Alt Empordà",
+    "coordenades": {
+      "latitud": 42.27068,
+      "longitud": 3.18147
+    }
+  },
+  {
+    "codi": "D5",
+    "nom": "Barcelona - Observatori Fabra",
+    "altitud": 411.0,
+    "comarca": "Barcelonès",
+    "coordenades": {
+      "latitud": 41.41864,
+      "longitud": 2.12379
+    }
+  },
+  {
+    "codi": "D6",
+    "nom": "Portbou - coll dels Belitres",
+    "altitud": 196.0,
+    "comarca": "Alt Empordà",
+    "coordenades": {
+      "latitud": 42.43515,
+      "longitud": 3.16622
+    }
+  },
+  {
+    "codi": "D7",
+    "nom": "Vinebre",
+    "altitud": 53.0,
+    "comarca": "Ribera d'Ebre",
+    "coordenades": {
+      "latitud": 41.18499,
+      "longitud": 0.59376
+    }
+  },
+  {
+    "codi": "D8",
+    "nom": "Horta de Sant Joan",
+    "altitud": 515.0,
+    "comarca": "Terra Alta",
+    "coordenades": {
+      "latitud": 40.95134,
+      "longitud": 0.30565
+    }
+  },
+  {
+    "codi": "D9",
+    "nom": "el Vendrell",
+    "altitud": 59.0,
+    "comarca": "Baix Penedès",
+    "coordenades": {
+      "latitud": 41.21553,
+      "longitud": 1.52121
+    }
+  },
+  {
+    "codi": "DB",
+    "nom": "el Perelló",
+    "altitud": 179.0,
+    "comarca": "Baix Ebre",
+    "coordenades": {
+      "latitud": 40.87287,
+      "longitud": 0.71581
+    }
+  },
+  {
+    "codi": "DF",
+    "nom": "la Bisbal d'Empordà",
+    "altitud": 28.6,
+    "comarca": "Baix Empordà",
+    "coordenades": {
+      "latitud": 41.97751,
+      "longitud": 3.03543
+    }
+  },
+  {
+    "codi": "DG",
+    "nom": "Núria (1.971 m)",
+    "altitud": 1971.4,
+    "comarca": "Ripollès",
+    "coordenades": {
+      "latitud": 42.39848,
+      "longitud": 2.15517
+    }
+  },
+  {
+    "codi": "DI",
+    "nom": "Font-rubí",
+    "altitud": 415.0,
+    "comarca": "Alt Penedès",
+    "coordenades": {
+      "latitud": 41.43292,
+      "longitud": 1.62386
+    }
+  },
+  {
+    "codi": "DJ",
+    "nom": "Banyoles",
+    "altitud": 176.0,
+    "comarca": "Pla de l'Estany",
+    "coordenades": {
+      "latitud": 42.11653,
+      "longitud": 2.78969
+    }
+  },
+  {
+    "codi": "DK",
+    "nom": "Torredembarra",
+    "altitud": 2.0,
+    "comarca": "Tarragonès",
+    "coordenades": {
+      "latitud": 41.14677,
+      "longitud": 1.41846
+    }
+  },
+  {
+    "codi": "DL",
+    "nom": "Illa de Buda",
+    "altitud": 0.5,
+    "comarca": "Montsià",
+    "coordenades": {
+      "latitud": 40.70719,
+      "longitud": 0.83449
+    }
+  },
+  {
+    "codi": "DN",
+    "nom": "Anglès",
+    "altitud": 150.0,
+    "comarca": "Selva",
+    "coordenades": {
+      "latitud": 41.96095,
+      "longitud": 2.63108
+    }
+  },
+  {
+    "codi": "DO",
+    "nom": "Castell d'Aro",
+    "altitud": 14.0,
+    "comarca": "Baix Empordà",
+    "coordenades": {
+      "latitud": 41.80857,
+      "longitud": 3.03241
+    }
+  },
+  {
+    "codi": "DP",
+    "nom": "Das - Aeròdrom",
+    "altitud": 1097.0,
+    "comarca": "Cerdanya",
+    "coordenades": {
+      "latitud": 42.38605,
+      "longitud": 1.8664
+    }
+  },
+  {
+    "codi": "DQ",
+    "nom": "Vila-rodona",
+    "altitud": 287.0,
+    "comarca": "Alt Camp",
+    "coordenades": {
+      "latitud": 41.30728,
+      "longitud": 1.36259
+    }
+  },
+  {
+    "codi": "H1",
+    "nom": "Òdena",
+    "altitud": 333.0,
+    "comarca": "Anoia",
+    "coordenades": {
+      "latitud": 41.58642,
+      "longitud": 1.65306
+    }
+  },
+  {
+    "codi": "J5",
+    "nom": "Pantà de Darnius - Boadella",
+    "altitud": 158.0,
+    "comarca": "Alt Empordà",
+    "coordenades": {
+      "latitud": 42.34215,
+      "longitud": 2.83423
+    }
+  },
+  {
+    "codi": "KE",
+    "nom": "Pantà de Sau",
+    "altitud": 426.0,
+    "comarca": "Osona",
+    "coordenades": {
+      "latitud": 41.96867,
+      "longitud": 2.41404
+    }
+  },
+  {
+    "codi": "KP",
+    "nom": "Fogars de la Selva",
+    "altitud": 36.0,
+    "comarca": "Selva",
+    "coordenades": {
+      "latitud": 41.73894,
+      "longitud": 2.69436
+    }
+  },
+  {
+    "codi": "KX",
+    "nom": "la Roca del Vallès - ETAP Cardedeu",
+    "altitud": 156.0,
+    "comarca": "Vallès Oriental",
+    "coordenades": {
+      "latitud": 41.61865,
+      "longitud": 2.36114
+    }
+  },
+  {
+    "codi": "M6",
+    "nom": "Sant Joan de les Abadesses",
+    "altitud": 730.0,
+    "comarca": "Ripollès",
+    "coordenades": {
+      "latitud": 42.22189,
+      "longitud": 2.2427
+    }
+  },
+  {
+    "codi": "MQ",
+    "nom": "Cardona",
+    "altitud": 401.0,
+    "comarca": "Bages",
+    "coordenades": {
+      "latitud": 41.92047,
+      "longitud": 1.69584
+    }
+  },
+  {
+    "codi": "MR",
+    "nom": "Pantà de Siurana",
+    "altitud": 500.0,
+    "comarca": "Priorat",
+    "coordenades": {
+      "latitud": 41.25079,
+      "longitud": 0.9106
+    }
+  },
+  {
+    "codi": "MS",
+    "nom": "Castellar de n'Hug - el Clot del Moro",
+    "altitud": 943.0,
+    "comarca": "Berguedà",
+    "coordenades": {
+      "latitud": 42.25945,
+      "longitud": 1.97609
+    }
+  },
+  {
+    "codi": "MV",
+    "nom": "Guixers - Valls",
+    "altitud": 845.0,
+    "comarca": "Solsonès",
+    "coordenades": {
+      "latitud": 42.13598,
+      "longitud": 1.67295
+    }
+  },
+  {
+    "codi": "MW",
+    "nom": "Navès",
+    "altitud": 545.0,
+    "comarca": "Solsonès",
+    "coordenades": {
+      "latitud": 42.00707,
+      "longitud": 1.65239
+    }
+  },
+  {
+    "codi": "U2",
+    "nom": "Sant Pere Pescador",
+    "altitud": 4.0,
+    "comarca": "Alt Empordà",
+    "coordenades": {
+      "latitud": 42.17716,
+      "longitud": 3.0968
+    }
+  },
+  {
+    "codi": "U3",
+    "nom": "Sant Martí Sarroca",
+    "altitud": 257.0,
+    "comarca": "Alt Penedès",
+    "coordenades": {
+      "latitud": 41.37491,
+      "longitud": 1.63032
+    }
+  },
+  {
+    "codi": "U4",
+    "nom": "Castellnou de Bages",
+    "altitud": 507.0,
+    "comarca": "Bages",
+    "coordenades": {
+      "latitud": 41.83094,
+      "longitud": 1.84699
+    }
+  },
+  {
+    "codi": "U6",
+    "nom": "Vinyols i els Arcs - Cambrils",
+    "altitud": 29.0,
+    "comarca": "Baix Camp",
+    "coordenades": {
+      "latitud": 41.08017,
+      "longitud": 1.06661
+    }
+  },
+  {
+    "codi": "U7",
+    "nom": "Aldover",
+    "altitud": 52.0,
+    "comarca": "Baix Ebre",
+    "coordenades": {
+      "latitud": 40.85936,
+      "longitud": 0.50525
+    }
+  },
+  {
+    "codi": "U9",
+    "nom": "l'Aldea",
+    "altitud": 62.0,
+    "comarca": "Baix Ebre",
+    "coordenades": {
+      "latitud": 40.76947,
+      "longitud": 0.61635
+    }
+  },
+  {
+    "codi": "UA",
+    "nom": "l'Ametlla de Mar",
+    "altitud": 93.0,
+    "comarca": "Baix Ebre",
+    "coordenades": {
+      "latitud": 40.9091,
+      "longitud": 0.76943
+    }
+  },
+  {
+    "codi": "UB",
+    "nom": "la Tallada d'Empordà",
+    "altitud": 15.0,
+    "comarca": "Baix Empordà",
+    "coordenades": {
+      "latitud": 42.05398,
+      "longitud": 3.06195
+    }
+  },
+  {
+    "codi": "UE",
+    "nom": "Torroella de Montgrí",
+    "altitud": 4.0,
+    "comarca": "Baix Empordà",
+    "coordenades": {
+      "latitud": 42.02306,
+      "longitud": 3.15719
+    }
+  },
+  {
+    "codi": "UF",
+    "nom": "PN del Garraf - el Rascler",
+    "altitud": 573.0,
+    "comarca": "Baix Llobregat",
+    "coordenades": {
+      "latitud": 41.28832,
+      "longitud": 1.90775
+    }
+  },
+  {
+    "codi": "UG",
+    "nom": "Viladecans",
+    "altitud": 3.0,
+    "comarca": "Baix Llobregat",
+    "coordenades": {
+      "latitud": 41.29928,
+      "longitud": 2.03787
+    }
+  },
+  {
+    "codi": "UH",
+    "nom": "el Montmell",
+    "altitud": 545.0,
+    "comarca": "Baix Penedès",
+    "coordenades": {
+      "latitud": 41.34171,
+      "longitud": 1.48769
+    }
+  },
+  {
+    "codi": "UI",
+    "nom": "Gisclareny",
+    "altitud": 1386.0,
+    "comarca": "Berguedà",
+    "coordenades": {
+      "latitud": 42.26477,
+      "longitud": 1.76218
+    }
+  },
+  {
+    "codi": "UJ",
+    "nom": "Santa Coloma de Queralt",
+    "altitud": 709.0,
+    "comarca": "Conca de Barberà",
+    "coordenades": {
+      "latitud": 41.52879,
+      "longitud": 1.3683
+    }
+  },
+  {
+    "codi": "UK",
+    "nom": "Sant Pere de Ribes - PN del Garraf",
+    "altitud": 161.0,
+    "comarca": "Garraf",
+    "coordenades": {
+      "latitud": 41.27861,
+      "longitud": 1.80479
+    }
+  },
+  {
+    "codi": "UM",
+    "nom": "la Granadella",
+    "altitud": 505.0,
+    "comarca": "Garrigues",
+    "coordenades": {
+      "latitud": 41.35991,
+      "longitud": 0.66789
+    }
+  },
+  {
+    "codi": "UN",
+    "nom": "Cassà de la Selva",
+    "altitud": 171.0,
+    "comarca": "Gironès",
+    "coordenades": {
+      "latitud": 41.87449,
+      "longitud": 2.92694
+    }
+  },
+  {
+    "codi": "UO",
+    "nom": "Fornells de la Selva",
+    "altitud": 97.0,
+    "comarca": "Gironès",
+    "coordenades": {
+      "latitud": 41.91461,
+      "longitud": 2.82069
+    }
+  },
+  {
+    "codi": "UP",
+    "nom": "Cabrils",
+    "altitud": 81.0,
+    "comarca": "Maresme",
+    "coordenades": {
+      "latitud": 41.51773,
+      "longitud": 2.37702
+    }
+  },
+  {
+    "codi": "UQ",
+    "nom": "Dosrius - PN Montnegre Corredor",
+    "altitud": 460.0,
+    "comarca": "Maresme",
+    "coordenades": {
+      "latitud": 41.61991,
+      "longitud": 2.44532
+    }
+  },
+  {
+    "codi": "US",
+    "nom": "les Cases d'Alcanar",
+    "altitud": 24.0,
+    "comarca": "Montsià",
+    "coordenades": {
+      "latitud": 40.55786,
+      "longitud": 0.52329
+    }
+  },
+  {
+    "codi": "UU",
+    "nom": "Amposta",
+    "altitud": 3.0,
+    "comarca": "Montsià",
+    "coordenades": {
+      "latitud": 40.70776,
+      "longitud": 0.6321
+    }
+  },
+  {
+    "codi": "UW",
+    "nom": "els Alfacs",
+    "altitud": 0.0,
+    "comarca": "Montsià",
+    "coordenades": {
+      "latitud": 40.62725,
+      "longitud": 0.65922
+    }
+  },
+  {
+    "codi": "UX",
+    "nom": "Ulldecona - els Valentins",
+    "altitud": 210.0,
+    "comarca": "Montsià",
+    "coordenades": {
+      "latitud": 40.62652,
+      "longitud": 0.37112
+    }
+  },
+  {
+    "codi": "UY",
+    "nom": "Os de Balaguer - el Monestir d'Avellanes",
+    "altitud": 576.0,
+    "comarca": "Noguera",
+    "coordenades": {
+      "latitud": 41.87912,
+      "longitud": 0.76103
+    }
+  },
+  {
+    "codi": "V1",
+    "nom": "Vallfogona de Balaguer",
+    "altitud": 238.0,
+    "comarca": "Noguera",
+    "coordenades": {
+      "latitud": 41.78487,
+      "longitud": 0.82939
+    }
+  },
+  {
+    "codi": "V4",
+    "nom": "Montesquiu",
+    "altitud": 684.0,
+    "comarca": "Osona",
+    "coordenades": {
+      "latitud": 42.11477,
+      "longitud": 2.21483
+    }
+  },
+  {
+    "codi": "V5",
+    "nom": "Perafita",
+    "altitud": 774.0,
+    "comarca": "Lluçanès",
+    "coordenades": {
+      "latitud": 42.03947,
+      "longitud": 2.11993
+    }
+  },
+  {
+    "codi": "V8",
+    "nom": "el Poal",
+    "altitud": 223.0,
+    "comarca": "Pla d'Urgell",
+    "coordenades": {
+      "latitud": 41.67279,
+      "longitud": 0.87741
+    }
+  },
+  {
+    "codi": "VA",
+    "nom": "Ascó",
+    "altitud": 256.0,
+    "comarca": "Ribera d'Ebre",
+    "coordenades": {
+      "latitud": 41.1964,
+      "longitud": 0.51101
+    }
+  },
+  {
+    "codi": "VB",
+    "nom": "Benissanet",
+    "altitud": 32.0,
+    "comarca": "Ribera d'Ebre",
+    "coordenades": {
+      "latitud": 41.06289,
+      "longitud": 0.63517
+    }
+  },
+  {
+    "codi": "VC",
+    "nom": "Pantà de Riba-roja",
+    "altitud": 69.0,
+    "comarca": "Ribera d'Ebre",
+    "coordenades": {
+      "latitud": 41.24415,
+      "longitud": 0.43266
+    }
+  },
+  {
+    "codi": "VD",
+    "nom": "el Canós",
+    "altitud": 429.0,
+    "comarca": "Segarra",
+    "coordenades": {
+      "latitud": 41.68939,
+      "longitud": 1.20381
+    }
+  },
+  {
+    "codi": "VH",
+    "nom": "Gimenells",
+    "altitud": 260.0,
+    "comarca": "Segrià",
+    "coordenades": {
+      "latitud": 41.65825,
+      "longitud": 0.3932
+    }
+  },
+  {
+    "codi": "VK",
+    "nom": "Raimat",
+    "altitud": 286.0,
+    "comarca": "Segrià",
+    "coordenades": {
+      "latitud": 41.68328,
+      "longitud": 0.4487
+    }
+  },
+  {
+    "codi": "VM",
+    "nom": "Vilanova de Segrià",
+    "altitud": 222.0,
+    "comarca": "Segrià",
+    "coordenades": {
+      "latitud": 41.7145,
+      "longitud": 0.62839
+    }
+  },
+  {
+    "codi": "VO",
+    "nom": "Lladurs",
+    "altitud": 785.0,
+    "comarca": "Solsonès",
+    "coordenades": {
+      "latitud": 42.08745,
+      "longitud": 1.42792
+    }
+  },
+  {
+    "codi": "VP",
+    "nom": "Pinós",
+    "altitud": 659.0,
+    "comarca": "Solsonès",
+    "coordenades": {
+      "latitud": 41.80483,
+      "longitud": 1.53853
+    }
+  },
+  {
+    "codi": "VQ",
+    "nom": "Constantí",
+    "altitud": 112.0,
+    "comarca": "Tarragonès",
+    "coordenades": {
+      "latitud": 41.1713,
+      "longitud": 1.16774
+    }
+  },
+  {
+    "codi": "VS",
+    "nom": "Lac Redon (2.247 m)",
+    "altitud": 2247.0,
+    "comarca": "Val d'Aran",
+    "coordenades": {
+      "latitud": 42.63835,
+      "longitud": 0.77889
+    }
+  },
+  {
+    "codi": "VU",
+    "nom": "Rellinars",
+    "altitud": 421.0,
+    "comarca": "Vallès Occidental",
+    "coordenades": {
+      "latitud": 41.63286,
+      "longitud": 1.91718
+    }
+  },
+  {
+    "codi": "VV",
+    "nom": "Sant Llorenç Savall",
+    "altitud": 528.0,
+    "comarca": "Vallès Occidental",
+    "coordenades": {
+      "latitud": 41.68129,
+      "longitud": 2.02647
+    }
+  },
+  {
+    "codi": "VX",
+    "nom": "Tagamanent - PN del Montseny",
+    "altitud": 1030.0,
+    "comarca": "Vallès Oriental",
+    "coordenades": {
+      "latitud": 41.74761,
+      "longitud": 2.30291
+    }
+  },
+  {
+    "codi": "VY",
+    "nom": "Nulles",
+    "altitud": 240.0,
+    "comarca": "Alt Camp",
+    "coordenades": {
+      "latitud": 41.25095,
+      "longitud": 1.29863
+    }
+  },
+  {
+    "codi": "VZ",
+    "nom": "Espolla",
+    "altitud": 83.0,
+    "comarca": "Alt Empordà",
+    "coordenades": {
+      "latitud": 42.38443,
+      "longitud": 3.00736
+    }
+  },
+  {
+    "codi": "W1",
+    "nom": "Castelló d'Empúries",
+    "altitud": 2.0,
+    "comarca": "Alt Empordà",
+    "coordenades": {
+      "latitud": 42.24726,
+      "longitud": 3.09021
+    }
+  },
+  {
+    "codi": "W4",
+    "nom": "Vilafranca del Penedès - la Granada",
+    "altitud": 240.0,
+    "comarca": "Alt Penedès",
+    "coordenades": {
+      "latitud": 41.36619,
+      "longitud": 1.72857
+    }
+  },
+  {
+    "codi": "W5",
+    "nom": "Oliana",
+    "altitud": 490.0,
+    "comarca": "Alt Urgell",
+    "coordenades": {
+      "latitud": 42.07683,
+      "longitud": 1.31489
+    }
+  },
+  {
+    "codi": "W8",
+    "nom": "Blancafort",
+    "altitud": 438.0,
+    "comarca": "Conca de Barberà",
+    "coordenades": {
+      "latitud": 41.44237,
+      "longitud": 1.15998
+    }
+  },
+  {
+    "codi": "W9",
+    "nom": "la Vall d'en Bas",
+    "altitud": 461.0,
+    "comarca": "Garrotxa",
+    "coordenades": {
+      "latitud": 42.14557,
+      "longitud": 2.45451
+    }
+  },
+  {
+    "codi": "WA",
+    "nom": "Oliola",
+    "altitud": 443.0,
+    "comarca": "Noguera",
+    "coordenades": {
+      "latitud": 41.87694,
+      "longitud": 1.1541
+    }
+  },
+  {
+    "codi": "WB",
+    "nom": "Albesa",
+    "altitud": 267.0,
+    "comarca": "Noguera",
+    "coordenades": {
+      "latitud": 41.76036,
+      "longitud": 0.67022
+    }
+  },
+  {
+    "codi": "WC",
+    "nom": "Golmés",
+    "altitud": 261.0,
+    "comarca": "Pla d'Urgell",
+    "coordenades": {
+      "latitud": 41.63642,
+      "longitud": 0.92446
+    }
+  },
+  {
+    "codi": "WG",
+    "nom": "Algerri",
+    "altitud": 301.0,
+    "comarca": "Noguera",
+    "coordenades": {
+      "latitud": 41.80104,
+      "longitud": 0.64804
+    }
+  },
+  {
+    "codi": "WI",
+    "nom": "Maials",
+    "altitud": 350.0,
+    "comarca": "Segrià",
+    "coordenades": {
+      "latitud": 41.35741,
+      "longitud": 0.4809
+    }
+  },
+  {
+    "codi": "WJ",
+    "nom": "el Masroig",
+    "altitud": 141.0,
+    "comarca": "Priorat",
+    "coordenades": {
+      "latitud": 41.1223,
+      "longitud": 0.72182
+    }
+  },
+  {
+    "codi": "WK",
+    "nom": "Alfarràs",
+    "altitud": 268.0,
+    "comarca": "Segrià",
+    "coordenades": {
+      "latitud": 41.81949,
+      "longitud": 0.57768
+    }
+  },
+  {
+    "codi": "WL",
+    "nom": "Sant Martí de Riucorb",
+    "altitud": 413.0,
+    "comarca": "Urgell",
+    "coordenades": {
+      "latitud": 41.57236,
+      "longitud": 1.0882
+    }
+  },
+  {
+    "codi": "WM",
+    "nom": "Santuari de Queralt",
+    "altitud": 1167.0,
+    "comarca": "Berguedà",
+    "coordenades": {
+      "latitud": 42.10736,
+      "longitud": 1.8267
+    }
+  },
+  {
+    "codi": "WN",
+    "nom": "Montserrat - Sant Dimes",
+    "altitud": 916.0,
+    "comarca": "Bages",
+    "coordenades": {
+      "latitud": 41.59539,
+      "longitud": 1.83751
+    }
+  },
+  {
+    "codi": "WO",
+    "nom": "la Bisbal del Penedès",
+    "altitud": 185.0,
+    "comarca": "Baix Penedès",
+    "coordenades": {
+      "latitud": 41.27151,
+      "longitud": 1.46717
+    }
+  },
+  {
+    "codi": "WP",
+    "nom": "Canaletes",
+    "altitud": 325.0,
+    "comarca": "Alt Penedès",
+    "coordenades": {
+      "latitud": 41.48518,
+      "longitud": 1.69337
+    }
+  },
+  {
+    "codi": "WQ",
+    "nom": "Montsec d'Ares (1.572 m)",
+    "altitud": 1572.0,
+    "comarca": "Pallars Jussà",
+    "coordenades": {
+      "latitud": 42.0513,
+      "longitud": 0.72952
+    }
+  },
+  {
+    "codi": "WR",
+    "nom": "Torroja del Priorat",
+    "altitud": 300.0,
+    "comarca": "Priorat",
+    "coordenades": {
+      "latitud": 41.2163,
+      "longitud": 0.79748
+    }
+  },
+  {
+    "codi": "WS",
+    "nom": "Viladrau",
+    "altitud": 953.0,
+    "comarca": "Osona",
+    "coordenades": {
+      "latitud": 41.84008,
+      "longitud": 2.41877
+    }
+  },
+  {
+    "codi": "WT",
+    "nom": "Malgrat de Mar",
+    "altitud": 2.0,
+    "comarca": "Maresme",
+    "coordenades": {
+      "latitud": 41.64707,
+      "longitud": 2.75658
+    }
+  },
+  {
+    "codi": "WU",
+    "nom": "Badalona - Museu",
+    "altitud": 42.0,
+    "comarca": "Barcelonès",
+    "coordenades": {
+      "latitud": 41.45215,
+      "longitud": 2.24757
+    }
+  },
+  {
+    "codi": "WV",
+    "nom": "Guardiola de Berguedà",
+    "altitud": 788.0,
+    "comarca": "Berguedà",
+    "coordenades": {
+      "latitud": 42.23414,
+      "longitud": 1.87485
+    }
+  },
+  {
+    "codi": "WW",
+    "nom": "Artés",
+    "altitud": 278.0,
+    "comarca": "Bages",
+    "coordenades": {
+      "latitud": 41.79423,
+      "longitud": 1.9368
+    }
+  },
+  {
+    "codi": "WX",
+    "nom": "Camarasa",
+    "altitud": 668.0,
+    "comarca": "Noguera",
+    "coordenades": {
+      "latitud": 41.9178,
+      "longitud": 0.88175
+    }
+  },
+  {
+    "codi": "WZ",
+    "nom": "Cunit",
+    "altitud": 17.0,
+    "comarca": "Baix Penedès",
+    "coordenades": {
+      "latitud": 41.20187,
+      "longitud": 1.63346
+    }
+  },
+  {
+    "codi": "X1",
+    "nom": "Falset",
+    "altitud": 359.0,
+    "comarca": "Priorat",
+    "coordenades": {
+      "latitud": 41.15374,
+      "longitud": 0.81953
+    }
+  },
+  {
+    "codi": "X3",
+    "nom": "Alguaire",
+    "altitud": 370.0,
+    "comarca": "Segrià",
+    "coordenades": {
+      "latitud": 41.74281,
+      "longitud": 0.5358
+    }
+  },
+  {
+    "codi": "X4",
+    "nom": "Barcelona - el Raval",
+    "altitud": 33.0,
+    "comarca": "Barcelonès",
+    "coordenades": {
+      "latitud": 41.3839,
+      "longitud": 2.16775
+    }
+  },
+  {
+    "codi": "X5",
+    "nom": "PN dels Ports",
+    "altitud": 1055.0,
+    "comarca": "Baix Ebre",
+    "coordenades": {
+      "latitud": 40.79705,
+      "longitud": 0.31822
+    }
+  },
+  {
+    "codi": "X6",
+    "nom": "Baldomar",
+    "altitud": 366.0,
+    "comarca": "Noguera",
+    "coordenades": {
+      "latitud": 41.92173,
+      "longitud": 1.02901
+    }
+  },
+  {
+    "codi": "X7",
+    "nom": "Torres de Segre",
+    "altitud": 215.0,
+    "comarca": "Segrià",
+    "coordenades": {
+      "latitud": 41.51909,
+      "longitud": 0.55314
+    }
+  },
+  {
+    "codi": "X8",
+    "nom": "Barcelona - Zona Universitària",
+    "altitud": 79.0,
+    "comarca": "Barcelonès",
+    "coordenades": {
+      "latitud": 41.37919,
+      "longitud": 2.1054
+    }
+  },
+  {
+    "codi": "X9",
+    "nom": "Caldes de Montbui",
+    "altitud": 176.0,
+    "comarca": "Vallès Oriental",
+    "coordenades": {
+      "latitud": 41.61265,
+      "longitud": 2.16836
+    }
+  },
+  {
+    "codi": "XA",
+    "nom": "la Panadella",
+    "altitud": 785.0,
+    "comarca": "Anoia",
+    "coordenades": {
+      "latitud": 41.60257,
+      "longitud": 1.4007
+    }
+  },
+  {
+    "codi": "XB",
+    "nom": "la Llacuna",
+    "altitud": 584.0,
+    "comarca": "Anoia",
+    "coordenades": {
+      "latitud": 41.4779,
+      "longitud": 1.53529
+    }
+  },
+  {
+    "codi": "XC",
+    "nom": "Castellbisbal",
+    "altitud": 147.0,
+    "comarca": "Vallès Occidental",
+    "coordenades": {
+      "latitud": 41.47892,
+      "longitud": 1.97546
+    }
+  },
+  {
+    "codi": "XD",
+    "nom": "Ulldemolins",
+    "altitud": 687.0,
+    "comarca": "Priorat",
+    "coordenades": {
+      "latitud": 41.32,
+      "longitud": 0.8857
+    }
+  },
+  {
+    "codi": "XE",
+    "nom": "Tarragona - Complex Educatiu",
+    "altitud": 5.0,
+    "comarca": "Tarragonès",
+    "coordenades": {
+      "latitud": 41.10393,
+      "longitud": 1.201
+    }
+  },
+  {
+    "codi": "XF",
+    "nom": "Sabadell - Parc Agrari",
+    "altitud": 258.0,
+    "comarca": "Vallès Occidental",
+    "coordenades": {
+      "latitud": 41.56568,
+      "longitud": 2.06952
+    }
+  },
+  {
+    "codi": "XG",
+    "nom": "Parets del Vallès",
+    "altitud": 123.0,
+    "comarca": "Vallès Oriental",
+    "coordenades": {
+      "latitud": 41.56734,
+      "longitud": 2.22619
+    }
+  },
+  {
+    "codi": "XH",
+    "nom": "Sort",
+    "altitud": 679.0,
+    "comarca": "Pallars Sobirà",
+    "coordenades": {
+      "latitud": 42.40533,
+      "longitud": 1.12993
+    }
+  },
+  {
+    "codi": "XI",
+    "nom": "Mollerussa",
+    "altitud": 247.0,
+    "comarca": "Pla d'Urgell",
+    "coordenades": {
+      "latitud": 41.61817,
+      "longitud": 0.87182
+    }
+  },
+  {
+    "codi": "XJ",
+    "nom": "Girona",
+    "altitud": 72.0,
+    "comarca": "Gironès",
+    "coordenades": {
+      "latitud": 41.98223,
+      "longitud": 2.80686
+    }
+  },
+  {
+    "codi": "XK",
+    "nom": "Puig Sesolles (1.668 m)",
+    "altitud": 1668.0,
+    "comarca": "Vallès Oriental",
+    "coordenades": {
+      "latitud": 41.77362,
+      "longitud": 2.43774
+    }
+  },
+  {
+    "codi": "XL",
+    "nom": "el Prat de Llobregat",
+    "altitud": 8.0,
+    "comarca": "Baix Llobregat",
+    "coordenades": {
+      "latitud": 41.34045,
+      "longitud": 2.08022
+    }
+  },
+  {
+    "codi": "XM",
+    "nom": "els Alamús",
+    "altitud": 235.0,
+    "comarca": "Segrià",
+    "coordenades": {
+      "latitud": 41.59522,
+      "longitud": 0.73507
+    }
+  },
+  {
+    "codi": "XN",
+    "nom": "Seròs",
+    "altitud": 89.0,
+    "comarca": "Segrià",
+    "coordenades": {
+      "latitud": 41.46379,
+      "longitud": 0.42765
+    }
+  },
+  {
+    "codi": "XO",
+    "nom": "Vic",
+    "altitud": 499.0,
+    "comarca": "Osona",
+    "coordenades": {
+      "latitud": 41.93497,
+      "longitud": 2.23987
+    }
+  },
+  {
+    "codi": "XP",
+    "nom": "Gandesa",
+    "altitud": 350.0,
+    "comarca": "Terra Alta",
+    "coordenades": {
+      "latitud": 41.06564,
+      "longitud": 0.43006
+    }
+  },
+  {
+    "codi": "XQ",
+    "nom": "Tremp",
+    "altitud": 473.0,
+    "comarca": "Pallars Jussà",
+    "coordenades": {
+      "latitud": 42.16252,
+      "longitud": 0.88814
+    }
+  },
+  {
+    "codi": "XR",
+    "nom": "Prades",
+    "altitud": 926.0,
+    "comarca": "Baix Camp",
+    "coordenades": {
+      "latitud": 41.31481,
+      "longitud": 0.98161
+    }
+  },
+  {
+    "codi": "XS",
+    "nom": "Santa Coloma de Farners",
+    "altitud": 162.0,
+    "comarca": "Selva",
+    "coordenades": {
+      "latitud": 41.86489,
+      "longitud": 2.66446
+    }
+  },
+  {
+    "codi": "XT",
+    "nom": "Solsona",
+    "altitud": 691.0,
+    "comarca": "Solsonès",
+    "coordenades": {
+      "latitud": 41.98766,
+      "longitud": 1.51165
+    }
+  },
+  {
+    "codi": "XU",
+    "nom": "Canyelles",
+    "altitud": 148.0,
+    "comarca": "Garraf",
+    "coordenades": {
+      "latitud": 41.28801,
+      "longitud": 1.72195
+    }
+  },
+  {
+    "codi": "XV",
+    "nom": "Sant Cugat del Vallès - CAR",
+    "altitud": 158.0,
+    "comarca": "Vallès Occidental",
+    "coordenades": {
+      "latitud": 41.48311,
+      "longitud": 2.07956
+    }
+  },
+  {
+    "codi": "XX",
+    "nom": "Anglesola - Tornabous",
+    "altitud": 291.0,
+    "comarca": "Urgell",
+    "coordenades": {
+      "latitud": 41.68835,
+      "longitud": 1.04476
+    }
+  },
+  {
+    "codi": "XY",
+    "nom": "Alcarràs",
+    "altitud": 122.0,
+    "comarca": "Segrià",
+    "coordenades": {
+      "latitud": 41.56509,
+      "longitud": 0.55027
+    }
+  },
+  {
+    "codi": "XZ",
+    "nom": "Torroella de Fluvià",
+    "altitud": 7.0,
+    "comarca": "Alt Empordà",
+    "coordenades": {
+      "latitud": 42.18139,
+      "longitud": 3.06202
+    }
+  },
+  {
+    "codi": "Y4",
+    "nom": "Alinyà",
+    "altitud": 1162.0,
+    "comarca": "Alt Urgell",
+    "coordenades": {
+      "latitud": 42.17426,
+      "longitud": 1.42775
+    }
+  },
+  {
+    "codi": "Y5",
+    "nom": "Navata",
+    "altitud": 152.0,
+    "comarca": "Alt Empordà",
+    "coordenades": {
+      "latitud": 42.22793,
+      "longitud": 2.86295
+    }
+  },
+  {
+    "codi": "Y6",
+    "nom": "Tivissa",
+    "altitud": 317.0,
+    "comarca": "Ribera d'Ebre",
+    "coordenades": {
+      "latitud": 41.04343,
+      "longitud": 0.74032
+    }
+  },
+  {
+    "codi": "Y7",
+    "nom": "Port de Barcelona - Bocana Sud",
+    "altitud": 3.0,
+    "comarca": "Baix Llobregat",
+    "coordenades": {
+      "latitud": 41.31725,
+      "longitud": 2.16537
+    }
+  },
+  {
+    "codi": "YA",
+    "nom": "Puigcerdà",
+    "altitud": 1213.0,
+    "comarca": "Cerdanya",
+    "coordenades": {
+      "latitud": 42.44013,
+      "longitud": 1.93482
+    }
+  },
+  {
+    "codi": "YB",
+    "nom": "Olot",
+    "altitud": 433.0,
+    "comarca": "Garrotxa",
+    "coordenades": {
+      "latitud": 42.18813,
+      "longitud": 2.47097
+    }
+  },
+  {
+    "codi": "YC",
+    "nom": "la Pobla de Segur",
+    "altitud": 508.0,
+    "comarca": "Pallars Jussà",
+    "coordenades": {
+      "latitud": 42.24388,
+      "longitud": 0.96802
+    }
+  },
+  {
+    "codi": "YD",
+    "nom": "les Borges Blanques",
+    "altitud": 283.0,
+    "comarca": "Garrigues",
+    "coordenades": {
+      "latitud": 41.51124,
+      "longitud": 0.8561
+    }
+  },
+  {
+    "codi": "YE",
+    "nom": "Massoteres",
+    "altitud": 513.0,
+    "comarca": "Segarra",
+    "coordenades": {
+      "latitud": 41.79409,
+      "longitud": 1.305756
+    }
+  },
+  {
+    "codi": "YF",
+    "nom": "Miami Platja",
+    "altitud": 43.0,
+    "comarca": "Baix Camp",
+    "coordenades": {
+      "latitud": 41.02066,
+      "longitud": 0.9345
+    }
+  },
+  {
+    "codi": "YG",
+    "nom": "Tírvia",
+    "altitud": 954.0,
+    "comarca": "Pallars Sobirà",
+    "coordenades": {
+      "latitud": 42.51881,
+      "longitud": 1.24244
+    }
+  },
+  {
+    "codi": "YH",
+    "nom": "Pujalt",
+    "altitud": 747.0,
+    "comarca": "Anoia",
+    "coordenades": {
+      "latitud": 41.71734,
+      "longitud": 1.42403
+    }
+  },
+  {
+    "codi": "YJ",
+    "nom": "Lleida - la Femosa",
+    "altitud": 170.0,
+    "comarca": "Segrià",
+    "coordenades": {
+      "latitud": 41.58449,
+      "longitud": 0.64217
+    }
+  },
+  {
+    "codi": "YK",
+    "nom": "Terrassa",
+    "altitud": 313.0,
+    "comarca": "Vallès Occidental",
+    "coordenades": {
+      "latitud": 41.55361,
+      "longitud": 1.99005
+    }
+  },
+  {
+    "codi": "YL",
+    "nom": "Riudecanyes",
+    "altitud": 170.0,
+    "comarca": "Baix Camp",
+    "coordenades": {
+      "latitud": 41.1227,
+      "longitud": 0.96951
+    }
+  },
+  {
+    "codi": "YM",
+    "nom": "Granollers",
+    "altitud": 210.0,
+    "comarca": "Vallès Oriental",
+    "coordenades": {
+      "latitud": 41.60922,
+      "longitud": 2.29841
+    }
+  },
+  {
+    "codi": "YN",
+    "nom": "Vielha - Elipòrt",
+    "altitud": 1027.0,
+    "comarca": "Val d'Aran",
+    "coordenades": {
+      "latitud": 42.69737,
+      "longitud": 0.80198
+    }
+  },
+  {
+    "codi": "YO",
+    "nom": "Sant Sadurní d'Anoia",
+    "altitud": 155.0,
+    "comarca": "Alt Penedès",
+    "coordenades": {
+      "latitud": 41.43531,
+      "longitud": 1.79324
+    }
+  },
+  {
+    "codi": "YP",
+    "nom": "Palafrugell",
+    "altitud": 35.0,
+    "comarca": "Baix Empordà",
+    "coordenades": {
+      "latitud": 41.90694,
+      "longitud": 3.16073
+    }
+  },
+  {
+    "codi": "YQ",
+    "nom": "Port de Barcelona - ZAL Prat",
+    "altitud": 6.0,
+    "comarca": "Baix Llobregat",
+    "coordenades": {
+      "latitud": 41.31928,
+      "longitud": 2.1372
+    }
+  },
+  {
+    "codi": "YR",
+    "nom": "Vilanova i la Geltrú",
+    "altitud": 31.0,
+    "comarca": "Garraf",
+    "coordenades": {
+      "latitud": 41.23575,
+      "longitud": 1.73148
+    }
+  },
+  {
+    "codi": "YS",
+    "nom": "Cabanes",
+    "altitud": 32.0,
+    "comarca": "Alt Empordà",
+    "coordenades": {
+      "latitud": 42.32038,
+      "longitud": 2.956401
+    }
+  },
+  {
+    "codi": "YT",
+    "nom": "Bonabé (1.693 m)",
+    "altitud": 1693.0,
+    "comarca": "Pallars Sobirà",
+    "coordenades": {
+      "latitud": 42.75089,
+      "longitud": 1.07527
+    }
+  },
+  {
+    "codi": "YU",
+    "nom": "Cantonigròs",
+    "altitud": 925.0,
+    "comarca": "Osona",
+    "coordenades": {
+      "latitud": 42.04265,
+      "longitud": 2.40472
+    }
+  },
+  {
+    "codi": "YV",
+    "nom": "Mataró",
+    "altitud": 87.0,
+    "comarca": "Maresme",
+    "coordenades": {
+      "latitud": 41.54517,
+      "longitud": 2.43322
+    }
+  },
+  {
+    "codi": "YX",
+    "nom": "Batea",
+    "altitud": 400.0,
+    "comarca": "Terra Alta",
+    "coordenades": {
+      "latitud": 41.08307,
+      "longitud": 0.31688
+    }
+  },
+  {
+    "codi": "Z1",
+    "nom": "Bonaigua (2.266 m)",
+    "altitud": 2266.0,
+    "comarca": "Pallars Sobirà",
+    "coordenades": {
+      "latitud": 42.64691,
+      "longitud": 0.98486
+    }
+  },
+  {
+    "codi": "Z2",
+    "nom": "Boí (2.535 m)",
+    "altitud": 2535.0,
+    "comarca": "Alta Ribagorça",
+    "coordenades": {
+      "latitud": 42.46602,
+      "longitud": 0.88405
+    }
+  },
+  {
+    "codi": "Z3",
+    "nom": "Malniu (2.230 m)",
+    "altitud": 2230.0,
+    "comarca": "Cerdanya",
+    "coordenades": {
+      "latitud": 42.46605,
+      "longitud": 1.7785
+    }
+  },
+  {
+    "codi": "Z5",
+    "nom": "Certascan (2.400 m)",
+    "altitud": 2400.0,
+    "comarca": "Pallars Sobirà",
+    "coordenades": {
+      "latitud": 42.70029,
+      "longitud": 1.27201
+    }
+  },
+  {
+    "codi": "Z6",
+    "nom": "Sasseuva (2.228 m)",
+    "altitud": 2228.0,
+    "comarca": "Val d'Aran",
+    "coordenades": {
+      "latitud": 42.77011,
+      "longitud": 0.73198
+    }
+  },
+  {
+    "codi": "Z7",
+    "nom": "Espot (2.519 m)",
+    "altitud": 2519.0,
+    "comarca": "Pallars Sobirà",
+    "coordenades": {
+      "latitud": 42.53412,
+      "longitud": 1.05476
+    }
+  },
+  {
+    "codi": "Z9",
+    "nom": "Cadí Nord (2.143 m) - Prat d'Aguiló",
+    "altitud": 2143.0,
+    "comarca": "Cerdanya",
+    "coordenades": {
+      "latitud": 42.29265,
+      "longitud": 1.71498
+    }
+  },
+  {
+    "codi": "ZB",
+    "nom": "Salòria (2.451 m)",
+    "altitud": 2451.0,
+    "comarca": "Pallars Sobirà",
+    "coordenades": {
+      "latitud": 42.51939,
+      "longitud": 1.36597
+    }
+  },
+  {
+    "codi": "ZC",
+    "nom": "Ulldeter (2.413 m)",
+    "altitud": 2413.0,
+    "comarca": "Ripollès",
+    "coordenades": {
+      "latitud": 42.42102,
+      "longitud": 2.24593
+    }
+  },
+  {
+    "codi": "ZD",
+    "nom": "la Tosa d'Alp (2.478 m)",
+    "altitud": 2478.0,
+    "comarca": "Cerdanya",
+    "coordenades": {
+      "latitud": 42.32211,
+      "longitud": 1.89716
+    }
+  },
+  {
+    "codi": "ZE",
+    "nom": "el Port del Comte (2.290 m)",
+    "altitud": 2290.0,
+    "comarca": "Solsonès",
+    "coordenades": {
+      "latitud": 42.19088,
+      "longitud": 1.53207
+    }
+  }
+]

@@ -1,5 +1,5 @@
 import raw from '../../full_dades.json'
-import stations from '../../stations.json'
+import stations from './stations.json'
 
 /* const values = {
   "temperatura": [], 
