@@ -14,17 +14,17 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange }) => {
     );
   }
   // global min/max from dayStats
-const globalStats = useMemo(() => {
-  const validDays = Object.values(data || {}).filter(d => d.dayStats);
-  const precMax = Math.max(...validDays.map(d => d.dayStats.precMax ?? 0), 0);
-  const precMin = Math.min(...validDays.map(d => d.dayStats.precMin ?? 0), 0);
-  const humMax = Math.max(...validDays.map(d => d.dayStats.humMax ?? 0), 0);
-  const humMin = Math.min(...validDays.map(d => d.dayStats.humMin ?? 0), 0);
-  const tempMax = Math.max(...validDays.map(d => d.dayStats.tempMax ?? -100), -100);
-  const tempMin = Math.min(...validDays.map(d => d.dayStats.tempMin ?? 100), 100);
-  return { precMin, precMax, humMin, humMax, tempMin, tempMax };
-}, [data]);
-
+  const globalStats = useMemo(() => {
+    const validDays = Object.values(data || {}).filter(d => d.dayStats);
+    const precMax = Math.max(...validDays.map(d => d.dayStats.precMax ?? 0), 0);
+    const precMin = Math.min(...validDays.map(d => d.dayStats.precMin ?? 0), 0);
+    const humMax = Math.max(...validDays.map(d => d.dayStats.humMax ?? 0), 0);
+    const humMin = Math.min(...validDays.map(d => d.dayStats.humMin ?? 0), 0);
+    const tempMax = Math.max(...validDays.map(d => d.dayStats.tempMax ?? -100), -100);
+    const tempMin = Math.min(...validDays.map(d => d.dayStats.tempMin ?? 100), 100);
+    return { precMin, precMax, humMin, humMax, tempMin, tempMax };
+  }, [data]);
+  console.log(daysRange)
   // generate day data
   const chartData = useMemo(() => {
     if (!data || !station?.properties?.codi) return [];
@@ -34,9 +34,13 @@ const globalStats = useMemo(() => {
 
     const allDates = [];
     if (from && to) {
+      // normalize to midnight to avoid timezone/time-of-day issues
       const d = new Date(from);
-      while (d <= to) {
-        allDates.push(fmt(d));
+      d.setHours(0, 0, 0, 0);
+      const end = new Date(to);
+      end.setHours(0, 0, 0, 0);
+      while (d <= end) {
+        allDates.push(fmt(new Date(d)));
         d.setDate(d.getDate() + 1);
       }
     }
@@ -50,11 +54,11 @@ const globalStats = useMemo(() => {
   }, [data, station, daysRange]);
 
   // max values for scaling
-  const maxRain = Math.max(...chartData.map(d => d.precAcc), 0);
-  const maxHum = Math.max(...chartData.map(d => d.humAvg), 0);
-  const maxTemp = Math.max(...chartData.map(d => d.tempAvg), -100);
-  console.log(maxRain, maxHum, maxTemp);
-  console.log(chartData);
+  //const maxRain = Math.max(...chartData.map(d => d.precAcc), 0);
+  //const maxHum = Math.max(...chartData.map(d => d.humAvg), 0);
+  //const maxTemp = Math.max(...chartData.map(d => d.tempAvg), -100);
+  //console.log(maxRain, maxHum, maxTemp);
+  //console.log(chartData);
   return (
     <div className={`station-panel ${isOpen ? "open" : "closed"}`}>
       <div
@@ -116,18 +120,10 @@ const globalStats = useMemo(() => {
               <div
                 key={i}
                 className="bar humidity"
-                style={{ height: <div
-  key={i}
-  className="bar humidity"
-  style={{
-    height: `${
-      ((d.humAvg - globalStats.humMin) /
-        (globalStats.humMax - globalStats.humMin || 1)) * 100
-    }%`
-  }}
-  title={`${d.day}: ${d.humAvg}%`}
-/>
- }}
+                style={{
+                  height: `${((d.humAvg - globalStats.humMin) /
+                    (globalStats.humMax - globalStats.humMin || 1)) * 100}%`
+                }}
                 title={`${d.day}: ${d.humAvg}%`}
               />
             ))}

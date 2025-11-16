@@ -19,7 +19,15 @@ export const daysCount = (daysRange) => {
   return diffDays > 0 ? diffDays : 1;
 }
 
-export const fmt = d => d ? new Date(d).toISOString().slice(0,10) : '-';
+export const fmt = d => {
+  if (!d) return '-';
+  const x = new Date(d);
+  if (isNaN(x)) return '-';
+  const y = x.getFullYear();
+  const m = String(x.getMonth() + 1).padStart(2, '0');
+  const day = String(x.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
 
 export const safeAvg = arr => {
   if (!Array.isArray(arr) || arr.length === 0) return null;

@@ -23,10 +23,9 @@ const center = [1.9, 41.9];
 const minZoom = 7;
 const maxZoom = 15;
 const App = ()  => {
-  // Use a public style on GH Pages to avoid provider 401s
-  const defaultStyle = import.meta.env.PROD
+  const defaultStyle = /* import.meta.env.PROD
     ? 'https://demotiles.maplibre.org/style.json'   // public, no key
-    : 'https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json';
+    : */ 'https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json';
   const [styleUrl, setStyleUrl] = React.useState(defaultStyle);
   const [selectedStation, setSelectedStation] = useState(null);
   const [daysRange, setDaysRange] = useState({ from: minDate, to: minDate });
@@ -236,7 +235,7 @@ const App = ()  => {
   const stationObj = selectedStation
   ? geoWithData?.features?.find(f => f.properties.codi === selectedStation)
   : null;
-  console.log(rangeLimits)
+  //console.log(rangeLimits)
   return (
     <div className='app'>
       <img  className='logo' src={logo} alt="MetoSeps" />

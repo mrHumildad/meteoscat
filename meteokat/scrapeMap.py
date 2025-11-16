@@ -1,15 +1,17 @@
 import requests
 import re
 import json
-from datetime import datetime, timedelta
+import sys
 
+from datetime import datetime, timedelta
+days_n = int(sys.argv[1]) if len(sys.argv) > 1 else 30
 base_url = 'https://www.meteo.cat/observacions/xema?dia={date}'
 
 today = datetime.now(datetime.utcnow().astimezone().tzinfo)
-dates = [(today - timedelta(days=i)).strftime('%Y-%m-%dT00:00Z') for i in range(30)]
+dates = [(today - timedelta(days=i)).strftime('%Y-%m-%dT00:00Z') for i in range(days_n)]
 full_data = {}
 
-for date_str, i in dates:
+for date_str in dates:
     url = base_url.format(date=date_str)
     print(f"Fetching: {url}")
     response = requests.get(url)

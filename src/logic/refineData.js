@@ -1,4 +1,4 @@
-import raw from '../../full_dades.json'
+import raw from '../../public/logic/full_dades.json'
 import stations from './stations.json'
 
 /* const values = {
