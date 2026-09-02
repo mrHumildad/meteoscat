@@ -1,9 +1,10 @@
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDroplet, faSeedling, faTemperatureLow, faCalendarDays, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faDroplet, faSeedling, faTemperatureLow, faCalendarDays, faRightFromBracket, faTree, faMountain, faMountainSun, faRulerVertical } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from 'react';
 import RangeSlider from 'react-range-slider-input';
+import { filterStationCodes } from '../logic/filterStations.js';
 //import 'react-range-slider-input/dist/style.css';
 import './rangesliders.css';
 const Selectors = ({
@@ -16,32 +17,30 @@ const Selectors = ({
   maxDate,
   setSelectedVariable,
   showCalendar,
-  setShowCalendar
+  setShowCalendar,
+  showForestOverlay,
+  setShowForestOverlay,
+  showRelief,
+  setShowRelief,
+  showTerrain3D,
+  setShowTerrain3D,
+  setAltBand
 }) => {
   // Local state for each range
   const [rainRange, setRainRange] = useState([rangeLimits.rainMin, rangeLimits.rainMax]);
   const [humRange, setHumRange] = useState([rangeLimits.humMin, rangeLimits.humMax]);
   const [tempRange, setTempRange] = useState([rangeLimits.tempMin, rangeLimits.tempMax]);
+  const [altRange, setAltRange] = useState([rangeLimits.altMin, rangeLimits.altMax]);
 
-  // Whenever a slider moves → filter stations
+  // Whenever a slider moves → filter stations (pure logic in filterStations.js).
+  // An empty code list means "show everything" (e.g. full-range sliders).
+  // The altitude band is also pushed up so App can draw the area overlay.
   useEffect(() => {
-    if (!stations || stations.length === 0) return;
-
-    const filtered = stations.filter(st => {
-      const p = st.properties || {};
-      const t = Number(p.tempAvg);
-      const h = Number(p.humAvg);
-      const r = Number(p.precAcc);
-
-      return (
-        !isNaN(t) && t >= tempRange[0] && t <= tempRange[1] &&
-        !isNaN(h) && h >= humRange[0] && h <= humRange[1] &&
-        !isNaN(r) && r >= rainRange[0] && r <= rainRange[1]
-      );
-    });
-
-    setFilteredStationsCodes(filtered.map(st => st.properties?.code));
-  }, [rainRange, humRange, tempRange, stations]);
+    setAltBand?.(altRange);
+    setFilteredStationsCodes(
+      filterStationCodes(stations, rainRange, humRange, tempRange, altRange, rangeLimits)
+    );
+  }, [rainRange, humRange, tempRange, altRange, stations, rangeLimits, setFilteredStationsCodes, setAltBand]);
 
   return (
     <div className="selectors">
@@ -51,7 +50,6 @@ const Selectors = ({
           selected={daysRange}
           onSelect={handleSelect}
           showOutsideDays
-          modifiers={{ start: daysRange?.from, end: daysRange?.to }}
           disabled={(date) => date < minDate || date > maxDate}
         />
       )}
@@ -114,12 +112,51 @@ const Selectors = ({
           </div>
         </div>
 
-        
+        <div className="sel-block">
+          <div className="range-container">
+            <span className="range-value">{altRange[0]} - {altRange[1]} m</span>
+            <RangeSlider
+              min={rangeLimits.altMin}
+              max={rangeLimits.altMax}
+              step={10}
+              value={altRange}
+              onInput={setAltRange}
+            />
+            </div>
+          <div
+            className="sel-button altitude"
+            onClick={() => setSelectedVariable('altitud')}
+          >
+            <FontAwesomeIcon icon={faRulerVertical} />
+          </div>
+        </div>
 
+        {/* MCSC forest / land-cover overlay toggle */}
+        <div
+          className={`sel-button forest${showForestOverlay ? ' on' : ''}`}
+          title="Cobertes del sòl (MCSC)"
+          onClick={() => setShowForestOverlay(!showForestOverlay)}
+        >
+          <FontAwesomeIcon icon={faTree} />
+        </div>
 
+        {/* Elevation — flat hillshade relief overlay */}
+        <div
+          className={`sel-button relief${showRelief ? ' on' : ''}`}
+          title="Relleu (ombrejat del terreny)"
+          onClick={() => setShowRelief(!showRelief)}
+        >
+          <FontAwesomeIcon icon={faMountain} />
+        </div>
 
-
-        
+        {/* Elevation — 3D terrain (tilts the camera) */}
+        <div
+          className={`sel-button terrain3d${showTerrain3D ? ' on' : ''}`}
+          title="Terreny 3D"
+          onClick={() => setShowTerrain3D(!showTerrain3D)}
+        >
+          <FontAwesomeIcon icon={faMountainSun} />
+        </div>
 
         {/* Calendar toggle */}
         <div

@@ -5,7 +5,8 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  // basura/ is a gitignored scratch dir — nothing committed there should be linted
+  globalIgnores(['dist', 'basura']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [
@@ -24,6 +25,13 @@ export default defineConfig([
     },
     rules: {
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+    },
+  },
+  // geojsonCreator.js is a Node CLI script (fs/path/process)
+  {
+    files: ['src/logic/geojsonCreator.js'],
+    languageOptions: {
+      globals: globals.node,
     },
   },
 ])

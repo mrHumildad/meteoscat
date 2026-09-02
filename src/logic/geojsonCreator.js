@@ -4,7 +4,19 @@ import { fileURLToPath } from 'url';
 
 console.log('geojsonCreator: module loaded, argv:', process && process.argv ? process.argv.slice(0,3) : null);
 
-export function stationsToGeoJSON(stations) {
+// MCSC attribution (mandatory under CC BY 4.0 when forest data is embedded)
+const MCSC_ATTRIBUTION =
+  'Mapa de Cobertes del Sòl de Catalunya (MCSC) v1.0 — ICGC & CREAF, ' +
+  'layer cobertes_2024 — CC BY 4.0 — http://www.icgc.cat';
+
+/**
+ * stations.json entries -> GeoJSON FeatureCollection.
+ * Optional enrichment:
+ *   meta  = meteokat/meta.json map {codi: {tipus, emplacament, municipi}}
+ *   forest = public/logic/forest_types.json map {codi: {mcscClass,
+ *            mcscName, forestType}}
+ */
+export function stationsToGeoJSON(stations, { meta = {}, forest = {} } = {}) {
   if (!Array.isArray(stations)) throw new TypeError('stations must be an array');
 
   const features = stations.map((s, idx) => {
@@ -23,7 +35,11 @@ export function stationsToGeoJSON(stations) {
       return null;
     }
 
-    const { coordenades, longitud, latitud, lon: _lon, lat: _lat, ...rest } = s;
+    // strip coords/aliases from properties; underscore-prefixed renames keep
+    // them out of `rest` without tripping no-unused-vars
+    const { coordenades: _coordenades, longitud: _longitud, latitud: _latitud, lon: _lon, lat: _lat, ...rest } = s;
+    const m = meta[s.codi] || {};
+    const f = forest[s.codi] || {};
 
     return {
       type: 'Feature',
@@ -33,12 +49,23 @@ export function stationsToGeoJSON(stations) {
         nom: s.nom ?? null,
         altitud: s.altitud ?? null,
         comarca: s.comarca ?? null,
+        tipus: m.tipus ?? null,
+        emplacament: m.emplacament ?? null,
+        municipi: m.municipi?.nom ?? null,
+        municipiCodi: m.municipi?.codi ?? null,
+        mcscClass: f.mcscClass ?? null,
+        mcscName: f.mcscName ?? null,
+        forestType: f.forestType ?? null,
         ...rest
       }
     };
   }).filter(Boolean);
 
-  return { type: 'FeatureCollection', features };
+  const geo = { type: 'FeatureCollection', features };
+  if (Object.keys(forest).length) {
+    geo.attribution = MCSC_ATTRIBUTION;
+  }
+  return geo;
 }
 
 // CLI
@@ -47,9 +74,23 @@ async function runCli() {
   const __dirname = path.dirname(__filename);
 
   const root = path.resolve(__dirname, '..', '..');
-  const inPath = path.join(root, 'stations.json');
-  const outDir = path.join(root, 'src', 'logic');
-  const outPath = path.join(outDir, 'stations.geojson');
+  const opt = (name, dflt) => {
+    const i = process.argv.indexOf(name);
+    return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : dflt;
+  };
+  const inPath = opt('--stations', path.join(root, 'src', 'logic', 'stations.json'));
+  const metaPath = opt('--meta', path.join(root, 'meteokat', 'meta.json'));
+  const forestPath = opt('--forest', path.join(root, 'public', 'logic', 'forest_types.json'));
+  const outPath = opt('--out', path.join(root, 'public', 'logic', 'stations.geojson'));
+
+  const readJsonOptional = (p, label) => {
+    try {
+      return JSON.parse(fs.readFileSync(p, 'utf8'));
+    } catch (err) {
+      console.warn(`Warning: could not load ${label} (${p}): ${err.message}`);
+      return null;
+    }
+  };
 
   console.log('geojsonCreator: start');
   console.log('Reading:', inPath);
@@ -82,7 +123,7 @@ async function runCli() {
         const t = line.trim();
         if (t === '') return true;
         // keep lines that start with json chars or quotes or braces
-        return /^[\[\]\{\}",:\-0-9]|^"/.test(t);
+        return /^[[\]{}",:0-9-]|^"/.test(t);
       }).join('\n');
 
       // remove empty object placeholders and trailing commas
@@ -123,9 +164,13 @@ async function runCli() {
   }
 
   console.log('Converting', stations.length, 'stations to GeoJSON features');
-  const geo = stationsToGeoJSON(stations);
+  const meta = readJsonOptional(metaPath, 'meteokat meta.json');
+  const forest = readJsonOptional(forestPath, 'forest types');
+  const geo = stationsToGeoJSON(stations, { meta: meta || {}, forest: forest || {} });
   console.log('Feature count after conversion:', geo.features.length);
+  if (forest && geo.attribution) console.log('MCSC attribution attached:', geo.attribution);
 
+  const outDir = path.dirname(outPath);
   if (!fs.existsSync(outDir)) {
     console.log('Creating output directory:', outDir);
     fs.mkdirSync(outDir, { recursive: true });

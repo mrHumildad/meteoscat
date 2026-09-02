@@ -2,41 +2,55 @@ import requests
 import re
 import json
 import sys
+import time
 
 from datetime import datetime, timedelta
-days_n = int(sys.argv[1]) if len(sys.argv) > 1 else 30
-base_url = 'https://www.meteo.cat/observacions/xema?dia={date}'
+
+days_n = int(sys.argv[1]) if len(sys.argv) > 1 else 60
+max_attempts = 3
+base_url = "https://www.meteo.cat/observacions/xema?dia={date}"
 
 today = datetime.now(datetime.utcnow().astimezone().tzinfo)
-dates = [(today - timedelta(days=i)).strftime('%Y-%m-%dT00:00Z') for i in range(days_n)]
+dates = [(today - timedelta(days=i)).strftime("%Y-%m-%dT00:00Z") for i in range(days_n)]
 full_data = {}
+failed = []
 
 for date_str in dates:
     url = base_url.format(date=date_str)
-    print(f"Fetching: {url}")
-    response = requests.get(url)
-    text = response.text
-
-    # Extract 'dades'
-    match = re.search(r'var\s+dades\s*=\s*(.*?);', text, re.DOTALL)
-    if match:
-        data_str = match.group(1)
+    data = None
+    # Meteocat occasionally drops a request; retry before giving up on a day
+    # (a silent gap would survive until the next rolling-window run).
+    for attempt in range(1, max_attempts + 1):
+        print(f"Fetching: {url}" + (f" (attempt {attempt})" if attempt > 1 else ""))
         try:
-            data = json.loads(data_str)
-            full_data[date_str[:10]] = data
-            """ with open(f"dades_{date_str[:10]}.json", "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-            print(f"Saved 'dades' to dades_{date_str[:10]}.json") """
+            response = requests.get(url, timeout=30)
+            text = response.text
         except Exception as e:
-            print("Could not parse 'dades' as JSON:", e)
-    else:
-        print("'dades' variable not found")
-""" for date_str in dates:
-    hours = full_data[date_str[:10]].keys()
-    for hour in hours:
-        full_data[date_str[:10]['stations']] """
+            print(f"  request error: {e}")
+            time.sleep(2 * attempt)
+            continue
 
-    #print(f"Date: {date_str[:10]}, Hours: {list(hours)}")
+        match = re.search(r"var\s+dades\s*=\s*(.*?);", text, re.DOTALL)
+        if not match:
+            print("  'dades' variable not found")
+            time.sleep(2 * attempt)
+            continue
+        try:
+            data = json.loads(match.group(1))
+            break
+        except Exception as e:
+            print("  could not parse 'dades' as JSON:", e)
+            time.sleep(2 * attempt)
+
+    if data is None:
+        failed.append(date_str[:10])
+        print(f"  !! giving up on {date_str[:10]} after {max_attempts} attempts")
+        continue
+    full_data[date_str[:10]] = data
+
 with open("full_dades.json", "w", encoding="utf-8") as f:
     json.dump(full_data, f, ensure_ascii=False, indent=2)
-print("Saved all 'dades' to full_dades.json")
+
+print(f"Saved {len(full_data)} days to full_dades.json")
+if failed:
+    print(f"WARNING: {len(failed)} day(s) failed and were skipped: {', '.join(failed)}")

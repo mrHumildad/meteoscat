@@ -1,4 +1,23 @@
 
+/**
+ * Parse a 'YYYY-MM-DD' string as LOCAL midnight. `new Date('YYYY-MM-DD')`
+ * parses as UTC midnight, which shifts the day in timezones east of UTC
+ * and made calendar day ranges / disabled checks off by one.
+ */
+export const parseDay = str => {
+  if (!str) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(str));
+  if (!m) return null;
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 0, 0, 0, 0);
+  // reject input that rolls over (month 13, Feb 30, …)
+  if (
+    d.getFullYear() !== Number(m[1]) ||
+    d.getMonth() !== Number(m[2]) - 1 ||
+    d.getDate() !== Number(m[3])
+  ) return null;
+  return d;
+};
+
 export const getDaysInRange = (data, from, to) => {
   if (!from) return [];
   const all = Object.keys(data).sort(); // assume YYYY-MM-DD keys
@@ -15,7 +34,11 @@ export const daysCount = (daysRange) => {
   if (!daysRange || !daysRange.from) return 0;
   const from = new Date(daysRange.from);
   const to = daysRange.to ? new Date(daysRange.to) : from;
-  const diffDays = Math.floor((to - from) / (1000 * 60 * 60 * 24)) + 1;
+  // Count by UTC day numbers so DST transitions (23h/25h days) never skew
+  // the result — the raw ms difference approach undercounts by one for
+  // ranges crossing the spring-forward transition.
+  const utcDay = d => Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+  const diffDays = (utcDay(to) - utcDay(from)) / (1000 * 60 * 60 * 24) + 1;
   return diffDays > 0 ? diffDays : 1;
 }
 
@@ -61,6 +84,16 @@ export function fmtDayCat(dateInput) {
   const dayNum = d.getDate();
 
   return `${dayAbbrev} ${dayNum}`;
+}
+
+// Full Catalan date, e.g. "DS 15 nov 2025"; keeps AVUI/AHIR for the last 2 days
+export function fmtDateCat(dateInput) {
+  const dayCat = fmtDayCat(dateInput);
+  if (dayCat === 'AVUI' || dayCat === 'AHIR') return dayCat;
+  const d = new Date(dateInput);
+  if (isNaN(d)) return '';
+  const monthsCat = ['gen', 'febr', 'març', 'abr', 'maig', 'juny', 'jul', 'ag', 'set', 'oct', 'nov', 'des'];
+  return `${dayCat} ${monthsCat[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 

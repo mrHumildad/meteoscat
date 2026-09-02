@@ -4,16 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDroplet, faSeedling, faTemperatureLow, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { fmtDayCat } from '../logic/utils.js';
 
-const StationPanel = ({ station, setSelectedStation, data, daysRange }) => {
-   const [isOpen, setIsOpen] = useState(true);
-  if (!station) {
-    return (
-      <div className="station-panel">
-        <p>Feu clic a una estació al mapa per veure detalls.</p>
-      </div>
-    );
-  }
-  // global min/max from dayStats
+const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation }) => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  // global min/max from dayStats (hooks must run before the early return)
   const globalStats = useMemo(() => {
     const validDays = Object.values(data || {}).filter(d => d.dayStats);
     const precMax = Math.max(...validDays.map(d => d.dayStats.precMax ?? 0), 0);
@@ -24,7 +18,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange }) => {
     const tempMin = Math.min(...validDays.map(d => d.dayStats.tempMin ?? 100), 100);
     return { precMin, precMax, humMin, humMax, tempMin, tempMax };
   }, [data]);
-  console.log(daysRange)
+
   // generate day data
   const chartData = useMemo(() => {
     if (!data || !station?.properties?.codi) return [];
@@ -53,6 +47,14 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange }) => {
     }));
   }, [data, station, daysRange]);
 
+  if (!station) {
+    return (
+      <div className="station-panel">
+        <p>Feu clic a una estació al mapa per veure detalls.</p>
+      </div>
+    );
+  }
+
   // max values for scaling
   //const maxRain = Math.max(...chartData.map(d => d.precAcc), 0);
   //const maxHum = Math.max(...chartData.map(d => d.humAvg), 0);
@@ -74,7 +76,16 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange }) => {
         <span className="st-name">
           {station.properties?.nom.toUpperCase() || station.properties?.codi}
         </span>
-        <span className="st-altitud">{station.properties?.altitud} m</span>
+        <span
+          className="st-altitud"
+          title={
+            elevation != null
+              ? `Altitud del terreny al punt (DEM) · altitud de l'estació: ${station.properties?.altitud ?? '—'} m`
+              : "Altitud de l'estació (metadades Meteocat)"
+          }
+        >
+          {elevation != null ? elevation : station.properties?.altitud ?? '—'} m
+        </span>
         <span className="st-comarca">{station.properties?.comarca}</span>
       </div>
       <div className="st-block">

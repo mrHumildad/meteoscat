@@ -22,6 +22,18 @@
   font-style: normal;
 }
 
+.app-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 12px 18px;
+  border-radius: 8px;
+  z-index: 20;
+  font-size: max(2vw, 2vh);
+}
 .logo {
   position: absolute;
   top: 1vh;
@@ -46,6 +58,17 @@
   gap: 1rem;
   align-items: center;
   font-size: max(2vw, 2vh);
+}
+.header-updated {
+  font-size: 0.6em;
+  opacity: 0.75;
+  white-space: nowrap;
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  padding-left: 1rem;
+}
+.header-updated.stale {
+  color: #ffb454;
+  opacity: 1;
 }
 .selectors {
   position: absolute;
@@ -189,6 +212,74 @@
 }
 .calendar {
   background-color: white;
+}
+.forest {
+  background-color: #7d9b4e;
+}
+.relief {
+  background-color: #b08968;
+}
+.altitude {
+  background-color: #9575cd;
+}
+.terrain3d {
+  background-color: #6e8ca0;
+}
+.sel-button.on {
+  outline: 3px solid #ffffff;
+}
+.mcsc-legend {
+  position: absolute;
+  bottom: 28px;
+  left: 10px;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 0.75rem;
+  padding: 8px 10px;
+  border-radius: 6px;
+  max-width: 250px;
+}
+.mcsc-legend-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+.mcsc-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 3px 0;
+  width: 100%;
+  padding: 3px 4px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.mcsc-legend-row:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+.mcsc-legend-row.off .mcsc-legend-label {
+  opacity: 0.55;
+}
+.mcsc-legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+.mcsc-legend-label {
+  line-height: 1.2;
+}
+.mcsc-legend-footer {
+  margin-top: 6px;
+  font-size: 0.65rem;
+  opacity: 0.7;
 }
 #st-days {
   margin-top: 1vh;
