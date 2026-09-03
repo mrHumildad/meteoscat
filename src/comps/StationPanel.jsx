@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { fmt } from '../logic/utils.js';
+import { fmt, fmtNum } from '../logic/utils.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDroplet, faSeedling, faTemperatureLow, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { fmtDayCat } from '../logic/utils.js';
@@ -94,7 +94,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation 
             <FontAwesomeIcon icon={faDroplet} />
           </span>
           <span className="st-block-value">
-            TOT {station.properties?.precAcc ?? "N/A"} mm
+            TOT {fmtNum(station.properties?.precAcc ?? null, 1) || "N/A"} mm
           </span>
         </div>
         <div className="block-right">
@@ -110,7 +110,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation 
                     100
                   }%`,
                 }}
-                title={`${d.day}: ${d.precAcc} mm`}
+                title={`${d.day}: ${fmtNum(d.precAcc, 1)} mm`}
               />
             ))}
           </div>
@@ -122,7 +122,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation 
             <FontAwesomeIcon icon={faSeedling} />
           </span>
           <span className="st-block-value">
-            MITJANA {station.properties?.humAvg ?? "N/A"} %
+            MITJANA {fmtNum(station.properties?.humAvg ?? null, 0) || "N/A"} %
           </span>
         </div>
         <div className="block-right">
@@ -135,7 +135,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation 
                   height: `${((d.humAvg - globalStats.humMin) /
                     (globalStats.humMax - globalStats.humMin || 1)) * 100}%`
                 }}
-                title={`${d.day}: ${d.humAvg}%`}
+                title={`${d.day}: ${fmtNum(d.humAvg, 0)}%`}
               />
             ))}
           </div>
@@ -147,7 +147,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation 
             <FontAwesomeIcon icon={faTemperatureLow} />
           </span>
           <span className="st-block-value">
-            MITJANA {station.properties?.tempAvg ?? "N/A"} °C
+            MITJANA {fmtNum(station.properties?.tempAvg ?? null, 1) || "N/A"} °C
           </span>
         </div>
         <div className="block-right">
@@ -160,7 +160,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation 
       ((d.tempAvg - globalStats.tempMin) /
         (globalStats.tempMax - globalStats.tempMin || 1)) * 100
     }%` }}
-                title={`${d.day}: ${d.tempAvg} °C`}
+                title={`${d.day}: ${fmtNum(d.tempAvg, 1)} °C`}
               />
             ))}
           </div>

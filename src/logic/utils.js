@@ -86,6 +86,16 @@ export function fmtDayCat(dateInput) {
   return `${dayAbbrev} ${dayNum}`;
 }
 
+// Compact Catalan date for tight row labels, e.g. "15 nov" (no weekday, no
+// year) — used by the filter panel's instance rows / editor labels.
+export function fmtShortCat(dateInput) {
+  if (dateInput === null || dateInput === undefined || dateInput === '') return ''; // new Date(null) is the epoch
+  const d = new Date(dateInput);
+  if (isNaN(d)) return '';
+  const monthsCat = ['gen', 'febr', 'març', 'abr', 'maig', 'juny', 'jul', 'ag', 'set', 'oct', 'nov', 'des'];
+  return `${d.getDate()} ${monthsCat[d.getMonth()]}`;
+}
+
 // Full Catalan date, e.g. "DS 15 nov 2025"; keeps AVUI/AHIR for the last 2 days
 export function fmtDateCat(dateInput) {
   const dayCat = fmtDayCat(dateInput);
@@ -95,6 +105,25 @@ export function fmtDateCat(dateInput) {
   const monthsCat = ['gen', 'febr', 'març', 'abr', 'maig', 'juny', 'jul', 'ag', 'set', 'oct', 'nov', 'des'];
   return `${dayCat} ${monthsCat[d.getMonth()]} ${d.getFullYear()}`;
 }
+
+/**
+ * Round a value for display with AT MOST `maxDec` decimals, stripping float
+ * noise and trailing zeros: 0.30000000000000004 → '0.3', 88.39999… → '88'
+ * (maxDec 0), 21.0 → '21'. Humidity renders whole (%) with maxDec 0;
+ * temperature and rain keep 1 decimal. DISPLAY-ONLY: filter comparisons and
+ * map logic keep the full-precision numbers. Returns '' for no-data input so
+ * callers can fall back to their own placeholder.
+ */
+export const fmtNum = (v, maxDec = 1) => {
+  if (v === null || v === undefined || v === '') return '';
+  const n = Number(v);
+  if (!Number.isFinite(n)) return '';
+  // Round HALF AWAY FROM ZERO, matching the ECMA-262 toFixed behaviour the
+  // data pipeline already mirrors (meteokat/aggregate.py safe_avg).
+  const f = 10 ** maxDec;
+  const r = Math.round(Math.abs(n) * f) / f;
+  return String(n < 0 ? -r : r);
+};
 
 
 

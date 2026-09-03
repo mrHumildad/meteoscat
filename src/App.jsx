@@ -2,19 +2,20 @@ import Map from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import logo from './assets/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faDroplet, faFilter, faMountainSun, faRulerVertical, faSeedling, faTemperatureLow, faTree } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faCar, faDroplet, faFilter, faMountainSun, faRulerVertical, faSeedling, faTemperatureLow, faTree } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadAvailableDays, loadSummaries } from './logic/refineData.js'
-import { getDaysInRange, fmt, daysCount, fmtDayCat, fmtDateCat, parseDay } from './logic/utils.js';
+import { getDaysInRange, fmtDateCat, parseDay } from './logic/utils.js';
 import './App.css'
 
 import { computeGeoValues } from './logic/computeGeoValues.js';
-import { MCSC_LEGEND, MCSC_GREY, MCSC_WATER_COLOR, renderMcscSld } from './logic/mcscLegend.js';
+import { filterStationCodes } from './logic/filterStations.js';
+import { buildAggregateTable, limitsForWindow, windowToDates, TYPE_TO_VARIABLE } from './logic/filterAggregate.js';
+import { MCSC_LEGEND, MCSC_GREY, MCSC_WATER_COLOR, MCSC_WATER_ENTRY } from './logic/mcscLegend.js';
 import { ELEVATION_TILES, ELEVATION_ATTRIBUTION, sampleElevation } from './logic/elevation.js';
-import { registerAltitudeProtocol } from './logic/altitudeOverlay.js';
-import { registerMeteoProtocol } from './logic/meteoOverlay.js';
+import { MCSC_ATTRIBUTION } from './logic/mcscRaw.js';
+import { registerTerrainProtocol, terrainTileUrl } from './logic/terrainOverlay.js';
 import { registerSeaProtocol } from './logic/seaOverlay.js';
-// import Selectors from './comps/Selectors.jsx'; // commented out — kept as reference while rebuilding the filter section
 import FilterPanel from './comps/FilterPanel.jsx';
 import StationPanel from './comps/StationPanel.jsx';
 
@@ -23,6 +24,11 @@ const bounds = [[-1.0, 40.0], [4.0, 44.0]];
 const center = [1.9, 41.9];
 const minZoom = 7;
 const maxZoom = 15;
+
+// Default display window: station circles, StationPanel chart and totals are
+// computed over the last DISPLAY_DAYS days from the reference day (filters
+// are independent — each has its own window).
+const DISPLAY_DAYS = 60;
 
 // MapLibre expression for the value shown inside each station circle.
 // Data-driven: reads the feature property `variable` and renders it as text.
@@ -62,98 +68,123 @@ const LABEL_CLASSES = {
   humAvg: 'humidity'
 };
 
-// Hex colour (no '#') for the open sea, matching the MCSC water class — and
-// greying out with it when the Aigües legend entry is dimmed, so the sea
-// behaves exactly like the rest of the water terrain.
+// Hex colour (no '#') for the open sea, matching the MCSC water class. When
+// the Aigües legend entry is dimmed the sea is left TRANSPARENT (null → the
+// sea overlay is off), so the bathymetric relief shows through exactly like
+// dimmed land-cover classes — no grey "deselected" colour anywhere.
 const seaColorHex = (offCodes) => {
-  const aigues = MCSC_LEGEND.find(e => e.label.startsWith('Aigües'));
-  return (aigues && offCodes.has(aigues.codes) ? MCSC_GREY : MCSC_WATER_COLOR).slice(1);
+  const aigues = MCSC_WATER_ENTRY;
+  return aigues && offCodes.has(aigues.codes) ? null : MCSC_WATER_COLOR.slice(1);
 };
-
-// Meteo area filters: rain/humidity/temperature station values interpolated
-// onto a continuous field (meteoGrid.js) and served through the meteo://
-// protocol — one raster layer per variable so active bands stack on the map.
-const METEO_VARS = [
-  { variable: 'precAcc', key: 'rain' },
-  { variable: 'humAvg', key: 'hum' },
-  { variable: 'tempAvg', key: 'temp' },
-];
-
-// ICGC/CREAF MCSC land-cover map (cobertes-sol, layer cobertes_2024), served
-// as raster tiles straight to the browser (CORS enabled). CC BY 4.0 — the
-// attribution below is injected into the map's attribution control via the
-// raster source.
-const MCSC_WMS_TILES =
-  'https://geoserveis.icgc.cat/servei/catalunya/cobertes-sol/wms?' +
-  'service=WMS&version=1.1.1&request=GetMap&layers=cobertes_2024&styles=&' +
-  'format=image/png&transparent=true&srs=EPSG:3857&width=256&height=256&' +
-  'bbox={bbox-epsg-3857}';
-const MCSC_ATTRIBUTION =
-  'Mapa de Cobertes del Sòl de Catalunya (MCSC) v1.0 — ICGC & CREAF, ' +
-  'layer cobertes_2024 — CC BY 4.0 — http://www.icgc.cat';
 
 // The MCSC raster is a palette map: each pixel holds an integer band value
 // (the WMS exposes it as "class = '<classCode>. (<band>) <name>'", e.g.
 // '342. (22) Eixample'). Bands follow MCSC class-code order, so every legend
 // entry's band values are hard-coded in mcscLegend.js. The legend doubles as
-// a switch panel: the layer's SLD is rebuilt on every toggle, colouring the
-// selected classes with their official colours and the dimmed ones (plus band
-// values with no legend entry) with a single shared grey.
+// a switch panel. Terrain is painted CLIENT-SIDE by the stacked terrain
+// overlay (terrainOverlay.js): every pixel carries its class colour only
+// when EVERY active filter passes — a selected class AND the altitude band
+// AND every meteo instance — and is transparent otherwise, so the relief
+// shows through like abroad (see the terrainState memo below).
 const App = ()  => {
   // Map style — Stadia free tier (no API key). PROD alternative kept:
   // 'https://demotiles.maplibre.org/style.json'   // public, no key
   const styleUrl = 'https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json';
   const [selectedStation, setSelectedStation] = useState(null);
-  const [days, setDays] = useState([]);
-  const [data, setData] = useState(null);
-  const [minDate, setMinDate] = useState(null);
-  const [maxDate, setMaxDate] = useState(null);
-  const [daysRange, setDaysRange] = useState(null);
+  const [days, setDays] = useState([]);           // available 'YYYY-MM-DD' days, oldest first
+  const [data, setData] = useState(null);         // all daily shards (every available day)
   const [labelMode, setLabelMode] = useState('humAvg'); // station-circle info: 'none' | 'precAcc' | 'altitud' | 'tempAvg' | 'humAvg'
   const [stationsGeo, setStationsGeo] = useState(null);
   const [geoWithData, setGeoWithData] = useState(null);
-  const [showCalendar, setShowCalendar] = useState(false);
   const [showLegend, setShowLegend] = useState(false);           // MCSC legend panel (overlay is always on)
   const [showTerrain3D, setShowTerrain3D] = useState(true);     // 3D terrain (tilts the camera)
   const [mapReady, setMapReady] = useState(false); // true once onMapLoad has added every layer
   const [mcscOff, setMcscOff] = useState(() => new Set()); // codes of dimmed legend entries
   const [filteredStationsCodes, setFilteredStationsCodes] = useState([]);
-  const [rangeLimits, setRangeLimits] = useState(null);
   const [dataLoading, setDataLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
   const [clickedElevation, setClickedElevation] = useState(null); // DEM sample, m
-  const [showFilter, setShowFilter] = useState(false); // rebuilt filter panel open state
-  const [reliefRange, setReliefRange] = useState(null); // applied altitude filter [lo, hi]; null = off
-  const [rainRange, setRainRange] = useState(null);     // applied rain band [lo, hi]; null = off
-  const [humRange, setHumRange] = useState(null);       // applied humidity band [lo, hi]; null = off
-  const [tempRange, setTempRange] = useState(null);     // applied temperature band [lo, hi]; null = off
-  // The altitude-band overlay state is derived from the applied relief range.
-  const altBand = reliefRange;
+  const [pickRoute, setPickRoute] = useState(false); // car button armed: next map click opens Google Maps directions
+  const [showFilter, setShowFilter] = useState(false); // filter panel open state
+  const [reliefRange, setReliefRange] = useState(null); // applied altitude band [lo, hi]; null = off
+  const [meteoFilters, setMeteoFilters] = useState([]); // [{ id, type, from, to, range }] — one per meteo filter instance
+  const [nextFilterId, setNextFilterId] = useState(1);
   const mapRef = useRef(null);
   const dataReqRef = useRef(0);
   const selectedStationRef = useRef(null); // stale-guard for async takeElevation
-  const altBandRef = useRef(null); // band read by the alt:// tile protocol
-  const windowKeyRef = useRef(''); // data-window key read by the meteo:// tile protocol
-  const geoWithDataRef = useRef(null); // latest features read by the meteo:// tile protocol
+  const pickRouteRef = useRef(false); // latest armed state read by the (once-registered) map handlers
+  const terrainStateRef = useRef(null); // stacked-overlay state read by the terrain:// tile protocol
+  const geoWithDataRef = useRef(null); // latest features read by the terrain:// tile protocol
+  const aggRef = useRef(null); // aggregate table read by the terrain:// tile protocol
 
-  // SLD-classified tile URL for the MCSC raster, rebuilt whenever a legend
-  // switch dims / restores a class (unselected and unlisted band values grey).
-  const mcscTiles = useMemo(() => {
-    const sld = renderMcscSld(MCSC_LEGEND, mcscOff);
-    return `${MCSC_WMS_TILES}&SLD_BODY=${encodeURIComponent(sld)}`;
-  }, [mcscOff]);
+  // Reference day = latest available data day; day ranges of every filter are
+  // offsets back from it.
+  const refDay = useMemo(() => (days.length ? parseDay(days[days.length - 1]) : null), [days]);
+  const maxDays = days.length;
 
-  // Applied area filters, memoized so FilterPanel's sync effect doesn't
-  // re-run on every App render (object identity is part of its deps).
-  const areaRanges = useMemo(
-    () => ({ relief: reliefRange, rain: rainRange, hum: humRange, temp: tempRange }),
-    [reliefRange, rainRange, humRange, tempRange]
-  );
+  // Prefix-sum aggregate table over ALL days — powers per-filter windows,
+  // value-slider limits and the stacked-overlay grids.
+  const agg = useMemo(() => buildAggregateTable(data ?? {}), [data]);
+
   // Stable feature list for the same data window (the `?? []` fallback would
   // otherwise create a new array on every render).
   const stationsFeatures = useMemo(() => geoWithData?.features ?? [], [geoWithData]);
 
-  // 0️⃣ Load the list of available days once, then open on the first day
+  // Display window (last DISPLAY_DAYS days from the reference day) — the
+  // values shown in station circles and the StationPanel chart/totals.
+  const displayWindow = useMemo(() => {
+    if (!refDay || !data) return null;
+    const from = new Date(refDay);
+    from.setDate(from.getDate() - (DISPLAY_DAYS - 1));
+    return { from, to: new Date(refDay) };
+  }, [refDay, data]);
+
+  // Altitude slider limits: static station metadata (min–max altitud).
+  const altLimits = useMemo(() => {
+    if (!stationsGeo) return null;
+    const alts = [];
+    for (const f of stationsGeo.features ?? []) {
+      const a = Number(f.properties?.altitud);
+      if (Number.isFinite(a)) alts.push(a);
+    }
+    return alts.length ? [Math.min(...alts), Math.max(...alts)] : null;
+  }, [stationsGeo]);
+
+  // Stacked terrain overlay state — the full set of conditions every painted
+  // pixel must satisfy: the dimmed (off) legend classes, the altitude band
+  // when narrowed below the stations' altitud span, and every ACTIVE meteo
+  // instance (band narrower than its window's full span) with its concrete
+  // window dates. Any change here regenerates the painted terrain tiles.
+  const terrainState = useMemo(() => {
+    const off = [...mcscOff].sort();
+    const altActive = !!reliefRange && !!altLimits &&
+      (reliefRange[0] !== altLimits[0] || reliefRange[1] !== altLimits[1]);
+    const filters = [];
+    for (const f of meteoFilters) {
+      const variable = TYPE_TO_VARIABLE[f.type];
+      if (!variable) continue;
+      const span = agg?.days.length ? limitsForWindow(agg, f.type, f.from, f.to) : null;
+      const w = refDay ? windowToDates(refDay, f.from, f.to) : null;
+      if (!w) continue;
+      const active = span != null && (f.range[0] !== span[0] || f.range[1] !== span[1]);
+      if (!active) continue;
+      filters.push({ variable, from: w.from, to: w.to, band: [f.range[0], f.range[1]] });
+    }
+    filters.sort((a, b) =>
+      (a.variable < b.variable ? -1 : a.variable > b.variable ? 1 : 0) ||
+      a.from.localeCompare(b.from) ||
+      a.to.localeCompare(b.to) ||
+      a.band[0] - b.band[0] ||
+      a.band[1] - b.band[1]
+    );
+    return { off, alt: altActive ? [reliefRange[0], reliefRange[1]] : null, filters };
+  }, [mcscOff, reliefRange, altLimits, meteoFilters, agg, refDay]);
+
+  // Terrain tile URL — the state signature token changes whenever any filter
+  // does, so setTiles() re-requests and the protocol repaints.
+  const terrainTiles = useMemo(() => [terrainTileUrl(terrainState)], [terrainState]);
+
+  // 0️⃣ Load the list of available days once
   useEffect(() => {
     let mounted = true;
     loadAvailableDays()
@@ -161,11 +192,6 @@ const App = ()  => {
         if (!mounted) return;
         if (!availableDays.length) throw new Error('No data available');
         setDays(availableDays);
-        // index.json is oldest-first: minDate = first, maxDate = last
-        // parseDay → local midnight, so calendar cells and disabled checks agree
-        setMinDate(parseDay(availableDays[0]));
-        setMaxDate(parseDay(availableDays[availableDays.length - 1]));
-        setDaysRange({ from: parseDay(availableDays[0]) });
       })
       .catch(err => {
         if (!mounted) return;
@@ -176,15 +202,13 @@ const App = ()  => {
     return () => { mounted = false };
   }, []);
 
-  // 0.5️⃣ Fetch daily summaries for the visible window whenever it changes
+  // 0.5️⃣ Fetch the daily summaries for EVERY available day once — filters
+  // may reference any window, and the aggregate table needs all of them.
   useEffect(() => {
-    if (!days.length || !daysRange?.from) return;
-    const from = new Date(daysRange.from); from.setHours(0, 0, 0, 0);
-    const to = daysRange.to ? new Date(daysRange.to) : from; to.setHours(0, 0, 0, 0);
+    if (!days.length) return;
     const reqId = ++dataReqRef.current;
-    console.log(`Fetching summaries for ${fmt(from)} -> ${fmt(to)}`);
     setDataLoading(true);
-    loadSummaries(days, fmt(from), fmt(to))
+    loadSummaries(days, days[0], days[days.length - 1])
       .then(summaries => {
         if (dataReqRef.current !== reqId) return; // stale response
         setData(summaries);
@@ -198,7 +222,7 @@ const App = ()  => {
       .finally(() => {
         if (dataReqRef.current === reqId) setDataLoading(false);
       });
-  }, [days, daysRange, minDate, maxDate]);
+  }, [days]);
 
   useEffect(() => {
     let mounted = true;
@@ -292,31 +316,37 @@ const App = ()  => {
       }, 'stations-label');
     }
 
-    // MCSC land-cover overlay, below the stations: a single SLD-classified
-    // raster where selected classes render in their official colours and
-    // dimmed ones (plus unlisted band values) render in a shared grey.
-    const addMcscLayer = (tiles) => {
-      if (!map.getSource('mcsc')) {
-        map.addSource('mcsc', {
-          type: 'raster',
-          tiles: [tiles],
-          tileSize: 256,
-          minzoom: 7,
-          maxzoom: 14,
-          attribution: MCSC_ATTRIBUTION
-        });
-      }
-      if (!map.getLayer('mcsc')) {
-        map.addLayer({
-          id: 'mcsc',
-          type: 'raster',
-          source: 'mcsc',
-          layout: { visibility: 'visible' }, // the MCSC overlay is always on
-          paint: { 'raster-opacity': 0.85 }
-        }, 'stations-circle');
-      }
-    };
-    addMcscLayer(mcscTiles);
+    // Stacked terrain overlay (terrain:// protocol): the single land-cover
+    // layer, below the stations and the hillshade (so the relief shading stays
+    // on top). It paints the MCSC class colour client-side only where EVERY
+    // active condition passes — selected class + altitude band + all meteo
+    // instances — and leaves failing pixels transparent, so unselected areas
+    // show the relief exactly like abroad (no grey mask). The source is
+    // always on; the filter state baked into the tile URL is refreshed by the
+    // terrain-tiles effect whenever it changes.
+    registerTerrainProtocol(map, () => terrainStateRef.current, () => ({
+      agg: aggRef.current,
+      features: geoWithDataRef.current?.features ?? [],
+    }));
+    if (!map.getSource('terrain')) {
+      map.addSource('terrain', {
+        type: 'raster',
+        tiles: terrainTiles,
+        tileSize: 256,
+        minzoom: 7,
+        maxzoom: 14,
+        attribution: MCSC_ATTRIBUTION
+      });
+    }
+    if (!map.getLayer('terrain')) {
+      map.addLayer({
+        id: 'terrain',
+        type: 'raster',
+        source: 'terrain',
+        layout: { visibility: 'visible' }, // the terrain overlay is always on
+        paint: { 'raster-opacity': 0.85 } // same look as the old MCSC layer
+      }, 'stations-circle');
+    }
 
     // Continuous elevation: raster-dem source (terrarium) shared by the
     // hillshade overlay and 3D terrain, drawn below the stations.
@@ -343,76 +373,15 @@ const App = ()  => {
       }, 'stations-circle');
     }
 
-    // Altitude-band area overlay: client-classified terrarium tiles served
-    // through the custom `alt://` protocol. In-band ⟶ transparent (the map
-    // shows through), out-of-band ⟶ the same grey as unselected MCSC classes;
-    // the band comes from the relief slider via altBandRef so tiles
-    // regenerate only on band change.
-    registerAltitudeProtocol(map, () => altBandRef.current);
-    if (!map.getSource('altitude-band')) {
-      map.addSource('altitude-band', {
-        type: 'raster',
-        tiles: ['alt://{z}/{x}/{y}?b=off'],
-        tileSize: 256,
-        minzoom: 7,
-        maxzoom: 15
-      });
-    }
-    if (!map.getLayer('altitude-band')) {
-      // Inserted BELOW the hillshade so the grey mask keeps the relief shading
-      // on top — exactly how dimmed MCSC legend classes look (grey + relief).
-      map.addLayer({
-        id: 'altitude-band',
-        type: 'raster',
-        source: 'altitude-band',
-        layout: { visibility: 'none' },
-        paint: { 'raster-opacity': 0.85 } // transparent in-band pixels + grey mask
-      }, 'hillshade');
-    }
-
-    // Meteo area overlays (rain/humidity/temp): station values interpolated
-    // per pixel through the custom `meteo://` protocol, one raster layer per
-    // variable so active bands stack. Same mask semantics as the altitude
-    // band (in-band transparent, out-of-band grey, sea transparent); the
-    // variable, data window and band come from the tile URL, so tiles
-    // regenerate only when a band or the data window changes.
-    registerMeteoProtocol(map, () => ({
-      windowKey: windowKeyRef.current,
-      features: geoWithDataRef.current?.features ?? [],
-    }));
-    METEO_VARS.forEach(({ variable }) => {
-      const bandId = `${variable}-band`;
-      if (!map.getSource(bandId)) {
-        map.addSource(bandId, {
-          type: 'raster',
-          tiles: ['meteo://{z}/{x}/{y}?v=off'],
-          tileSize: 256,
-          minzoom: 7,
-          maxzoom: 15
-        });
-      }
-      if (!map.getLayer(bandId)) {
-        // Inserted BELOW the hillshade, like the altitude band, so the grey
-        // mask keeps the relief shading on top.
-        map.addLayer({
-          id: bandId,
-          type: 'raster',
-          source: bandId,
-          layout: { visibility: 'none' },
-          paint: { 'raster-opacity': 0.85 }
-        }, 'hillshade');
-      }
-    });
-
     // Sea overlay: paints the ocean (elevation <= 0, from the same DEM the
     // relief uses) with the water colour. It sits ABOVE the hillshade — which
-    // would otherwise render the flat/bathy sea grey — and BELOW the MCSC
+    // would otherwise render the flat/bathy sea grey — and BELOW the terrain
     // layer, so the land-cover water class draws on top with the same colour.
     registerSeaProtocol();
     if (!map.getSource('sea')) {
       map.addSource('sea', {
         type: 'raster',
-        tiles: [`sea://{z}/{x}/{y}?c=${seaColorHex(mcscOff)}`],
+        tiles: [`sea://{z}/{x}/{y}?c=${seaColorHex(mcscOff) ?? 'off'}`],
         tileSize: 256,
         minzoom: 7,
         maxzoom: 15
@@ -425,17 +394,19 @@ const App = ()  => {
         source: 'sea',
         layout: { visibility: 'visible' },
         paint: { 'raster-opacity': 1 }
-      }, 'mcsc');
+      }, 'terrain');
     }
 
     map.on('click', 'stations-circle', (e) => {
+      // Directions mode: a station click picks the point (opens Google Maps)
+      // instead of opening the station panel — the map-level handler below
+      // already fires for it, so just bail out here.
+      if (pickRouteRef.current) return;
       if (!e.features || !e.features.length) return;
       const f = e.features[0];
       const coords = f.geometry.coordinates.slice();
       const code = f.properties?.codi ?? 'unknown';
       console.log('Clicked station', code, f.properties);
-      //console.log({...stationsGeo.features.find(s => s.properties?.codi === code), data: Object.keys(data).map(day => data[day]?.[code] || null)});   
-      //console.log(geoWithData)
 
       setSelectedStation(code);   
       map.flyTo({ center: coords, zoom: Math.max(map.getZoom(), 12) });
@@ -450,49 +421,45 @@ const App = ()  => {
       });
     });
 
-    map.on('mouseenter', 'stations-circle', () => map.getCanvas().style.cursor = 'pointer');
-    map.on('mouseleave', 'stations-circle', () => map.getCanvas().style.cursor = '');
+    map.on('mouseenter', 'stations-circle', () => {
+      map.getCanvas().style.cursor = pickRouteRef.current ? 'crosshair' : 'pointer';
+    });
+    map.on('mouseleave', 'stations-circle', () => {
+      map.getCanvas().style.cursor = pickRouteRef.current ? 'crosshair' : '';
+    });
+
+    // Car (directions) mode: while armed, clicking anywhere on the map opens
+    // a Google Maps "how to get there" route to that point in a new tab.
+    map.on('click', (e) => {
+      if (!pickRouteRef.current) return;
+      const { lat, lng } = e.lngLat ?? {};
+      if (lat == null || lng == null) return;
+      const dest = `${lat.toFixed(5)},${lng.toFixed(5)}`;
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}`, '_blank');
+      // One pick per arming: disarm right after the tab opens (Esc also works).
+      setPickRoute(false);
+    });
 
     // layers are all in place now — let the terrain effect apply the initial
     // (default-on) 3D state, since it can't run before the map exists
     setMapReady(true);
   };
 
-  // 1️⃣ Compute geoWithData
+  // 1️⃣ Compute geoWithData over the DISPLAY window (labels + panel values;
+  // filters evaluate their own windows via the aggregate table)
   useEffect(() => {
-    if (!stationsGeo || !data) return;
-    const from = daysRange?.from ?? null;
-    const to = daysRange?.to ?? from;
-    const daysInRange = getDaysInRange(data, from, to);
-    const computed = computeGeoValues(stationsGeo, data, daysInRange);
-    setGeoWithData(computed);
-    const allTemps = [];
-    const allRains = [];
-    const allHums = [];
-    const allAlts = [];
-    computed.features.forEach(f => {
-      const temp = Number(f.properties?.tempAvg);
-      const rain = Number(f.properties?.precAcc);
-      const hum  = Number(f.properties?.humAvg);
-      const alt  = Number(f.properties?.altitud);
-          
-      if (!isNaN(temp) && temp !== 0) allTemps.push(temp);
-      if (!isNaN(rain)) allRains.push(rain);
-      if (!isNaN(hum) && hum !== 0) allHums.push(hum);
-      if (Number.isFinite(alt)) allAlts.push(alt);
-    });
+    if (!stationsGeo || !data || !displayWindow) return;
+    const daysInRange = getDaysInRange(data, displayWindow.from, displayWindow.to);
+    setGeoWithData(computeGeoValues(stationsGeo, data, daysInRange));
+  }, [stationsGeo, data, displayWindow]);
 
-    setRangeLimits({
-      tempMin: Math.min(...allTemps),
-      tempMax: Math.max(...allTemps),
-      rainMin: Math.min(...allRains),
-      rainMax: Math.max(...allRains),
-      humMin: Math.min(...allHums),
-      humMax: Math.max(...allHums),
-      altMin: Math.min(...allAlts),
-      altMax: Math.max(...allAlts),
-    });
-  }, [daysRange, stationsGeo, data]);
+  // 1.5️⃣ Station filter: every meteo instance (its own window + band) AND
+  // the relief band. [] = "no filtering" → show everything.
+  useEffect(() => {
+    setFilteredStationsCodes(
+      filterStationCodes(stationsFeatures, meteoFilters, reliefRange, agg)
+    );
+  }, [stationsFeatures, meteoFilters, reliefRange, agg]);
 
   // 2.5️⃣ Keep station markers + their labels in sync with the station-info
   // mode. 'none' hides the circles (and their name labels, which would float
@@ -517,42 +484,53 @@ const App = ()  => {
     }
   }, [labelMode]);
 
-  // 2.7️⃣ Rebuild the MCSC raster tiles when a legend switch dims / restores a
-  // class (each switch state produces a different SLD_BODY URL).
+  // 2.7️⃣ Rebuild the stacked-terrain tiles when any filter changes — a
+  // legend switch, the altitude band, or a meteo instance's window/band. The
+  // state signature in the URL differs, so setTiles re-requests and the
+  // terrain:// protocol repaints with the new conditions.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
-    const src = map.getSource('mcsc');
+    if (!map || !mapReady) return;
+    terrainStateRef.current = terrainState;
+    const src = map.getSource('terrain');
     if (src && typeof src.setTiles === 'function') {
-      src.setTiles([mcscTiles]);
+      src.setTiles(terrainTiles);
     }
-  }, [mcscTiles]);
+  }, [terrainState, terrainTiles, mapReady]);
 
   // 2.7.1️⃣ Keep the open sea in sync with the Aigües legend switch: blue by
-  // default, grey when the water class is dimmed (so the sea behaves exactly
-  // like the rest of the water terrain). The colour bakes into the tile URL,
-  // regenerating the overlay tiles on each change.
+  // default, fully transparent when the water class is dimmed (so the sea
+  // shows the relief, exactly like a dimmed land-cover class — no grey). The
+  // colour bakes into the tile URL, regenerating the overlay tiles.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !map.getSource('sea')) return;
-    map.getSource('sea').setTiles([`sea://{z}/{x}/{y}?c=${seaColorHex(mcscOff)}`]);
+    map.getSource('sea').setTiles([`sea://{z}/{x}/{y}?c=${seaColorHex(mcscOff) ?? 'off'}`]);
   }, [mcscOff]);
 
   // keep the latest selected station in a ref so async DEM samples can check
   // they still match the station the user last clicked
   useEffect(() => { selectedStationRef.current = selectedStation; }, [selectedStation]);
 
-  // keep the altitude band in a ref so the alt:// tile protocol can read it
-  useEffect(() => { altBandRef.current = altBand; }, [altBand]);
+  // keep the armed state in a ref so the once-registered map handlers see it
+  useEffect(() => { pickRouteRef.current = pickRoute; }, [pickRoute]);
 
-  // keep the current data window + features in refs so the meteo:// tile
-  // protocol can (re)build its interpolation grid for the right window
+  // While the directions (car) button is armed the pointer becomes a
+  // crosshair over the map so the next click is understood as "pick here";
+  // Escape cancels the arming without opening anything.
   useEffect(() => {
-    windowKeyRef.current = daysRange?.from
-      ? `${fmt(daysRange.from)}-${fmt(daysRange.to ?? daysRange.from)}`
-      : '';
-  }, [daysRange]);
+    const map = mapRef.current;
+    if (map) map.getCanvas().style.cursor = pickRoute ? 'crosshair' : '';
+    if (!pickRoute) return;
+    const onKey = (e) => { if (e.key === 'Escape') setPickRoute(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [pickRoute]);
+
+  // keep the display features + aggregate table in refs so the terrain:// tile
+  // protocol can (re)build grids for the right data
   useEffect(() => { geoWithDataRef.current = geoWithData; }, [geoWithData]);
+  useEffect(() => { aggRef.current = agg; }, [agg]);
 
   // 2.9️⃣ Toggle 3D terrain (raster-dem source + tilted camera)
   useEffect(() => {
@@ -567,47 +545,10 @@ const App = ()  => {
     }
   }, [showTerrain3D, mapReady]);
 
-  // 2.10️⃣ Altitude-band overlay: visible only while the altitude slider is
-  // narrowed below its full span; the band bakes into the tile URL so each
-  // change regenerates the classified tiles.
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !map.getSource('altitude-band')) return;
-    const active = !!altBand && !!rangeLimits &&
-      (altBand[0] !== rangeLimits.altMin || altBand[1] !== rangeLimits.altMax);
-    map.setLayoutProperty('altitude-band', 'visibility', active ? 'visible' : 'none');
-    map.getSource('altitude-band').setTiles([
-      active ? `alt://{z}/{x}/{y}?b=${altBand[0]}-${altBand[1]}` : 'alt://{z}/{x}/{y}?b=off'
-    ]);
-  }, [altBand, rangeLimits]);
-
-  // 2.11️⃣ Meteo bands: one raster layer per variable, visible only while its
-  // slider is narrowed below the full span. Variable, data window and band
-  // bake into the tile URL so each change regenerates the classified tiles.
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    const w = windowKeyRef.current;
-    const bandOf = { rain: rainRange, hum: humRange, temp: tempRange };
-    for (const { variable, key } of METEO_VARS) {
-      const bandId = `${variable}-band`;
-      if (!map.getSource(bandId)) continue;
-      const band = bandOf[key];
-      const active = !!band && !!rangeLimits &&
-        (band[0] !== rangeLimits[`${key}Min`] || band[1] !== rangeLimits[`${key}Max`]);
-      map.setLayoutProperty(bandId, 'visibility', active ? 'visible' : 'none');
-      map.getSource(bandId).setTiles([
-        active
-          ? `meteo://{z}/{x}/{y}?v=${variable}&w=${w}&b=${band[0]}_${band[1]}`
-          : 'meteo://{z}/{x}/{y}?v=off'
-      ]);
-    }
-  }, [rainRange, humRange, tempRange, rangeLimits, daysRange]);
-
-  // 2️⃣ Update map once geoWithData is ready (and apply the slider filter).
+  // 2️⃣ Update map once geoWithData is ready (and apply the filter).
   // All stations stay in the source; out-of-range ones carry inRange=false and
-  // are dimmed to MCSC_GREY (same grey as deselected terrain classes) instead
-  // of being removed, so you can see what's being filtered out.
+  // are dimmed (smaller, faded, grey) instead of being removed, so you can see
+  // what's being filtered out.
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -615,7 +556,7 @@ const App = ()  => {
       // prefer geoWithData (computed averages) when available
       const dataToSet = geoWithData || stationsGeo;
       if (!dataToSet) return;
-      // filtering is active only once a slider has been narrowed (non-empty list)
+      // filtering is active only once a filter constrains (non-empty list)
       const filteringOn = filteredStationsCodes.length > 0;
       const features = (dataToSet.features ?? []).map(f => ({
         ...f,
@@ -657,47 +598,35 @@ const App = ()  => {
     }
   }, [stationsGeo, geoWithData, filteredStationsCodes, labelMode]);
 
-  //const daysNum = daysCount(daysRange);
-  let headerdays = fmtDayCat(daysRange?.from)
-  if (daysRange?.to && daysRange.to.getTime() !== daysRange.from.getTime()) {
-    headerdays += ` - ${fmtDayCat(daysRange?.to)}`;
-  }
-  const headerDayCount = daysCount(daysRange) > 1 ? ` (${daysCount(daysRange)} dies)` : '';
+  // Filter instance handlers (lifted to App so the map + stations share one
+  // source of truth)
+  const addFilter = (type) => {
+    const from = maxDays > 0 ? Math.min(60, maxDays - 1) : 0;
+    const span = agg?.days.length ? limitsForWindow(agg, type, from, 0) : null;
+    const inst = { id: `f${nextFilterId}`, type, from, to: 0, range: span ? [span[0], span[1]] : [0, 0] };
+    setMeteoFilters(prev => [...prev, inst]);
+    setNextFilterId(n => n + 1);
+    return inst;
+  };
+  const updateFilter = (id, patch) => {
+    setMeteoFilters(prev => prev.map(f => (f.id === id ? { ...f, ...patch } : f)));
+  };
+  const removeFilter = (id) => {
+    setMeteoFilters(prev => prev.filter(f => f.id !== id));
+  };
+
   // latest available data day (index.json is oldest-first) + staleness hint
   const latestDate = days.length ? new Date(days[days.length - 1]) : null;
   const dataStale = latestDate ? (Date.now() - latestDate.getTime()) / 86400000 > 1 : false;
 
-  //console.log(geoWithData)
-
-  const handleSelect = (range) => {
-    if (!range) { setDaysRange(null); return; }
-    let from = range.from ? new Date(range.from) : null;
-    let to = range.to ? new Date(range.to) : from;
-    if (minDate && from && from < minDate) from = minDate;
-    if (maxDate && to && to > maxDate) to = maxDate;
-    if (!to || from?.getTime() === to?.getTime()) {
-      setDaysRange(from ? { from } : null);
-    } else {
-      setDaysRange({ from, to });
-    }
-  };
   const stationObj = selectedStation
   ? geoWithData?.features?.find(f => f.properties.codi === selectedStation)
   : null;
-  const applyAreaRange = (key, range) => {
-    if (key === 'relief') setReliefRange(range);
-    else if (key === 'rain') setRainRange(range);
-    else if (key === 'hum') setHumRange(range);
-    else if (key === 'temp') setTempRange(range);
-  };
-  //console.log(rangeLimits)
   return (
     <div className='app'>
       <img  className='logo' src={logo} alt="MetoSeps" />
-      {!showCalendar && <div className="app-header">
+      <div className="app-header">
         <span className='header-title'>MeteoSeps</span>
-        <span className='header-days'>{headerdays}</span>
-        <span className='header-count'>{headerDayCount}</span>
         {latestDate && (
           <span
             className={`header-updated${dataStale ? ' stale' : ''}`}
@@ -706,9 +635,7 @@ const App = ()  => {
             Últimes dades: {fmtDateCat(latestDate)}
           </span>
         )}
-      </div>}
-      {/* {log} */}
-      {/* Rebuilt filter section: single button toggling the panel */}
+      </div>
       {data && (
         <div className="top-buttons">
           <div
@@ -721,40 +648,26 @@ const App = ()  => {
           {showFilter && (
             <FilterPanel
               onClose={() => setShowFilter(false)}
-              onApply={() => setShowFilter(false)}
-              rangeLimits={rangeLimits}
-              stations={stationsFeatures}
-              areaRanges={areaRanges}
-              onApplyAreaRange={applyAreaRange}
+              reliefRange={reliefRange}
+              onApplyRelief={setReliefRange}
+              meteoFilters={meteoFilters}
+              onAddFilter={addFilter}
+              onUpdateFilter={updateFilter}
+              onRemoveFilter={removeFilter}
+              agg={agg}
+              refDay={refDay}
+              maxDays={maxDays}
+              altLimits={altLimits}
               // Forest filter reuses the legend's dim state (mcscOff) — the
               // tree filter is a copy of the legend and drives the same tiles.
               filteredForestCodes={mcscOff}
               onApplyForest={setMcscOff}
-              setFilteredStationsCodes={setFilteredStationsCodes}
             />
           )}
         </div>
       )}
-      {/* Selectors kept as reference while rebuilding the filter section */}
-      {/*
-      {data && rangeLimits && minDate && maxDate && (
-        <Selectors
-          setLabelMode={setLabelMode}
-          stations={geoWithData?.features ?? []}
-          daysRange={daysRange}
-          handleSelect={handleSelect}
-          minDate={minDate}
-          maxDate={maxDate}
-          showCalendar={showCalendar} 
-          setShowCalendar={setShowCalendar}
-          setAltBand={setAltBand}
-          rangeLimits={rangeLimits}
-          filteredStationsCodes={filteredStationsCodes}
-          setFilteredStationsCodes={setFilteredStationsCodes}
-        /> 
-      )}
-      */}
-      {/* Bottom-left button stack: legend (forest), 3D terrain, station info */}
+      {/* Bottom-left button stack: legend (forest), 3D terrain, station info,
+          directions (car) */}
       <div className="bottom-buttons">
         <div
           className={`sel-button forest${showLegend ? ' on' : ''}`}
@@ -781,6 +694,14 @@ const App = ()  => {
         >
           <FontAwesomeIcon icon={LABEL_ICONS[labelMode] ?? faBan} />
         </div>
+        {/* Directions: arm the map so the next click opens Google Maps routes */}
+        <div
+          className={`sel-button directions${pickRoute ? ' on' : ''}`}
+          title="Com hi arribo — tria un punt al mapa (obre Google Maps)"
+          onClick={() => setPickRoute(!pickRoute)}
+        >
+          <FontAwesomeIcon icon={faCar} />
+        </div>
       </div>
       <Map
         key={styleUrl}
@@ -801,7 +722,7 @@ const App = ()  => {
       )}
       {selectedStation && <StationPanel
         station={stationObj}
-        daysRange={daysRange}
+        daysRange={displayWindow}
         data={data}
         setSelectedStation={setSelectedStation}
         elevation={clickedElevation}
@@ -811,7 +732,7 @@ const App = ()  => {
           <div className="mcsc-legend-title">Cobertes del sòl (MCSC)</div>
           {/* Info-only legend: dimming terrain types is done from the filter
               panel (Bosc), so these rows are not interactive. They still show
-              the current map state — dimmed classes appear grey. */}
+              the current map state — dimmed classes appear as a grey swatch. */}
           {MCSC_LEGEND.map(entry => {
             const off = mcscOff.has(entry.codes);
             return (

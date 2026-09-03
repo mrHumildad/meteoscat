@@ -4,8 +4,10 @@ import {
   sampleMeteoGrid,
   distKm,
   getMeteoGrid,
+  featuresForWindow,
   GRID_BOUNDS,
 } from './meteoGrid.js';
+import { buildAggregateTable } from './filterAggregate.js';
 
 // Features mirror the shape produced by computeGeoValues.js:
 // geometry Point [lng, lat], properties = { codi, altitud, tempAvg, ... }
@@ -118,11 +120,58 @@ describe('sampleMeteoGrid', () => {
 });
 
 describe('getMeteoGrid', () => {
-  it('caches per (windowKey, variable)', () => {
-    const g1 = getMeteoGrid('w1', 'tempAvg', [feat('A', 2, 42, { tempAvg: 10 })]);
-    const g2 = getMeteoGrid('w1', 'tempAvg', [feat('A', 2, 42, { tempAvg: 10 })]);
+  it('caches per (concrete window, variable)', () => {
+    const g1 = getMeteoGrid('2026-09-01_2026-09-02', 'tempAvg', [feat('A', 2, 42, { tempAvg: 10 })]);
+    const g2 = getMeteoGrid('2026-09-01_2026-09-02', 'tempAvg', [feat('A', 2, 42, { tempAvg: 10 })]);
     expect(g2).toBe(g1); // same window + variable → same cached grid
-    const g3 = getMeteoGrid('w2', 'tempAvg', [feat('A', 2, 42, { tempAvg: 10 })]);
+    const g3 = getMeteoGrid('2026-09-02_2026-09-03', 'tempAvg', [feat('A', 2, 42, { tempAvg: 10 })]);
     expect(g3).not.toBe(g1); // different window → rebuilt
+  });
+});
+
+describe('featuresForWindow', () => {
+  const agg = buildAggregateTable({
+    '2026-09-01': {
+      A: { tempAvg: 10, humAvg: 60, precAcc: 5 },
+      B: { tempAvg: 25, humAvg: 40, precAcc: 2 },
+    },
+    '2026-09-02': {
+      A: { tempAvg: 12, humAvg: 70, precAcc: 3 },
+      B: { tempAvg: 27, humAvg: 45, precAcc: 0 },
+    },
+    '2026-09-03': {
+      A: { tempAvg: 11, humAvg: 65, precAcc: 1.5 },
+    },
+  });
+  const features = [
+    feat('A', 2, 42),
+    feat('B', 2.1, 42),
+    feat('X', 2.2, 42), // absent from the aggregate table
+  ];
+
+  it('computes each station aggregate over the window into the variable property', () => {
+    const out = featuresForWindow(agg, features, 'precAcc', '2026-09-01', '2026-09-03');
+    expect(out[0].properties.precAcc).toBeCloseTo(9.5, 10); // A: 5+3+1.5
+    expect(out[1].properties.precAcc).toBeCloseTo(2, 10);   // B: 2+0 (09-03 missing)
+    expect(out[2].properties.precAcc).toBeNull();           // X: no data
+  });
+
+  it('preserves geometry, codi and altitud', () => {
+    const out = featuresForWindow(agg, features, 'tempAvg', '2026-09-01', '2026-09-03');
+    expect(out[0].geometry.coordinates).toEqual([2, 42]);
+    expect(out[0].properties.codi).toBe('A');
+    expect(out[0].properties.altitud).toBe(0);
+    expect(out[0].properties.tempAvg).toBeCloseTo(11, 10); // (10+12+11)/3
+  });
+
+  it('respects the window endpoints', () => {
+    const out = featuresForWindow(agg, features, 'precAcc', '2026-09-02', '2026-09-02');
+    expect(out[0].properties.precAcc).toBeCloseTo(3, 10); // A on 09-02 only
+    expect(out[1].properties.precAcc).toBeCloseTo(0, 10); // B on 09-02
+  });
+
+  it('returns [] for unknown variables or no features', () => {
+    expect(featuresForWindow(agg, features, 'bogus', '2026-09-01', '2026-09-03')).toEqual([]);
+    expect(featuresForWindow(agg, [], 'precAcc', '2026-09-01', '2026-09-03')).toEqual([]);
   });
 });

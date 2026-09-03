@@ -26,7 +26,9 @@ export const computeGeoValues = (stationsGeo, data, daysInRange) => {
         const humidityAvg = safeAvg(humidities);
         const precipAccumRounded = precAcc === null ? null : Math.round(precAcc * 10) / 10;
         const temperatureAvgRounded = temperatureAvg === null ? null : Math.round(temperatureAvg * 10) / 10;
-        const humidityAvgRounded = humidityAvg === null ? null : Math.round(humidityAvg * 10) / 10;
+        // Humidity renders whole % (rain/temp keep 1 decimal) — display-only:
+        // filtering reads the aggregate table, never these feature properties.
+        const humidityAvgRounded = humidityAvg === null ? null : Math.round(humidityAvg);
         //console.log(`Station ${code}: precAcc=${precipAccumRounded}, tempAvg=${temperatureAvgRounded}, humAvg=${humidityAvgRounded}`);
         return {
           ...f,

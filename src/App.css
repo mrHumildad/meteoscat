@@ -228,6 +228,9 @@
 .stationinfo {
   background-color: #ffb703;
 }
+.directions {
+  background-color: #00bfa5;
+}
 .sel-button.on {
   outline: 3px solid #ffffff;
 }
@@ -349,7 +352,7 @@
 }
 .mcsc-legend {
   position: absolute;
-  bottom: calc(58px + 3 * max(5vw, 5vh));
+  bottom: calc(68px + 4 * max(5vw, 5vh));
   left: 10px;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.8);

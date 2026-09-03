@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseDay, getDaysInRange, daysCount } from './utils.js';
+import { parseDay, getDaysInRange, daysCount, fmtShortCat, fmtNum } from './utils.js';
 
 describe('parseDay', () => {
   it('parses YYYY-MM-DD as a valid local-midnight Date', () => {
@@ -67,6 +67,50 @@ describe('getDaysInRange', () => {
 
   it('returns [] when `to` is before `from`', () => {
     expect(getDaysInRange(data, '2025-09-25', '2025-09-23')).toEqual([]);
+  });
+});
+
+describe('fmtShortCat', () => {
+  it('formats day + abbreviated Catalan month, no weekday or year', () => {
+    expect(fmtShortCat(parseDay('2026-09-02'))).toBe('2 set');
+    expect(fmtShortCat(parseDay('2025-11-15'))).toBe('15 nov');
+    expect(fmtShortCat(parseDay('2026-01-05'))).toBe('5 gen');
+  });
+
+  it('returns "" for invalid input', () => {
+    expect(fmtShortCat(null)).toBe('');
+    expect(fmtShortCat('garbage')).toBe('');
+  });
+});
+
+describe('fmtNum', () => {
+  it('strips float noise at the requested decimals', () => {
+    expect(fmtNum(0.30000000000000004, 1)).toBe('0.3');
+    expect(fmtNum(88.39999999999999, 0)).toBe('88');
+    expect(fmtNum(155.69999999999996, 1)).toBe('155.7');
+  });
+
+  it('rounds to whole numbers with maxDec 0 (humidity %)', () => {
+    expect(fmtNum(88.3, 0)).toBe('88');
+    expect(fmtNum(88.7, 0)).toBe('89');
+    expect(fmtNum(100, 0)).toBe('100');
+  });
+
+  it('keeps one decimal for temp/rain but drops trailing zeros', () => {
+    expect(fmtNum(21.55, 1)).toBe('21.6');
+    expect(fmtNum(12.34, 1)).toBe('12.3');
+    expect(fmtNum(12, 1)).toBe('12');
+    expect(fmtNum(21.5, 1)).toBe('21.5');
+  });
+
+  it('handles negatives and no-data input', () => {
+    expect(fmtNum(-5.25, 1)).toBe('-5.3');
+    expect(fmtNum(-5, 1)).toBe('-5');
+    expect(fmtNum(null, 1)).toBe('');
+    expect(fmtNum(undefined, 1)).toBe('');
+    expect(fmtNum('', 1)).toBe('');
+    expect(fmtNum('garbage', 1)).toBe('');
+    expect(fmtNum('6.5', 1)).toBe('6.5');
   });
 });
 

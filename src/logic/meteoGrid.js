@@ -1,3 +1,5 @@
+import { aggregateWindowByDates, TYPE_TO_VARIABLE } from './filterAggregate.js';
+
 /**
  * Interpolated meteo field (rain / humidity / temperature) built from station
  * point values.
@@ -5,10 +7,11 @@
  * The altitude filter works because every map pixel already has an elevation
  * from the DEM. Meteo variables have no raster: only ~190 station points. So
  * we interpolate the station values onto a coarse grid (inverse distance
- * weighting, IDW) once per data window, then the meteo:// tile protocol
- * samples that grid per pixel — turning the rain/humidity/temperature sliders
- * into *area* filters with exactly the same mask semantics as the altitude
- * band (in-band transparent, out-of-band grey).
+ * weighting, IDW) once per data window, then the terrain:// tile protocol
+ * (terrainOverlay.js) samples that grid per pixel — turning the
+ * rain/humidity/temperature sliders into *area* conditions stacked with the
+ * altitude band and the land-cover class selection (paint the class colour
+ * only where EVERY condition holds).
  *
  * Grid resolution is GRID_STEP (≈ 1.1 km) over the app bounds — fine enough
  * for a smooth-looking mask, cheap enough to rebuild lazily per variable
@@ -18,6 +21,13 @@
  * level (temp + lapseRate·altitud/1000) so the IDW field varies smoothly,
  * then the overlay re-applies the cell elevation per pixel (subtracting
  * lapseRate·elev/1000). The other variables interpolate raw values.
+ *
+ * With per-filter time ranges (FILTER_REFACTOR_PLAN.md §5.2), a filter
+ * instance's grid is built from its OWN concrete window: `featuresForWindow`
+ * projects the base station features through the aggregate table
+ * (filterAggregate.js) so `properties[variable]` holds the window aggregate.
+ * The terrain overlay samples every active instance's grid per pixel and
+ * requires each sampled value inside its band (AND semantics).
  */
 
 // ≈ 1.1 km at Catalonia's latitude — grid cells per degree.
@@ -46,6 +56,31 @@ export const distKm = (lng1, lat1, lng2, lat2) => {
 // undefined and empty strings are no-data, not zero.
 const hasNumber = v =>
   v !== null && v !== undefined && v !== '' && Number.isFinite(Number(v));
+
+// Tile-URL variable name → aggregate type used by the prefix-sum table
+// (reverse of the shared TYPE_TO_VARIABLE map).
+const TYPE_BY_VARIABLE = Object.fromEntries(
+  Object.entries(TYPE_TO_VARIABLE).map(([type, variable]) => [variable, type])
+);
+
+/**
+ * Feature list whose `properties[variable]` holds each station's aggregate
+ * over the concrete `[from, to]` day range (YYYY-MM-DD), computed from the
+ * aggregate table. Geometry, `codi` and `altitud` are preserved. Stations
+ * without `codi` or without data in the window carry `null` and are skipped
+ * by buildMeteoGrid's hasNumber guard.
+ */
+export const featuresForWindow = (agg, features, variable, from, to) => {
+  const type = TYPE_BY_VARIABLE[variable];
+  if (!type || !agg || !agg.days.length) return [];
+  return (features || []).map(f => ({
+    ...f,
+    properties: {
+      ...(f?.properties || {}),
+      [variable]: aggregateWindowByDates(agg, f?.properties?.codi, type, from, to),
+    },
+  }));
+};
 
 /**
  * Build the IDW grid for one variable from GeoJSON station features

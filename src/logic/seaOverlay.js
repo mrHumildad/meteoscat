@@ -9,11 +9,12 @@
  * transparent, using the exact same DEM the relief uses, so the sea/coast
  * boundary is pixel-perfect with the terrain.
  *
- * The colour is baked into the tile URL (`sea://{z}/{x}/{y}?c=000080`), so the
- * app just calls `source.setTiles([...])` with a new URL to recolor the sea —
- * e.g. to grey it together with the Aigües class when that legend entry is
- * dimmed. Tiles are generated in the browser (fetch + decode + classify +
- * PNG encode) and cached per (z,x,y,colour).
+ * The colour is baked into the tile URL (`sea://{z}/{x}/{y}?c=000080` or
+ * `c=off`), so the app just calls `source.setTiles([...])` with a new URL to
+ * recolor the sea — e.g. to hide it (fully transparent → relief shows)
+ * together with the Aigües class when that legend entry is dimmed. Tiles are
+ * generated in the browser (fetch + decode + classify + PNG encode) and
+ * cached per (z,x,y,colour).
  */
 
 import { loadTileImageData, terrariumElevation } from './elevation.js';

@@ -1,50 +1,96 @@
-// Pure slider-filter logic for station features.
-// Extracted from Selectors.jsx so it can be unit-tested without React.
+// Pure station-filtering logic for the per-filter time-range refactor
+// (FILTER_REFACTOR_PLAN.md §4.3).
 //
-// `stations` is an array of GeoJSON features whose `properties` carry the
-// computed averages `precAcc`, `humAvg`, `tempAvg` and the station code
-// `codi` (see computeGeoValues.js).
+// Evaluates the AND of every active filter against the prefix-sum aggregate
+// table (filterAggregate.js): a station passes when
+//   - its per-window aggregate lies inside every meteo instance's value band,
+//   - its altitud lies inside the relief band (when active), and
+//   - it has usable data for every active instance.
 //
-// Returns the list of station codes that pass every active slider range.
-// While all four sliders sit at their full span, NO filtering is applied:
-// returns [] which the caller treats as "show everything".
+// Contract (unchanged from before): an EMPTY result list means "no
+// filtering" — the caller shows everything. So when nothing constrains
+// (no instance narrowed below its window's full span, no active relief band)
+// this returns []. Inert instances (band == full span of their window,
+// plan §2.3) always pass and never count as constraining.
 //
-// `altitud` is the station's static metadata height in metres (survives into
-// the features via computeGeoValues' property spread).
+// Known quirk carried over from the old sliders: a combination that matches
+// no station also yields [], which the caller reads as "show everything".
+// Distinguishing "no match" from "no filter" is out of scope for this step.
+
+import { aggregateWindow, limitsForWindow } from './filterAggregate.js';
 
 const hasNumber = v =>
   v !== null && v !== undefined && v !== '' && Number.isFinite(Number(v));
 
-export const filterStationCodes = (stations, rainRange, humRange, tempRange, altRange, rangeLimits) => {
+// An instance constrains only when its band is narrower than the full span
+// its window can produce across all stations.
+const usableRange = f =>
+  Array.isArray(f.range) &&
+  f.range.length === 2 &&
+  Number.isFinite(f.range[0]) &&
+  Number.isFinite(f.range[1]);
+
+const sameBand = (a, b) => !!a && !!b && a[0] === b[0] && a[1] === b[1];
+
+/**
+ * Station codes that pass every active filter.
+ *
+ * @param {Array} stations     GeoJSON features with `properties.codi` and
+ *                             `properties.altitud` (static metadata).
+ * @param {Array} meteoFilters Filter instances `{ id, type, from, to, range }`
+ *                             (type ∈ rain|hum|temp, offsets days back from
+ *                             the reference day).
+ * @param {[number, number] | null} reliefRange Applied altitude band, or null.
+ * @param {object} agg         Aggregate table from buildAggregateTable.
+ * @returns {string[]}         Station codes passing every filter, or [] when
+ *                             no filter constrains anything.
+ */
+export const filterStationCodes = (stations, meteoFilters, reliefRange, agg) => {
   if (!Array.isArray(stations) || stations.length === 0) return [];
 
-  const lim = [
-    rangeLimits.rainMin, rangeLimits.rainMax,
-    rangeLimits.humMin, rangeLimits.humMax,
-    rangeLimits.tempMin, rangeLimits.tempMax,
-    rangeLimits.altMin, rangeLimits.altMax
-  ];
-  const ranges = [rainRange, humRange, tempRange, altRange];
-  const atFullRange = ranges.every((r, i) => r[0] === lim[i * 2] && r[1] === lim[i * 2 + 1]);
-  if (atFullRange) return [];
+  const filters = Array.isArray(meteoFilters) ? meteoFilters : [];
+  const active = filters.filter(f => {
+    if (!usableRange(f)) return false;
+    const span = limitsForWindow(agg, f.type, f.from, f.to);
+    return span != null && !sameBand(f.range, span);
+  });
+
+  // The relief band constrains only when narrowed below the stations'
+  // altitud span (full span == off, same contract as the old slider).
+  const alts = [];
+  for (const st of stations) {
+    const raw = st.properties?.altitud;
+    if (hasNumber(raw)) alts.push(Number(raw));
+  }
+  const altFull = alts.length ? [Math.min(...alts), Math.max(...alts)] : null;
+  const reliefActive =
+    reliefRange != null &&
+    altFull != null &&
+    (reliefRange[0] !== altFull[0] || reliefRange[1] !== altFull[1]);
+
+  if (active.length === 0 && !reliefActive) return [];
 
   const codes = [];
   for (const st of stations) {
     const p = st.properties || {};
-    if (!hasNumber(p.tempAvg) || !hasNumber(p.humAvg) || !hasNumber(p.precAcc)) continue;
-    if (!hasNumber(p.altitud)) continue;
-    const t = Number(p.tempAvg);
-    const h = Number(p.humAvg);
-    const r = Number(p.precAcc);
-    const a = Number(p.altitud);
-    if (
-      t >= tempRange[0] && t <= tempRange[1] &&
-      h >= humRange[0] && h <= humRange[1] &&
-      r >= rainRange[0] && r <= rainRange[1] &&
-      a >= altRange[0] && a <= altRange[1]
-    ) {
-      codes.push(p.codi);
+    const code = p.codi;
+    if (!code) continue;
+
+    if (reliefActive) {
+      if (!hasNumber(p.altitud)) continue;
+      const a = Number(p.altitud);
+      if (a < reliefRange[0] || a > reliefRange[1]) continue;
     }
+
+    let ok = true;
+    for (const f of active) {
+      const v = aggregateWindow(agg, code, f.type, f.from, f.to);
+      if (v == null || v < f.range[0] || v > f.range[1]) {
+        ok = false;
+        break;
+      }
+    }
+    if (ok) codes.push(code);
   }
   return codes;
 };

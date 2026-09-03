@@ -64,7 +64,7 @@ App.jsx
   `from = to = 0` → just the reference day.
   The day-range slider is drawn on a **day-index axis** (0 = oldest day … maxDays−1 = reference day, rightmost): left handle = window start (older), right handle = window end (newer). Stored offsets map to slider values via `[maxDays−1−from, maxDays−1−to]` (the slider lib requires `min < max`).
 - **Unit conversions for the value band:** rain in mm, humidity in %, temperature in °C.
-- **New-instance defaults:** day range `[30, 0]` (clamped to `maxDays − 1`) = "last 30 days"; value `range` = **full span of that window**, so the instance is *inert* (always passes, no map layer) until the user narrows a handle — same contract as today's "full span = no filtering". The editor opens immediately on add; ✕ Cancel removes the instance again.
+- **New-instance defaults:** day range `[60, 0]` (clamped to `maxDays − 1`) = "last 60 days"; value `range` = **full span of that window**, so the instance is *inert* (always passes, no map layer) until the user narrows a handle — same contract as today's "full span = no filtering". The editor opens immediately on add; ✕ Cancel removes the instance again.
 - Altitude and terrain are **not** instances — they keep today's single `reliefRange` (`[lo, hi] | null`) and `mcscOff` (`Set`).
 
 ### 2.2 Per-instance aggregation (what "the value" means)
@@ -130,13 +130,14 @@ The heart of the refactor. Once per data load, build **prefix sums per station p
 //   count[code][k]    = number of days with data for that station up to k
 ```
 
-Exports:
-- `buildAggregateTable(data)` → `{ days, sumRain, sumTemp, sumHum, count, stations }` (memoized in App).
+Exports (implemented, `filterAggregate.js`):
+- `buildAggregateTable(data)` → `{ days, stations, sums, counts }` with `days` (sorted ascending) and prefix arrays per station per variable: `sums[type][code]`, `counts[type][code]` (`type ∈ rain|temp|hum`). `counts.rain` = days the station has an entry (drives the null-vs-0 decision); `counts.temp/hum` = days with a *usable* (`hasNumber`) value. Memoized in App.
 - `aggregateWindow(agg, code, type, fromOffset, toOffset)` → `value | null`
-  - concrete indices: `iFrom = days.length − 1 − fromOffset`, `iTo = days.length − 1 − toOffset`
-  - rain: `Σ = sumRain[iTo] − sumRain[iFrom−1]` (missing days contribute 0 — matches today)
-  - temp/hum: `x̄ = (sumX[iTo] − sumX[iFrom−1]) / (count[iTo] − count[iFrom−1])`; if the denominator is 0 → `null` (no data)
+  - concrete indices: `iFrom = days.length − 1 − fromOffset`, `iTo = days.length − 1 − toOffset`; requires `toOffset ≤ fromOffset ≤ days.length − 1` (else `null`)
+  - rain: `Σ` over present days (missing days contribute 0 — matches today); `null` when the window has no present day
+  - temp/hum: `x̄` over usable days; `null` when none (deviation from computeGeoValues: unusable values are skipped, not coerced to 0)
 - `windowToDates(refDay, fromOffset, toOffset)` → `{ from: 'YYYY-MM-DD', to: 'YYYY-MM-DD' }` for labels, tile URLs, grid keys.
+- `limitsForWindow(agg, type, fromOffset, toOffset)` → `[min, max] | null` across all stations, memoized per aggregate table via a `WeakMap` (small LRU) so re-built tables never read stale limits.
 
 Complexity: build O(vars × days × stations) ≈ 3×60×190 ≈ 34k ops once; every window query O(1).
 
@@ -144,13 +145,13 @@ Complexity: build O(vars × days × stations) ≈ 3×60×190 ≈ 34k ops once; e
 
 The value slider's `[min, max]` **depends on the filter's day window** (rain over 30 days reaches higher than rain over 1 day). Rule:
 
-- When the day slider changes → recompute `limitsForWindow(type, from, to)` = min/max across all stations of `aggregateWindow(...)` (O(stations) ≈ 190 ops, memoized per `type|from|to` with a small LRU).
+- When the day slider changes → recompute `limitsForWindow(agg, type, from, to)` = min/max across all stations of `aggregateWindow(...)` (O(stations) ≈ 190 ops; implemented in `filterAggregate.js`, memoized per table via `WeakMap`).
 - If the current value `range` falls outside the new limits, **clamp** it into `[min, max]` before showing the editor.
 - Altitude keeps its static station-metadata limits.
 
-### 4.3 Rewrite `src/logic/filterStations.js`
+### 4.3 Rewrite `src/logic/filterStations.js` — **done**
 
-New signature (pure, unit-testable, no React):
+New signature (pure, unit-testable, no React), implemented:
 
 ```js
 filterStationCodes(features, meteoFilters, reliefRange, aggTable)
@@ -160,18 +161,26 @@ filterStationCodes(features, meteoFilters, reliefRange, aggTable)
 - For each feature: `altitud` check (if relief active), then for each instance `aggregateWindow(agg, codi, f.type, f.from, f.to)` ∈ `f.range`.
 - Station missing data for an active instance → excluded (same spirit as today).
 - Empty `meteoFilters` + no relief → `[]` ("show everything").
+- Inert detection: an instance constrains only when its band is narrower than `limitsForWindow(agg, type, from, to)` (full span == off); malformed instances (no usable `range`) are treated as inert. The relief band is inactive when it spans the stations' altitud min–max (raw-`hasNumber` guard, so `null` altitud is never coerced to 0).
 
 ### 4.4 `computeGeoValues.js` — display window only
 
 With no global window, this module stops driving filters. It stays as the source of the **display values** shown in station circles (`labelMode`) and `StationPanel` totals, computed over a **default display window**:
-- Default: the **last 30 days** from the reference day (`[refDay − 29, refDay]`), consistent with the new-instance day-range default; the chart shows exactly this window, so no extra capping is needed. The label-mode circle values and StationPanel totals are computed over this same display window.
+- Default: the **last 60 days** from the reference day (`[refDay − 59, refDay]`), consistent with the new-instance day-range default; the chart shows exactly this window, so no extra capping is needed. The label-mode circle values and StationPanel totals are computed over this same display window.
 - `rangeLimits` → split: `altLimits` from station metadata; meteo limits now per-window (§4.2).
 
 ---
 
 ## 5. Map overlays
 
-### 5.1 Meteo overlays: one raster layer **per filter instance**
+> **SUPERSEDED after implementation** — the grey-mask overlay architecture
+> below (§5.1–5.3, per-layer `meteo://`/`alt://` grey masks + remote-coloured
+> MCSC WMS) was replaced by ONE client-side stacked terrain overlay
+> (`terrain://`, §13): terrain is painted only where EVERY condition holds and
+> failing pixels are transparent (relief), no grey anywhere. §5 remains for
+> the record; §10/§11 are updated.
+
+### 5.1 Meteo overlays: one raster layer **per filter instance** (superseded)
 
 Today: one layer per variable, one grid per (window, variable). With per-instance windows:
 - Each active instance gets its **own raster layer** `precAcc-band-<id>`, whose tile URL bakes the instance's concrete window + band:
@@ -180,17 +189,17 @@ Today: one layer per variable, one grid per (window, variable). With per-instanc
 - **AND semantics fall out of stacking:** each layer greys pixels whose window-value is *outside* its band; a pixel is grey if **any** layer greys it = every instance must pass. Identical to how today's variable layers stack.
 - Grid cache key becomes the **concrete window** (`precAcc|2026-08-19_2026-09-02` instead of the old `windowKey`), so two instances sharing a window reuse the same IDW grid. (Note: with AND semantics, per-instance layers work; if we ever switch to OR within a type we'd merge layers back to one per variable with a combined classifier — noted, not needed now.)
 
-### 5.2 `meteoOverlay.js` / `meteoGrid.js` changes
+### 5.2 `meteoOverlay.js` / `meteoGrid.js` changes — done, then **superseded**
 
-- `parseMeteoTileUrl`: parse `w=<from>_<to>` + `id`; keep `b=<lo>_<hi>` (`_` separator already handles negatives).
-- `getContext` now returns `{ data /* all daily shards */, features /* station coords + altitud */, aggTable }` instead of window features; `buildMeteoTile` computes the window features on the fly via `aggregateWindow` (or a `featuresForWindow(agg, features, from, to)` helper) and passes them to the existing `buildMeteoGrid`.
+- `parseMeteoTileUrl`: parses `w=<from>_<to>` (two YYYY-MM-DD dates — `w` now carries the CONCRETE window, not the old window key) + `id`; keeps `b=<lo>_<hi>` (`_` separator already handles negatives). Regex is end-anchored, so legacy and malformed URLs reject (tested).
+- `getContext` returns `{ agg, features }` (aggregate table + base station features); `buildMeteoTile` computes the window features on the fly via `featuresForWindow(agg, features, variable, from, to)` — implemented in `meteoGrid.js`, mapping variable → type and using the new `aggregateWindowByDates` in `filterAggregate.js` — and passes them to the existing `buildMeteoGrid`.
+- Grid cache key = `${from}_${to}|${variable}` (concrete dates passed as the `windowKey` param) — two instances sharing a window reuse one IDW grid.
 - Lapse-rate correction for temp grids: unchanged.
-- The effect that regenerates tiles (currently keyed on `rainRange/humRange/tempRange`) is rewritten to iterate `meteoFilters` and `setTiles` per instance layer; removed instances have their layer + source removed.
+- The effect that regenerates tiles is rewritten to iterate `meteoFilters` and `setTiles` per instance layer (`${variable}-band-${id}`); removed instances have their layer + source removed. The flow test now embeds the v2 effect body (with `limitsForWindow`-based inert detection) as the canonical copy step 4 must implement in App.jsx.
 
-### 5.3 Altitude band & terrain — unchanged
+### 5.3 Altitude band & terrain — unchanged (superseded)
 
-- `alt://` protocol, `altitude-band` layer, `altBandRef`: untouched (altitud is static per station, no time dimension).
-- Forest filter (`mcscOff` + MCSC SLD rebuild): untouched.
+- Old design: `alt://` protocol, `altitude-band` layer, `altBandRef`; forest filter (`mcscOff` + remote MCSC SLD rebuild). Both replaced by the stacked overlay (§13) — altitud is still static per station; the band is now one of the stacked conditions.
 
 ---
 
@@ -251,7 +260,7 @@ Clicking an applied row (or a freshly added instance) expands it **in place**; t
 
 ### Header / StationPanel
 - Header: replace the `headerdays` range with the existing "Últimes dades: …" indicator (already present); no day-range text.
-- `StationPanel.jsx`: replace `daysRange` with the default display window (last 30 days) for its chart and totals. `globalStats` already derives from `data` — unaffected once all days are loaded.
+- `StationPanel.jsx`: replace `daysRange` with the default display window (last 60 days) for its chart and totals. `globalStats` already derives from `data` — unaffected once all days are loaded.
 
 ---
 
@@ -283,11 +292,14 @@ Clicking an applied row (or a freshly added instance) expands it **in place**; t
 
 | File | Tests |
 |---|---|
-| **new** `filterAggregate.test.js` | rain Σ over window incl. missing-day-as-0; temp/hum mean over present days; `from/to` offsets → correct concrete window; O(1) results match naive re-summation; `null` when no data in window |
-| **rewrite** `filterStations.test.js` | AND across types; AND across same-type instances; relief ANDed in; no-data station excluded; no filters → `[]`; inclusive value bounds |
-| **update** `meteoGrid.test.js` | grid cache key uses concrete window dates (two instances, same window → one grid) |
-| **update** `meteoOverlay.tile/flow.test.js` | URL parsing with `w=<from>_<to>` + `id`; classify per-instance (AND stacking); off/no-band → transparent |
+| **new** `filterAggregate.test.js` — **done** | rain Σ incl. missing-day-as-0 + null-window; temp/hum means over usable days; `from/to` offsets → correct concrete window; O(1) vs naive re-summation; `limitsForWindow` incl. no-data + per-table cache |
+| **rewrite** `filterStations.test.js` — **done** | AND across types; AND across same-type instances; per-instance windows; relief ANDed in + full-span-off; no-data / no-codi exclusion; no filters → `[]`; inclusive value bounds; inert + malformed instances |
+| **update** `meteoGrid.test.js` — **done** | grid cache key uses concrete window dates; `featuresForWindow` (window aggregates into feature properties, endpoint respect, unknown variable/empty → `[]`) |
+| **update** `meteoOverlay.tile/flow.test.js` — done, then **deleted with the module** (§13 supersedes the per-layer grey masks) |
 | **keep** `App.render.test.jsx` | still renders (new state defaults) |
+| **new** `terrainOverlay.test.js` — **done** | `colourForBand` (official colour / null for no-data, unlisted 230–234, dimmed); `classifyTerrainPixel` (all-conditions AND, water never gated, inclusive bounds, sea/no-data excluded); state signature + tile URL (order-insensitive, changes with filters, parse round-trip) |
+| **new** `terrainOverlay.tile.test.js` — **done** | painted tile end-to-end: class colour with no filters; dimmed class transparent + water painted (no grey); altitude gates land but never water (DEM only fetched when needed); meteo band gates land; ALL conditions together + temperature lapse re-application |
+| **update** `mcscLegend.test.js` — **done** | new lookups (`entryForBand`, `isWaterBand`, water values) + `renderBandSld` (every band 1–41 → `rgb(v,0,0)`, no legend colours / no grey server-side) |
 
 ---
 
@@ -295,35 +307,96 @@ Clicking an applied row (or a freshly added instance) expands it **in place**; t
 
 | File | Change |
 |---|---|
-| `src/logic/filterAggregate.js` | **NEW** — prefix-sum aggregate table + window helpers (§4.1) |
-| `src/logic/filterStations.js` | **REWRITE** — instance-list + relief signature, AND semantics (§4.3) |
-| `src/comps/FilterPanel.jsx` | **REWRITE** — header anchor + single ✕ (drop ✓), add-type buttons, in-place two-slider editor, applied rows (§6) |
-| `src/logic/utils.js` | add compact `fmtShortCat` date helper for row labels (§6.2) |
-| `src/App.jsx` | state model (§3), all-days loading (§7), refDay/maxDays, add/update/remove handlers, dynamic meteo layers (§5.1), header/display window (§6) |
-| `src/logic/meteoOverlay.js` | URL with window+id, context returns `{ data, features, aggTable }`, per-instance classify (§5.2) |
-| `src/logic/meteoGrid.js` | cache key = concrete window dates; window-features helper (§5.2) |
-| `src/logic/computeGeoValues.js` | display window only (last 30 days default) (§4.4) |
-| `src/comps/StationPanel.jsx` | `daysRange` → default display window (§6) |
-| `src/comps/Selectors.jsx` | **DELETE** (calendar) |
-| `package.json` | remove `react-day-picker` |
-| `src/logic/filterStations.test.js`, `meteoGrid.test.js`, `meteoOverlay.*.test.js` | update; add `filterAggregate.test.js` |
+| `src/logic/filterAggregate.js` | **NEW (done)** — prefix-sum aggregate table, `aggregateWindow` + `aggregateWindowByDates`, `windowToDates`, `limitsForWindow` (§4.1–4.2) |
+| `src/logic/filterAggregate.test.js` | **NEW (done)** — 20 tests: rain Σ / missing-day-as-0 / null-window, temp+hum means over usable days, offset→concrete window, naive cross-check, limits incl. no-data + cache (§9) |
+| `src/logic/filterStations.js` | **REWRITE (done)** — instance-list + relief signature, AND semantics on the aggregate table (§4.3) |
+| `src/logic/filterStations.test.js` | **REWRITE (done)** — 16 tests: no-filters → `[]`, inert/malformed instances, AND across types + same-type, per-instance windows, relief ANDed in + full-span-off, no-data/no-codi exclusion, inclusive bounds (§9) |
+| `src/comps/FilterPanel.jsx` | **DONE** — header anchor + single ✕ (✓ dropped), add-type buttons (5-per-type cap), in-place two-slider editors, inert rows, relief/forest unchanged (§6) |
+| `src/logic/utils.js` | **DONE** — `fmtShortCat` compact date helper + tests (§6.2) |
+| `src/App.jsx` | **DONE** — state model (§3), all-days loading (§7), refDay/maxDays, add/update/remove handlers, `terrainState` memo (§13) + single always-on `terrain` source/layer replacing remote MCSC + altitude + per-instance meteo layers, sea transparent when Aigües off, display window, header without day range (§6) |
+| `src/logic/meteoOverlay.js` | done (§5.2), then **DELETED** — superseded by `terrainOverlay.js` (§13); its tests deleted with it |
+| `src/logic/altitudeOverlay.js` | **DELETED** — the `alt://` grey mask is folded into `terrainOverlay.js` (§13); its test deleted with it |
+| `src/logic/mcscLegend.js` | **REWORKED (done)** — band lookups (`entryForBand`, `isWaterBand`, `MCSC_WATER_ENTRY/VALUES`) + `renderBandSld` (raw band value → `rgb(v,0,0)`); `renderMcscSld` (server colouring / grey dimming) removed — the map never greys anymore |
+| `src/logic/mcscRaw.js` | **NEW (done)** — raw-band WMS tile URL + browser loader (band-encoded SLD, decode red channel, cached per z/x/y) |
+| `src/logic/terrainOverlay.js` | **NEW (done)** — `terrain://` protocol: per-pixel AND (selected class + altitude band + every meteo instance) paints the MCSC colour, else transparent (relief); water never gated; state-signature tile URL; DEM fetched only when needed (§13) |
+| `src/logic/meteoGrid.js` | **DONE** — `featuresForWindow` helper over the aggregate table; cache keyed by concrete window dates (§5.2) — now sampled by `terrainOverlay.js` |
+| `src/logic/computeGeoValues.js` | unchanged — called over the display window (last 60 days) from App (§4.4) |
+| `src/comps/StationPanel.jsx` | unchanged — receives the display window via the `daysRange` prop (§6) |
+| `src/comps/Selectors.jsx` | **DELETED** (calendar) |
+| `package.json` | react-day-picker removed (lockfile updated via `npm install`) |
+| tests (`filterAggregate`, `filterStations`, `meteoGrid`, `terrainOverlay*`, `mcscLegend`, `utils`, …) | **DONE** — 125 tests / 10 files (after deleting the superseded overlay tests) |
 
 ---
 
 ## 11. Implementation checklist (suggested order)
 
-1. **`filterAggregate.js`** + tests — pure logic first (prefix sums, window helpers, limits lookup).
-2. **`filterStations.js`** rewrite + tests — instance-list AND filtering on the aggregate table.
-3. **`meteoGrid.js` / `meteoOverlay.js`** — concrete-window cache key, URL `w`/`id`, context via aggregate table; update overlay tests.
-4. **`App.jsx`** — new state model, all-days load, refDay, add/update/remove handlers, dynamic meteo layers, display window for `computeGeoValues`/`StationPanel`, header.
-5. **`FilterPanel.jsx`** — new UI (add buttons, two-slider editor, applied rows, remove).
-6. **Cleanup** — delete `Selectors.jsx`, drop `react-day-picker`, run `npm test` + `npm run build` + `npm run lint`.
+1. ~~**`filterAggregate.js`** + tests — done~~ — pure logic first (prefix sums, window helpers, limits lookup).
+2. ~~**`filterStations.js`** rewrite + tests — done~~ — instance-list AND filtering on the aggregate table.
+3. ~~**`meteoGrid.js` / `meteoOverlay.js`** — done~~ — concrete-window cache key, URL `w`/`id`, context via aggregate table; update overlay tests.
+4. ~~**`App.jsx`** — done~~ — new state model, all-days load, refDay, add/update/remove handlers, dynamic meteo layers, display window for `computeGeoValues`/`StationPanel`, header.
+5. ~~**`FilterPanel.jsx`** — done~~ — new UI (add buttons, two-slider editor, applied rows, remove). Implemented together with step 4 (the old panel called the old `filterStationCodes` signature, so the two are coupled).
+6. ~~**Cleanup** — done~~ — `Selectors.jsx` deleted, `react-day-picker` dropped, `npm test` (126) + `npm run build` + `npm run lint` all green.
+7. ~~**Stacked terrain overlay** — done~~ — replace the grey-mask architecture (§5) with one client-side `terrain://` composite (§13): legend rework + `mcscRaw` + `terrainOverlay` + App rewire + retire `altitudeOverlay`/`meteoOverlay`; 125 tests / 10 files, lint + build green.
 
 ---
 
 ## 12. Decisions recorded / open questions
 
-**Decided (all defaults fixed):** D1 two-handle day slider per filter · D2 AND across all filters incl. same-type · D3 range value slider · D4 reference = latest data day (anchor shown in UI) · new-instance defaults `[30, 0]` + full value span (inert until narrowed) · 5-instance-per-type cap · display window = last 30 days.
+**Decided (all defaults fixed):** D1 two-handle day slider per filter · D2 AND across all filters incl. same-type · D3 range value slider · D4 reference = latest data day (anchor shown in UI) · new-instance defaults `[60, 0]` + full value span (inert until narrowed) · 5-instance-per-type cap · display window = last 60 days.
 
 **Deferred / future (not blockers):**
 - Switch the reference to "today" (device clock): one-line change (`refDay = new Date()`); the offsets design already supports it.
+
+---
+
+## 13. Stacked terrain overlay (implemented)
+
+**Request:** no more grey "deselected" areas — unselected map areas must show
+just the relief, exactly like territories abroad / areas without terrain info;
+and all filters must STACK: paint terrain only where every condition is true,
+else transparent.
+
+**Why it had to move client-side:** the old MCSC layer was a remote WMS image
+coloured server-side (SLD) and the altitude/meteo filters were separate grey
+masks stacked on top. You cannot mask a server-coloured raster with client
+conditions — so the terrain colouring decision moved into ONE browser-side
+raster that evaluates every condition per pixel (see the earlier analysis:
+"why it can't be done by stacking the current layers").
+
+**Mechanism (verified against the live ICGC WMS):**
+- `mcscLegend.js` now exports band lookups + `renderBandSld()`, an SLD that
+  makes the MCSC WMS return the RAW palette band value per pixel encoded as
+  its red channel (`band v → colour rgb(v,0,0)`), everything else transparent.
+- `mcscRaw.js` requests those tiles (`mcscBandTileUrl`) and decodes them in
+  the browser (`loadMcscBandTile`, cached per z/x/y).
+- `terrainOverlay.js` paints, per pixel: the pixel's MCSC class colour iff
+  - the band has a legend entry whose class is **selected** (not dimmed, not
+    a permanently-unlisted 230–234 value) AND
+  - (it is **water** — painted whenever Aigües is on, never gated: water is
+    not "mushroom terrain") OR the **altitude band** accepts the DEM elevation
+    AND every **active meteo instance**'s window aggregate at the pixel is
+    inside its band (sampled from its own IDW grid, §5.2).
+  - failing pixels → transparent → the hillshade/relief shows through.
+- Per-instance state is baked into the tile URL as a signature
+  (`terrain://{z}/{x}/{y}?s=<sig>`); the protocol reads the CURRENT state via
+  `getState()`, cache keyed per (z,x,y,state). `App.jsx` keeps one memoised
+  `terrainState` (dimmed codes + narrowed alt band + active instances with
+  concrete windows) and `setTiles` on any change.
+- The DEM is fetched per tile only when a tile needs it: an active altitude
+  band or a temperature instance (sea-level-reduced grid re-applied per
+  pixel, same lapse rate as before).
+
+**Layer stack (was 5 layers, now 3):** `sea` (water colour; transparent when
+Aigües dimmed → relief) → `terrain` (the composite, always on, opacity 0.85)
+→ `hillshade` (relief on top, unchanged) → stations. `mcsc` (remote WMS),
+`altitude-band` and the per-instance meteo raster layers are gone.
+
+**Retired:** `meteoOverlay.js`, `altitudeOverlay.js` and their tests. Kept:
+`meteoGrid.js` (grids, sampled per pixel by the composite) and
+`seaOverlay.js` (`c=off` semantics instead of grey). MCSC_GREY survives only
+as the legend-UI swatch for a dimmed entry.
+
+**Tests:** `terrainOverlay.test.js` (pure classification + URL/state) and
+`terrainOverlay.tile.test.js` (painted-tile integration with stubbed
+band/DEM/canvas) — all-conditions AND, relief-on-fail, water/sea never gated,
+no grey anywhere. 125 tests / 10 files, lint + build green.

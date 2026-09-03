@@ -1,5 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { MCSC_LEGEND, MCSC_GREY, MCSC_EXTRA_VALUES, renderMcscSld } from './mcscLegend.js';
+import {
+  MCSC_LEGEND,
+  MCSC_GREY,
+  MCSC_EXTRA_VALUES,
+  MCSC_BAND_MIN,
+  MCSC_BAND_MAX,
+  MCSC_WATER_VALUES,
+  entryForBand,
+  isWaterBand,
+  renderBandSld,
+} from './mcscLegend.js';
 
 describe('MCSC_LEGEND', () => {
   it('covers the three mushroom-relevant forest types plus key non-forest covers', () => {
@@ -15,10 +25,12 @@ describe('MCSC_LEGEND', () => {
     expect(labels).toContain('Aigües');
   });
 
-  it('uses valid 6-digit hex colours, including the shared dim grey', () => {
+  it('uses valid 6-digit hex colours, including the shared legend-switch grey', () => {
     for (const e of MCSC_LEGEND) {
       expect(e.color).toMatch(/^#[0-9a-f]{6}$/i);
     }
+    // MCSC_GREY is now only the legend-UI swatch for a dimmed class — the MAP
+    // paints dimmed classes transparent (see renderBandSld / terrainOverlay).
     expect(MCSC_GREY).toMatch(/^#[0-9a-f]{6}$/i);
   });
 
@@ -42,35 +54,39 @@ describe('MCSC_LEGEND', () => {
   });
 });
 
-describe('renderMcscSld', () => {
-  it('renders every legend class in its official colour when nothing is dimmed', () => {
-    const sld = renderMcscSld();
-    for (const e of MCSC_LEGEND) {
-      for (const v of e.values) {
-        expect(sld).toContain(`color="${e.color}" quantity="${v}"`);
-      }
-    }
-  });
-
-  it('renders unlisted raster values in grey regardless of the switches', () => {
-    const sld = renderMcscSld();
+describe('band lookups', () => {
+  it('entryForBand resolves legend bands to their entry and extras to null', () => {
+    expect(entryForBand(7).codes).toBe('221/225');     // aciculifolis
+    expect(entryForBand(36).codes).toBe('461–466');    // aigües
     for (const v of MCSC_EXTRA_VALUES) {
-      expect(sld).toContain(`color="${MCSC_GREY}" quantity="${v}"`);
+      expect(entryForBand(v)).toBeNull();              // 230–234: no legend entry
+    }
+    expect(entryForBand(0)).toBeNull();
+    expect(entryForBand(MCSC_BAND_MAX + 1)).toBeNull();
+  });
+
+  it('isWaterBand is true exactly for the Aigües entry bands', () => {
+    for (const v of MCSC_WATER_VALUES) expect(isWaterBand(v)).toBe(true);
+    expect(isWaterBand(7)).toBe(false);   // forest
+    expect(isWaterBand(0)).toBe(false);
+    expect(MCSC_WATER_VALUES).toEqual([36, 37, 38, 39, 40, 41]);
+  });
+});
+
+describe('renderBandSld', () => {
+  it('encodes every raster band value as its own red-channel colour (rgb(v,0,0))', () => {
+    const sld = renderBandSld();
+    for (let v = MCSC_BAND_MIN; v <= MCSC_BAND_MAX; v++) {
+      const hex = v.toString(16).padStart(2, '0');
+      expect(sld).toContain(`color="#${hex}0000" quantity="${v}"`);
     }
   });
 
-  it('dims a toggled-off class to the shared grey, keeping the others coloured', () => {
-    const off = new Set(['221/225']);
-    const sld = renderMcscSld(MCSC_LEGEND, off);
-    expect(sld).toContain(`color="${MCSC_GREY}" quantity="7"`);
-    expect(sld).toContain(`color="${MCSC_GREY}" quantity="11"`);
-    expect(sld).toContain(`color="${MCSC_LEGEND[1].color}" quantity="8"`);   // caducifolis stays on
-    expect(sld).toContain(`color="${MCSC_LEGEND[8].color}" quantity="36"`);  // aigües stays on
-  });
-
-  it('restores the official colour when a dimmed class is switched back on', () => {
-    const sld = renderMcscSld(MCSC_LEGEND, new Set());
-    expect(sld).toContain(`color="${MCSC_LEGEND[4].color}" quantity="10"`); // matollar
-    expect(sld).not.toContain(`color="${MCSC_GREY}" quantity="10"`);
+  it('contains no legend colours and no grey — the server never colours pixels', () => {
+    const sld = renderBandSld();
+    for (const e of MCSC_LEGEND) {
+      expect(sld).not.toContain(`color="${e.color}"`);
+    }
+    expect(sld).not.toContain(`color="${MCSC_GREY}"`);
   });
 });

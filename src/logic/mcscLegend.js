@@ -35,27 +35,47 @@ export const MCSC_LEGEND = [
   { color: MCSC_WATER_COLOR, label: 'Aigües (mar, llacs, embassaments)', codes: '461–466', values: [36, 37, 38, 39, 40, 41] },
 ];
 
-// Single grey shared by every dimmed / not-selected class.
+// Single grey used by the legend UI for a dimmed (off) swatch. The MAP no
+// longer paints grey for unselected areas — dimmed classes (and areas that
+// fail the stacked filters) are transparent, so the relief shows through.
 export const MCSC_GREY = '#8a8a8a';
 
 // Raster band values that exist on the map but have no legend entry of their
 // own (230 sòl nu forestal, 231 zones cremades, 232 roquissars, 233 platges,
-// 234 zones humides). They stay permanently grey — there is no switch for them.
+// 234 zones humides). They are never selectable, so they are treated like
+// "no terrain info" and left transparent (relief shows through).
 export const MCSC_EXTRA_VALUES = [16, 17, 18, 19, 20];
 
-// Build the inline SLD that styles the MCSC raster for the current switch
-// state: selected entries render with their official colour, dimmed entries
-// (and unlisted band values) render grey, everything else transparent.
-export function renderMcscSld(legend = MCSC_LEGEND, offCodes = new Set()) {
+// Lowest / highest MCSC palette band value (bands follow class-code order,
+// 111–116 → 1-6 … 461–466 → 36-41, plus 230–234 → 16-20 — contiguous 1..41).
+export const MCSC_BAND_MIN = 1;
+export const MCSC_BAND_MAX = 41;
+
+// The Aigües (water) legend entry — inland water bodies within the raster.
+// Like the open sea (handled by the sea overlay), water is painted when its
+// legend switch is on and transparent when dimmed; it is never gated by the
+// altitude / meteo conditions (water is not "mushroom terrain").
+export const MCSC_WATER_ENTRY = MCSC_LEGEND.find(e => e.label.startsWith('Aigües')) ?? null;
+export const MCSC_WATER_VALUES = MCSC_WATER_ENTRY?.values ?? [];
+
+// Legend entry controlling a band value, or null for unlisted bands
+// (230-234 sòl nu / zones cremades / roquissars / platges / zones humides).
+export const entryForBand = (band, legend = MCSC_LEGEND) =>
+  legend.find(e => e.values.includes(band)) ?? null;
+
+// True for band values of the Aigües (water) legend entry.
+export const isWaterBand = (band) => MCSC_WATER_VALUES.includes(band);
+
+// Build the inline SLD that asks the MCSC WMS for the RAW palette value per
+// pixel, encoded as the red channel (band v → colour rgb(v,0,0)) so the app
+// can decode it client-side (everything else transparent). The stacked
+// terrain layer paints the official class colour itself, gated by every
+// active filter — the server never applies class colours / dimming anymore.
+export function renderBandSld() {
   const entries = [];
-  for (const entry of legend) {
-    const off = offCodes.has(entry.codes);
-    for (const v of entry.values) {
-      entries.push(`<ColorMapEntry color="${off ? MCSC_GREY : entry.color}" quantity="${v}"/>`);
-    }
-  }
-  for (const v of MCSC_EXTRA_VALUES) {
-    entries.push(`<ColorMapEntry color="${MCSC_GREY}" quantity="${v}"/>`);
+  for (let v = MCSC_BAND_MIN; v <= MCSC_BAND_MAX; v++) {
+    const hex = v.toString(16).padStart(2, '0');
+    entries.push(`<ColorMapEntry color="#${hex}0000" quantity="${v}"/>`);
   }
   return (
     '<StyledLayerDescriptor version="1.0.0" ' +
