@@ -89,11 +89,45 @@ describe('classifyTerrainPixel', () => {
     // meteo fails while altitude passes
     expect(classifyTerrainPixel(green, false, 700, [500, 800], [30], [0], [20])).toEqual(TERRAIN_TRANSPARENT);
   });
+
+  it('gates land by the geology family (dimmed keys), nodata never gated', () => {
+    const offCarbons = new Set(['carbonatades']);
+    // pixel on a dimmed family → transparent (same contract as a dimmed class)
+    expect(classifyTerrainPixel(green, false, 100, null, [], [], [], 'carbonatades', offCarbons))
+      .toEqual(TERRAIN_TRANSPARENT);
+    // a different family, or no family at all (nodata) → passes
+    expect(classifyTerrainPixel(green, false, 100, null, [], [], [], 'volcaniques', offCarbons))
+      .toEqual(green);
+    expect(classifyTerrainPixel(green, false, 100, null, [], [], [], null, offCarbons))
+      .toEqual(green);
+    expect(classifyTerrainPixel(green, false, 100, null, [], [], [], undefined, offCarbons))
+      .toEqual(green);
+    // no dimmed families at all → passes
+    expect(classifyTerrainPixel(green, false, 100, null, [], [], [], 'carbonatades', new Set()))
+      .toEqual(green);
+    // water is NEVER gated by the geology filter
+    expect(classifyTerrainPixel(water, true, 100, null, [], [], [], 'carbonatades', offCarbons))
+      .toEqual(water);
+  });
+
+  it('requires the geology family AND altitude AND meteo all together', () => {
+    const offCarbons = new Set(['carbonatades']);
+    expect(classifyTerrainPixel(green, false, 700, [500, 800], [10], [0], [20], 'volcaniques', offCarbons))
+      .toEqual(green);
+    // family off while everything else passes
+    expect(classifyTerrainPixel(green, false, 700, [500, 800], [10], [0], [20], 'carbonatades', offCarbons))
+      .toEqual(TERRAIN_TRANSPARENT);
+    // family on but altitude fails
+    expect(classifyTerrainPixel(green, false, 900, [500, 800], [10], [0], [20], 'volcaniques', offCarbons))
+      .toEqual(TERRAIN_TRANSPARENT);
+  });
 });
 
 describe('terrain state signature & tile URL', () => {
   it('produces a stable signature for an empty state', () => {
-    expect(terrainStateSig(terrainStateSignature())).toBe(terrainStateSig({ off: [], alt: null, filters: [] }));
+    expect(terrainStateSig(terrainStateSignature())).toBe(
+      terrainStateSig(terrainStateSignature({ off: [], alt: null, filters: [], geoOff: [] }))
+    );
   });
 
   it('is insensitive to ordering (sorted codes / filters)', () => {
@@ -117,10 +151,28 @@ describe('terrain state signature & tile URL', () => {
   });
 
   it('changes when the filters change', () => {
-    const base = { off: [], alt: null, filters: [] };
+    const base = { off: [], alt: null, filters: [], geoOff: [] };
     expect(terrainTileUrl(base)).not.toBe(terrainTileUrl({
-      off: [], alt: [0, 100], filters: [{ variable: 'precAcc', from: '2026-08-01', to: '2026-09-01', band: [10, 20] }],
+      off: [], alt: [0, 100], geoOff: [], filters: [{ variable: 'precAcc', from: '2026-08-01', to: '2026-09-01', band: [10, 20] }],
     }));
+  });
+
+  it('changes when the dimmed geology families change (and is order-insensitive)', () => {
+    const a = terrainTileUrl({ mode: 'substrate', off: [], alt: null, geoOff: ['gresos', 'carbonatades'], filters: [] });
+    const b = terrainTileUrl({ mode: 'substrate', off: [], alt: null, geoOff: ['carbonatades', 'gresos'], filters: [] });
+    const c = terrainTileUrl({ mode: 'substrate', off: [], alt: null, geoOff: ['gresos'], filters: [] });
+    expect(a).toBe(b); // same dimmed set, different order
+    expect(a).not.toBe(c);
+    expect(a).not.toBe(terrainTileUrl({ mode: 'substrate', off: [], alt: null, geoOff: [], filters: [] }));
+  });
+
+  it('changes when the rendering mode changes (terrain vs substrate)', () => {
+    const base = { mode: 'terrain', off: [], alt: null, filters: [], geoOff: [] };
+    expect(terrainTileUrl(base)).not.toBe(terrainTileUrl({ ...base, mode: 'substrate' }));
+    // an absent mode canonicalises to 'terrain'
+    expect(terrainStateSig(terrainStateSignature(base))).toBe(
+      terrainStateSig(terrainStateSignature({ off: [], alt: null, filters: [] }))
+    );
   });
 
   it('embeds an encoded state token and parses it back', () => {

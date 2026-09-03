@@ -216,6 +216,9 @@
 .forest {
   background-color: #7d9b4e;
 }
+.substrat {
+  background-color: #8d6e63;
+}
 .relief {
   background-color: #b08968;
 }
@@ -341,6 +344,9 @@
   flex-wrap: wrap;
   gap: 4px;
 }
+.legend-layer {
+  background-color: #607d8b;
+}
 .bottom-buttons {
   position: absolute;
   left: 10px;
@@ -352,7 +358,7 @@
 }
 .mcsc-legend {
   position: absolute;
-  bottom: calc(68px + 4 * max(5vw, 5vh));
+  bottom: calc(72px + 5 * max(5vw, 5vh)); /* 5 stacked buttons + gaps */
   left: 10px;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.8);
@@ -360,7 +366,7 @@
   font-size: 0.62rem;
   padding: 6px 8px;
   border-radius: 6px;
-  max-width: 200px;
+  max-width: 250px;
 }
 .mcsc-legend-title {
   font-weight: bold;

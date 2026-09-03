@@ -6,6 +6,7 @@
 // transparent (relief shows through) — no grey anywhere.
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { buildAggregateTable } from './filterAggregate.js';
+import { decodeLithoGrid } from './lithology.js';
 
 vi.mock('maplibre-gl', () => ({ addProtocol: vi.fn() }));
 
@@ -111,6 +112,8 @@ const makeContext = async () => {
 const forest = (128 * 256 + 128) * 4;  // centre pixel (band 7 land)
 const water = (16 * 256 + 16) * 4;     // water block (band 36)
 const abroad = (240 * 256 + 240) * 4;  // no-data block (band 0)
+const landLeft = (80 * 256 + 80) * 4;    // forest land, west half of the tile
+const landRight = (200 * 256 + 128) * 4; // forest land, east half of the tile
 
 describe('buildTerrainTile', () => {
   it('paints the class colour with no filters, keeps water + no-data blocks distinct', async () => {
@@ -178,6 +181,102 @@ describe('buildTerrainTile', () => {
     }, context);
     expect(put[0].data[forest + 3]).toBe(255);
     expect(put[0].data[forest]).toBe(51);
+  });
+
+  // A substrate grid over the WHOLE tile: family 1 (quaternary, #e3d47f) on
+  // the west half, nodata (id 0) on the east half. Context carries it; base
+  // (makeContext) has no grid.
+  const makeGeoContext = async () => {
+    const { tileXYToLngLat } = await import('./elevation.js');
+    const base = await makeContext();
+    const t = base.tile;
+    const lon0 = tileXYToLngLat(t.z, t.x, t.y, 0, 0).lng;
+    const lon1 = tileXYToLngLat(t.z, t.x, t.y, 256, 0).lng;
+    const latN = tileXYToLngLat(t.z, t.x, t.y, 0, 0).lat;
+    const latS = tileXYToLngLat(t.z, t.x, t.y, 0, 256).lat;
+    const cols = 8;
+    const step = (lon1 - lon0) / cols;
+    const rows = Math.ceil((latN - latS) / step) + 1;
+    const lithoGrid = decodeLithoGrid({
+      cols,
+      rows,
+      west: lon0,
+      north: latN,
+      step,
+      families: {
+        '0': { key: 'nodata', label: 'Sense dades', color: null },
+        '1': { key: 'quaternary', label: 'Dipòsits no consolidats', color: '#e3d47f' },
+      },
+      rle: Array.from({ length: rows }, () => [[1, 4], [0, 4]]),
+    });
+    return {
+      t,
+      ctx: { ...base, context: () => ({ ...base.context(), lithoGrid }) },
+      baseCtx: base,
+    };
+  };
+
+  it('terrain mode ignores the substrate dims (each palette is filtered by its own switch only)', async () => {
+    const { t, ctx } = await makeGeoContext();
+    await buildTerrainTile(t.z, t.x, t.y,
+      { mode: 'terrain', off: [], alt: null, filters: [], geoOff: ['quaternary'] }, ctx.context);
+    // MCSC class colour everywhere, dimmed substrate family has NO effect
+    expect(put[0].data[landLeft + 3]).toBe(255);
+    expect(put[0].data[landLeft]).toBe(51);
+    expect(put[0].data[landRight + 3]).toBe(255);
+    expect(put[0].data[water + 3]).toBe(255);
+  });
+
+  it('substrate mode paints the family colour (nodata land transparent), water unchanged', async () => {
+    const { t, ctx } = await makeGeoContext();
+    await buildTerrainTile(t.z, t.x, t.y,
+      { mode: 'substrate', off: [], alt: null, filters: [], geoOff: [] }, ctx.context);
+    // quaternary #e3d47f on the west half
+    expect(put[0].data[landLeft]).toBe(227);
+    expect(put[0].data[landLeft + 1]).toBe(212);
+    expect(put[0].data[landLeft + 2]).toBe(127);
+    expect(put[0].data[landLeft + 3]).toBe(255);
+    // east half has no substrate data → transparent, even though the MCSC
+    // forest class under it is fine
+    expect(put[0].data[landRight + 3]).toBe(0);
+    expect(put[0].data[water + 2]).toBe(128); // water keeps its class colour
+    expect(put[0].data[water + 3]).toBe(255);
+    expect(loadDemMock).not.toHaveBeenCalled();
+  });
+
+  it('substrate mode gates land by dimmed families and IGNORES the MCSC class dims', async () => {
+    const { t, ctx } = await makeGeoContext();
+    // band 7 (aciculifolis) is dimmed via '221/225', but the family is on →
+    // the substrate colour still paints (own-palette rule).
+    await buildTerrainTile(t.z, t.x, t.y,
+      { mode: 'substrate', off: ['221/225'], alt: null, filters: [], geoOff: [] }, ctx.context);
+    expect(put[0].data[landLeft + 3]).toBe(255);
+    expect(put[0].data[landLeft]).toBe(227);
+
+    // …while dimming the family itself makes it transparent.
+    put.length = 0;
+    await buildTerrainTile(t.z, t.x, t.y,
+      { mode: 'substrate', off: [], alt: null, filters: [], geoOff: ['quaternary'] }, ctx.context);
+    expect(put[0].data[landLeft + 3]).toBe(0);
+    // water is still painted through the family dims
+    expect(put[0].data[water + 3]).toBe(255);
+  });
+
+  it('substrate mode still applies the altitude + meteo gates, and falls back to terrain rendering without the grid', async () => {
+    const { t, ctx, baseCtx } = await makeGeoContext();
+    // DEM is 100 m → band [500, 800] excludes every land pixel.
+    await buildTerrainTile(t.z, t.x, t.y,
+      { mode: 'substrate', off: [], alt: [500, 800], filters: [], geoOff: [] }, ctx.context);
+    expect(put[0].data[landLeft + 3]).toBe(0);
+    expect(put[0].data[water + 3]).toBe(255); // water never gated by altitude
+    expect(loadDemMock).toHaveBeenCalled();
+
+    // Without a grid in context the overlay degrades to terrain rendering.
+    put.length = 0;
+    await buildTerrainTile(t.z, t.x, t.y,
+      { mode: 'substrate', off: [], alt: null, filters: [], geoOff: [] }, baseCtx.context);
+    expect(put[0].data[landLeft]).toBe(51); // MCSC green, not family colour
+    expect(put[0].data[landLeft + 3]).toBe(255);
   });
 
   it('requires ALL conditions together and re-applies the temperature lapse rate', async () => {

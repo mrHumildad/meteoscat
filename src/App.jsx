@@ -2,7 +2,7 @@ import Map from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import logo from './assets/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faCar, faDroplet, faFilter, faMountainSun, faRulerVertical, faSeedling, faTemperatureLow, faTree } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faCar, faDroplet, faFilter, faLayerGroup, faList, faMountainSun, faRulerVertical, faSeedling, faTemperatureLow, faTree } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadAvailableDays, loadSummaries } from './logic/refineData.js'
 import { getDaysInRange, fmtDateCat, parseDay } from './logic/utils.js';
@@ -11,11 +11,13 @@ import './App.css'
 import { computeGeoValues } from './logic/computeGeoValues.js';
 import { filterStationCodes } from './logic/filterStations.js';
 import { buildAggregateTable, limitsForWindow, windowToDates, TYPE_TO_VARIABLE } from './logic/filterAggregate.js';
+import { scoreStations, codesAboveThreshold, scoreByCode } from './logic/boletEngine.js';
 import { MCSC_LEGEND, MCSC_GREY, MCSC_WATER_COLOR, MCSC_WATER_ENTRY } from './logic/mcscLegend.js';
 import { ELEVATION_TILES, ELEVATION_ATTRIBUTION, sampleElevation } from './logic/elevation.js';
 import { MCSC_ATTRIBUTION } from './logic/mcscRaw.js';
 import { registerTerrainProtocol, terrainTileUrl } from './logic/terrainOverlay.js';
 import { registerSeaProtocol } from './logic/seaOverlay.js';
+import { LITHO_ATTRIBUTION, lithoLegendEntries, loadLithoGrid } from './logic/lithology.js';
 import FilterPanel from './comps/FilterPanel.jsx';
 import StationPanel from './comps/StationPanel.jsx';
 
@@ -96,10 +98,13 @@ const App = ()  => {
   const [labelMode, setLabelMode] = useState('humAvg'); // station-circle info: 'none' | 'precAcc' | 'altitud' | 'tempAvg' | 'humAvg'
   const [stationsGeo, setStationsGeo] = useState(null);
   const [geoWithData, setGeoWithData] = useState(null);
-  const [showLegend, setShowLegend] = useState(false);           // MCSC legend panel (overlay is always on)
+  const [showLegend, setShowLegend] = useState(false);           // legend panel of the ACTIVE rendering mode
+  const [terrainMode, setTerrainMode] = useState('terrain');    // painted areas: 'terrain' (MCSC) | 'substrate' (geology)
   const [showTerrain3D, setShowTerrain3D] = useState(true);     // 3D terrain (tilts the camera)
   const [mapReady, setMapReady] = useState(false); // true once onMapLoad has added every layer
   const [mcscOff, setMcscOff] = useState(() => new Set()); // codes of dimmed legend entries
+  const [geoOff, setGeoOff] = useState(() => new Set()); // keys of dimmed substrate families
+  const [lithoGrid, setLithoGrid] = useState(null); // decoded substrate grid (lithology.js)
   const [filteredStationsCodes, setFilteredStationsCodes] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
@@ -109,6 +114,8 @@ const App = ()  => {
   const [reliefRange, setReliefRange] = useState(null); // applied altitude band [lo, hi]; null = off
   const [meteoFilters, setMeteoFilters] = useState([]); // [{ id, type, from, to, range }] — one per meteo filter instance
   const [nextFilterId, setNextFilterId] = useState(1);
+  const [boletFilter, setBoletFilter] = useState(null); // { species, threshold } | null — mushroom rule filter (test)
+  const [forestByCode, setForestByCode] = useState({});  // stationCodi → MCSC forestType from forest_types.json
   const mapRef = useRef(null);
   const dataReqRef = useRef(0);
   const selectedStationRef = useRef(null); // stale-guard for async takeElevation
@@ -116,6 +123,7 @@ const App = ()  => {
   const terrainStateRef = useRef(null); // stacked-overlay state read by the terrain:// tile protocol
   const geoWithDataRef = useRef(null); // latest features read by the terrain:// tile protocol
   const aggRef = useRef(null); // aggregate table read by the terrain:// tile protocol
+  const lithoGridRef = useRef(null); // substrate grid read by the terrain:// tile protocol
 
   // Reference day = latest available data day; day ranges of every filter are
   // offsets back from it.
@@ -150,11 +158,36 @@ const App = ()  => {
     return alts.length ? [Math.min(...alts), Math.max(...alts)] : null;
   }, [stationsGeo]);
 
-  // Stacked terrain overlay state — the full set of conditions every painted
-  // pixel must satisfy: the dimmed (off) legend classes, the altitude band
-  // when narrowed below the stations' altitud span, and every ACTIVE meteo
-  // instance (band narrower than its window's full span) with its concrete
-  // window dates. Any change here regenerates the painted terrain tiles.
+  // Substrate legend for the filter UI (family id > 0, from the grid file so
+  // the UI can never drift from the data it filters). Empty until the grid
+  // loads — the Substrat filter stays hidden meanwhile.
+  const geoLegend = useMemo(() => lithoLegendEntries(lithoGrid), [lithoGrid]);
+
+  // Bolet scores: every station × the selected species over the DISPLAY
+  // window (the species engine takes the LAST windowDays of it). Recomputed
+  // when the filter, data window or forest types change.
+  const boletScores = useMemo(() => {
+    if (!boletFilter || !data || !displayWindow) return null;
+    const daysInRange = getDaysInRange(data, displayWindow.from, displayWindow.to);
+    return scoreStations(data, daysInRange, boletFilter.species, forestByCode);
+  }, [boletFilter, data, displayWindow, forestByCode]);
+
+  // Stations passing the bolet threshold (score ≥ threshold). Empty when the
+  // filter is off — matches the "[] = no filtering" contract of the rest.
+  const boletPassing = useMemo(() =>
+    boletFilter && boletScores
+      ? new Set(codesAboveThreshold(boletScores, boletFilter.threshold))
+      : null
+  , [boletFilter, boletScores]);
+
+  // Stacked terrain overlay state — the rendering mode + the full set of
+  // conditions every painted pixel must satisfy. Each rendering palette is
+  // filtered by its OWN legend switch only (terrainOverlay.js): 'terrain'
+  // dims MCSC classes (`off`), 'substrate' dims substrate families
+  // (`geoOff`); the altitude band when narrowed below the stations' altitud
+  // span and every ACTIVE meteo instance (band narrower than its window's
+  // full span) with its concrete window dates gate both modes. Any change
+  // here regenerates the painted terrain tiles.
   const terrainState = useMemo(() => {
     const off = [...mcscOff].sort();
     const altActive = !!reliefRange && !!altLimits &&
@@ -177,8 +210,18 @@ const App = ()  => {
       a.band[0] - b.band[0] ||
       a.band[1] - b.band[1]
     );
-    return { off, alt: altActive ? [reliefRange[0], reliefRange[1]] : null, filters };
-  }, [mcscOff, reliefRange, altLimits, meteoFilters, agg, refDay]);
+    // Each palette carries only its own dims into the overlay state (the
+    // module never mixes them): geoOff travels only in substrate mode, and
+    // the class dims in terrain mode stay available for the shared water
+    // handling in both.
+    return {
+      mode: terrainMode,
+      off,
+      alt: altActive ? [reliefRange[0], reliefRange[1]] : null,
+      filters,
+      geoOff: terrainMode === 'substrate' ? [...geoOff].sort() : [],
+    };
+  }, [mcscOff, reliefRange, altLimits, meteoFilters, agg, refDay, geoOff, terrainMode]);
 
   // Terrain tile URL — the state signature token changes whenever any filter
   // does, so setTiles() re-requests and the protocol repaints.
@@ -240,6 +283,40 @@ const App = ()  => {
       })
       .then(geo => { if (mounted) setStationsGeo(geo); })
       .catch(err => { console.error('Could not load stations.geojson:', err.message); });
+    return () => { mounted = false };
+  }, []);
+
+  // Substrate (geology) grid — loaded once alongside the stations; the
+  // geology filter stays hidden/inert until it arrives.
+  useEffect(() => {
+    let mounted = true;
+    const base = import.meta.env.BASE_URL || '/';
+    loadLithoGrid(`${base}logic/litho_grid.json`)
+      .then(grid => { if (mounted) setLithoGrid(grid); })
+      .catch(err => { console.error('Could not load litho_grid.json:', err.message); });
+    return () => { mounted = false };
+  }, []);
+
+  // MCSC forest type per station (forest_types.json) — powers the binary
+  // forest-host gate of the bolet scoring (a species only scores on its host
+  // tree; stations without a sampled forest type never match).
+  useEffect(() => {
+    let mounted = true;
+    const base = import.meta.env.BASE_URL || '/';
+    fetch(`${base}logic/forest_types.json`)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then(json => {
+        if (!mounted) return;
+        const map = {};
+        for (const [code, e] of Object.entries(json ?? {})) {
+          map[code] = e?.forestType ?? null;
+        }
+        setForestByCode(map);
+      })
+      .catch(err => { console.error('Could not load forest_types.json:', err.message); });
     return () => { mounted = false };
   }, []);
 
@@ -327,6 +404,7 @@ const App = ()  => {
     registerTerrainProtocol(map, () => terrainStateRef.current, () => ({
       agg: aggRef.current,
       features: geoWithDataRef.current?.features ?? [],
+      lithoGrid: lithoGridRef.current,
     }));
     if (!map.getSource('terrain')) {
       map.addSource('terrain', {
@@ -335,7 +413,7 @@ const App = ()  => {
         tileSize: 256,
         minzoom: 7,
         maxzoom: 14,
-        attribution: MCSC_ATTRIBUTION
+        attribution: `${MCSC_ATTRIBUTION} · ${LITHO_ATTRIBUTION}`
       });
     }
     if (!map.getLayer('terrain')) {
@@ -454,12 +532,23 @@ const App = ()  => {
   }, [stationsGeo, data, displayWindow]);
 
   // 1.5️⃣ Station filter: every meteo instance (its own window + band) AND
-  // the relief band. [] = "no filtering" → show everything.
+  // the relief band AND the geology gate (dimmed substrate families). The
+  // bolet species filter ANDs on top: a station also needs a bolet score ≥
+  // its threshold. [] = "no filtering" → show everything (but when the bolet
+  // filter is ON it always constrains, even with no meteo/relief/geo).
   useEffect(() => {
+    const base = filterStationCodes(stationsFeatures, meteoFilters, reliefRange, agg,
+      { off: geoOff, grid: lithoGrid });
+    if (!boletPassing) {
+      setFilteredStationsCodes(base);
+      return;
+    }
+    // Intersect with the bolet gate; "[] = no filtering" from the meteo side
+    // means "everything passes" → the bolet set alone decides.
     setFilteredStationsCodes(
-      filterStationCodes(stationsFeatures, meteoFilters, reliefRange, agg)
+      base.length ? base.filter(code => boletPassing.has(code)) : [...boletPassing]
     );
-  }, [stationsFeatures, meteoFilters, reliefRange, agg]);
+  }, [stationsFeatures, meteoFilters, reliefRange, agg, geoOff, lithoGrid, boletPassing]);
 
   // 2.5️⃣ Keep station markers + their labels in sync with the station-info
   // mode. 'none' hides the circles (and their name labels, which would float
@@ -527,10 +616,11 @@ const App = ()  => {
     return () => window.removeEventListener('keydown', onKey);
   }, [pickRoute]);
 
-  // keep the display features + aggregate table in refs so the terrain:// tile
-  // protocol can (re)build grids for the right data
+  // keep the display features + aggregate table + substrate grid in refs so
+  // the terrain:// tile protocol can (re)build grids for the right data
   useEffect(() => { geoWithDataRef.current = geoWithData; }, [geoWithData]);
   useEffect(() => { aggRef.current = agg; }, [agg]);
+  useEffect(() => { lithoGridRef.current = lithoGrid; }, [lithoGrid]);
 
   // 2.9️⃣ Toggle 3D terrain (raster-dem source + tilted camera)
   useEffect(() => {
@@ -558,11 +648,15 @@ const App = ()  => {
       if (!dataToSet) return;
       // filtering is active only once a filter constrains (non-empty list)
       const filteringOn = filteredStationsCodes.length > 0;
+      const scoreMap = boletScores ? scoreByCode(boletScores) : null;
       const features = (dataToSet.features ?? []).map(f => ({
         ...f,
         properties: {
           ...f.properties,
           inRange: filteringOn ? filteredStationsCodes.includes(f.properties?.codi) : true,
+          // bolet score for the circle colour ramp (null when the species
+          // filter is off or the station has no data in the window)
+          boletScore: scoreMap?.[f.properties?.codi] ?? null,
         },
       }));
       const featureCollection = { ...dataToSet, features };
@@ -575,8 +669,17 @@ const App = ()  => {
       // their name labels; hide the value number inside their circles.
       const dim = ['!', ['get', 'inRange']];
       if (map.getLayer('stations-circle')) {
+        // Bolet filter ON → green score ramp (grey = no data); otherwise the
+        // usual in-range grey / dimmed grey case.
         map.setPaintProperty('stations-circle', 'circle-color',
-          ['case', ['get', 'inRange'], '#888', MCSC_GREY]);
+          boletScores
+            ? ['interpolate', ['linear'], ['coalesce', ['get', 'boletScore'], -1],
+              -1, '#9e9e9e',
+              0, '#dcedc8',
+              0.5, '#8bc34a',
+              0.75, '#4caf50',
+              1, '#1b5e20']
+            : ['case', ['get', 'inRange'], '#888', MCSC_GREY]);
         map.setPaintProperty('stations-circle', 'circle-opacity',
           ['case', ['get', 'inRange'], 1, 0.3]);
         map.setPaintProperty('stations-circle', 'circle-stroke-opacity',
@@ -596,7 +699,7 @@ const App = ()  => {
     } catch (e) {
       console.warn('Error updating stations source after load', e);
     }
-  }, [stationsGeo, geoWithData, filteredStationsCodes, labelMode]);
+  }, [stationsGeo, geoWithData, filteredStationsCodes, labelMode, boletScores]);
 
   // Filter instance handlers (lifted to App so the map + stations share one
   // source of truth)
@@ -662,19 +765,45 @@ const App = ()  => {
               // tree filter is a copy of the legend and drives the same tiles.
               filteredForestCodes={mcscOff}
               onApplyForest={setMcscOff}
+              // Geology (substrate) filter: dimmed families gate terrain
+              // pixels + station dots via terrainState / filterStationCodes.
+              lithoLegend={geoLegend}
+              geoOff={geoOff}
+              onApplyGeo={setGeoOff}
+              boletFilter={boletFilter}
+              onApplyBolet={setBoletFilter}
             />
           )}
         </div>
       )}
-      {/* Bottom-left button stack: legend (forest), 3D terrain, station info,
-          directions (car) */}
+      {/* Bottom-left button stack: active-layer legend, render-mode switch
+          (terrain types ↔ substrate), 3D terrain, station info, directions */}
       <div className="bottom-buttons">
+        {/* Legend of the ACTIVE rendering method (its content switches with
+            the mode; info-only rows, dimming stays in the filter panel) */}
         <div
-          className={`sel-button forest${showLegend ? ' on' : ''}`}
-          title="Llegenda (MCSC)"
+          className={`sel-button legend-layer${showLegend ? ' on' : ''}`}
+          title="Llegenda de la capa activa"
           onClick={() => setShowLegend(!showLegend)}
         >
-          <FontAwesomeIcon icon={faTree} />
+          <FontAwesomeIcon icon={faList} />
+        </div>
+        {/* Render-mode switch: painted areas show terrain types (MCSC class
+            colours) or substrate (geology family colours). The icon + colour
+            reflect the ACTIVE mode. Substrate needs the loaded geology grid. */}
+        <div
+          className={`sel-button ${terrainMode === 'substrate' ? 'substrat' : 'forest'}${terrainMode === 'substrate' ? ' on' : ''}`}
+          title={terrainMode === 'substrate'
+            ? 'Veure el tipus de terreny (cobertes del sòl)'
+            : lithoGrid
+              ? 'Veure el substrat (geologia)'
+              : 'Substrat no disponible (dades de geologia encara no carregades)'}
+          onClick={() => {
+            if (!lithoGrid) return;
+            setTerrainMode(m => (m === 'substrate' ? 'terrain' : 'substrate'));
+          }}
+        >
+          <FontAwesomeIcon icon={terrainMode === 'substrate' ? faLayerGroup : faTree} />
         </div>
         <div
           className={`sel-button terrain3d${showTerrain3D ? ' on' : ''}`}
@@ -726,26 +855,52 @@ const App = ()  => {
         data={data}
         setSelectedStation={setSelectedStation}
         elevation={clickedElevation}
+        boletFilter={boletFilter}
+        boletScores={boletScores}
       />}
       {showLegend && (
         <div className="mcsc-legend">
-          <div className="mcsc-legend-title">Cobertes del sòl (MCSC)</div>
-          {/* Info-only legend: dimming terrain types is done from the filter
-              panel (Bosc), so these rows are not interactive. They still show
-              the current map state — dimmed classes appear as a grey swatch. */}
-          {MCSC_LEGEND.map(entry => {
-            const off = mcscOff.has(entry.codes);
-            return (
-              <div
-                key={entry.codes}
-                className={`mcsc-legend-row info${off ? ' off' : ''}`}
-              >
-                <span className="mcsc-legend-swatch" style={{ backgroundColor: off ? MCSC_GREY : entry.color }} />
-                <span className="mcsc-legend-label">{entry.label}</span>
-              </div>
-            );
-          })}
-          <div className="mcsc-legend-footer">ICGC &amp; CREAF · CC BY 4.0</div>
+          {terrainMode === 'substrate' && lithoGrid ? (
+            <>
+              <div className="mcsc-legend-title">Substrat geològic (1:50.000)</div>
+              {/* Info-only legend of the substrate rendering mode: dimming
+                  families is done from the filter panel (Substrat), so these
+                  rows are not interactive. Dimmed families show grey. */}
+              {geoLegend.map(entry => {
+                const off = geoOff.has(entry.key);
+                return (
+                  <div
+                    key={entry.key}
+                    className={`mcsc-legend-row info${off ? ' off' : ''}`}
+                  >
+                    <span className="mcsc-legend-swatch" style={{ backgroundColor: off ? MCSC_GREY : entry.color }} />
+                    <span className="mcsc-legend-label">{entry.label}</span>
+                  </div>
+                );
+              })}
+              <div className="mcsc-legend-footer">Mapa geològic 1:50.000 v3.0 — ICGC · CC BY 4.0</div>
+            </>
+          ) : (
+            <>
+              <div className="mcsc-legend-title">Cobertes del sòl (MCSC)</div>
+              {/* Info-only legend: dimming terrain types is done from the filter
+                  panel (Bosc), so these rows are not interactive. They still show
+                  the current map state — dimmed classes appear as a grey swatch. */}
+              {MCSC_LEGEND.map(entry => {
+                const off = mcscOff.has(entry.codes);
+                return (
+                  <div
+                    key={entry.codes}
+                    className={`mcsc-legend-row info${off ? ' off' : ''}`}
+                  >
+                    <span className="mcsc-legend-swatch" style={{ backgroundColor: off ? MCSC_GREY : entry.color }} />
+                    <span className="mcsc-legend-label">{entry.label}</span>
+                  </div>
+                );
+              })}
+              <div className="mcsc-legend-footer">ICGC &amp; CREAF · CC BY 4.0</div>
+            </>
+          )}
         </div>
       )}
     </div>

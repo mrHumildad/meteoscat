@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { filterStationCodes } from './filterStations.js';
 import { buildAggregateTable } from './filterAggregate.js';
+import { decodeLithoGrid } from './lithology.js';
 
 // Daily summaries: values are constant per variable so the [2,0] window
 // aggregates are easy to reason about. Reference day = 2026-08-03.
@@ -115,5 +116,67 @@ describe('filterStationCodes', () => {
 
   it('returns [] when no station matches', () => {
     expect(filterStationCodes(features, [temp(2, 0, [30, 40])], null, agg)).toEqual([]);
+  });
+});
+
+// ── Geology (substrate) gate ───────────────────────────────────────────────
+// 4 cols × 3 rows @ 1° cells, west = 0, north = 3:
+//   row 0 (y∈[2,3)): 1 1 2 2   row 1 (y∈[1,2)): 3 0 0 0   row 2: all nodata
+const geoGridJson = {
+  cols: 4,
+  rows: 3,
+  west: 0,
+  north: 3,
+  step: 1,
+  families: {
+    '0': { key: 'nodata', label: 'Sense dades', color: null },
+    '1': { key: 'carbonatades', label: 'Calcàries', color: '#6a93cf' },
+    '2': { key: 'volcaniques', label: 'Volcàniques', color: '#8f4fc0' },
+    '3': { key: 'gresos', label: 'Gresos', color: '#bf8a4e' },
+  },
+  rle: [[[1, 2], [2, 2]], [[3, 1], [0, 3]], [[0, 4]]],
+};
+const geoGrid = decodeLithoGrid(geoGridJson);
+
+// A on carbonatades, B on volcaniques, C on gresos, D on nodata (no
+// substrate), E without geometry at all.
+const geoFeatures = [
+  { properties: { codi: 'A' }, geometry: { type: 'Point', coordinates: [0.5, 2.5] } },
+  { properties: { codi: 'B' }, geometry: { type: 'Point', coordinates: [2.5, 2.5] } },
+  { properties: { codi: 'C' }, geometry: { type: 'Point', coordinates: [0.5, 1.5] } },
+  { properties: { codi: 'D' }, geometry: { type: 'Point', coordinates: [1.5, 1.5] } },
+  { properties: { codi: 'E' } },
+];
+
+describe('filterStationCodes — geology (substrate) gate', () => {
+  const geo = off => ({ off, grid: geoGrid });
+
+  it('is inert when no family is dimmed (even with the grid loaded)', () => {
+    expect(filterStationCodes(geoFeatures, [], null, agg, geo(new Set()))).toEqual([]);
+  });
+
+  it('excludes stations on dimmed families; nodata and no-geometry stations pass', () => {
+    expect(filterStationCodes(geoFeatures, [], null, agg, geo(new Set(['carbonatades']))))
+      .toEqual(['B', 'C', 'D', 'E']);
+    expect(filterStationCodes(geoFeatures, [], null, agg, geo(new Set(['volcaniques']))))
+      .toEqual(['A', 'C', 'D', 'E']);
+    expect(filterStationCodes(geoFeatures, [], null, agg, geo(new Set(['gresos', 'volcaniques']))))
+      .toEqual(['A', 'D', 'E']);
+  });
+
+  it('ANDs the geology gate with the meteo filters', () => {
+    // rain [2,0] band [10,60] keeps A (20) and C (48); dimming carbonatades
+    // removes A, and D/E have no data → only C passes.
+    const r = rain(2, 0, [10, 60]);
+    expect(filterStationCodes(geoFeatures, [r], null, agg, geo(new Set(['carbonatades']))))
+      .toEqual(['C']);
+    // without the geology gate the same meteo filter keeps A + C
+    expect(filterStationCodes(geoFeatures, [r], null, agg)).toEqual(['A', 'C']);
+  });
+
+  it('requires the grid: a dimmed set without a loaded grid constrains nothing', () => {
+    expect(filterStationCodes(geoFeatures, [], null, agg,
+      { off: new Set(['carbonatades']), grid: null })).toEqual([]);
+    expect(filterStationCodes(geoFeatures, [], null, agg, undefined)).toEqual([]);
   });
 });

@@ -1,10 +1,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faDroplet, faMountain, faSeedling, faTemperatureLow, faTree, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCarrot, faCheck, faDroplet, faLayerGroup, faMountain, faSeedling, faTemperatureLow, faTree, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import RangeSlider from 'react-range-slider-input';
 import { limitsForWindow, TYPE_TO_VARIABLE, windowToDates } from '../logic/filterAggregate.js';
 import { fmtNum, fmtShortCat } from '../logic/utils.js';
 import { MCSC_LEGEND, MCSC_GREY } from '../logic/mcscLegend.js';
+import { SPECIES, SPECIES_KEYS } from '../logic/speciesRules.js';
 import './rangesliders.css';
 
 // Per-filter time ranges (FILTER_REFACTOR_PLAN.md §6): each meteo filter is
@@ -42,6 +43,11 @@ const FilterPanel = ({
   altLimits,
   filteredForestCodes,
   onApplyForest,
+  lithoLegend,
+  geoOff,
+  onApplyGeo,
+  boletFilter,
+  onApplyBolet,
 }) => {
   const [editingId, setEditingId] = useState(null);   // instance currently expanded
   const [pendingId, setPendingId] = useState(null);   // just-added instance: cancel removes it
@@ -50,6 +56,13 @@ const FilterPanel = ({
   const [reliefDraft, setReliefDraft] = useState(null);
   const [forestEditing, setForestEditing] = useState(false);
   const [draftForest, setDraftForest] = useState(() => new Set());
+  const [geoEditing, setGeoEditing] = useState(false);
+  const [draftGeo, setDraftGeo] = useState(() => new Set());
+  const [boletEditing, setBoletEditing] = useState(false);
+  const [draftBolet, setDraftBolet] = useState(() => ({
+    species: boletFilter?.species ?? 'rovellons',
+    threshold: boletFilter?.threshold ?? 0.5,
+  }));
 
   const editing = editingId ? meteoFilters.find(f => f.id === editingId) ?? null : null;
 
@@ -129,6 +142,25 @@ const FilterPanel = ({
     });
   };
 
+  // ── Geology (substrat) — single timeless filter, mirrors the forest one:
+  // the legend rows ARE the toggle list; dimmed families are transparent on
+  // the map (terrainState.geoOff) and exclude the stations on them
+  // (filterStationCodes geo gate). Nodata cells (family 0) are never listed
+  // nor filtered — missing substrate info is not a reason to hide anything.
+  const geoApplied = (geoOff?.size ?? 0) > 0;
+  const openGeoEditor = () => {
+    setDraftGeo(new Set(geoOff ?? []));
+    setGeoEditing(true);
+  };
+  const toggleGeoFamily = key => {
+    setDraftGeo(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
   // ── Relief (altitude) — single timeless filter ──────────────────────────
   const reliefApplied = reliefRange != null;
   const reliefFull = altLimits ?? [0, 0];
@@ -172,6 +204,22 @@ const FilterPanel = ({
             onClick={() => (reliefEditing ? setReliefEditing(false) : openReliefEditor())}
           >
             <FontAwesomeIcon icon={faMountain} />
+          </div>
+          {lithoLegend.length > 0 && (
+            <div
+              className={`sel-button substrat${geoApplied ? ' on' : ''}`}
+              title="Filtre de substrat geològic"
+              onClick={() => (geoEditing ? setGeoEditing(false) : openGeoEditor())}
+            >
+              <FontAwesomeIcon icon={faLayerGroup} />
+            </div>
+          )}
+          <div
+            className={`sel-button bolet${boletFilter ? ' on' : ''}`}
+            title="Filtre de bolets (regles d'espècie — prova)"
+            onClick={() => (boletEditing ? setBoletEditing(false) : setBoletEditing(true))}
+          >
+            <FontAwesomeIcon icon={faCarrot} />
           </div>
         </div>
 
@@ -253,6 +301,85 @@ const FilterPanel = ({
           </div>
         )}
 
+        {geoEditing && (
+          <div className="filter-line">
+            <div className="filter-line-header">
+              <span className="filter-line-label">Substrat geològic</span>
+              <span className="range-value">
+                {draftGeo.size === 0
+                  ? 'Tots els substrats'
+                  : `${draftGeo.size} família${draftGeo.size > 1 ? 's' : ''} atenuada${draftGeo.size > 1 ? 's' : ''}`}
+              </span>
+              <div className="filter-line-actions">
+                <div
+                  className="sel-button filter-line-ok"
+                  title="D'acord"
+                  onClick={() => {
+                    onApplyGeo?.(new Set(draftGeo));
+                    setGeoEditing(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCheck} />
+                </div>
+                <div
+                  className="sel-button filter-line-cancel"
+                  title="Cancel·la"
+                  onClick={() => setGeoEditing(false)}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </div>
+              </div>
+            </div>
+            <div className="filter-legend">
+              {lithoLegend.map(entry => {
+                const off = draftGeo.has(entry.key);
+                return (
+                  <button
+                    type="button"
+                    key={entry.key}
+                    className={`mcsc-legend-row${off ? ' off' : ''}`}
+                    title={off ? 'Ressaltar' : 'Atenuar'}
+                    onClick={() => toggleGeoFamily(entry.key)}
+                  >
+                    <span className="mcsc-legend-swatch" style={{ backgroundColor: off ? MCSC_GREY : entry.color }} />
+                    <span className="mcsc-legend-label">{entry.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mcsc-legend-footer">Mapa geològic 1:50.000 v3.0 — ICGC · CC BY 4.0</div>
+          </div>
+        )}
+
+        {!geoEditing && geoApplied && (
+          <div className="filter-line applied">
+            <div className="filter-line-header">
+              <span className="filter-line-label">Substrat</span>
+              {/* Squares for the still-selected (non-dimmed) substrate
+                  families; hover shows which family each square is */}
+              <div className="filter-swatches">
+                {lithoLegend.filter(e => !geoOff.has(e.key)).map(entry => (
+                  <span
+                    key={entry.key}
+                    className="mcsc-legend-swatch"
+                    style={{ backgroundColor: entry.color }}
+                    title={entry.label}
+                  />
+                ))}
+              </div>
+              <div className="filter-line-actions">
+                <div
+                  className="sel-button filter-line-cancel"
+                  title="Treu el filtre"
+                  onClick={() => onApplyGeo?.(new Set())}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {reliefEditing && (
           <div className="filter-line">
             <div className="filter-line-header">
@@ -302,6 +429,89 @@ const FilterPanel = ({
                   className="sel-button filter-line-cancel"
                   title="Treu el filtre"
                   onClick={() => onApplyRelief?.(null)}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Bolets: species rule filter (test) ──────────────────────── */}
+        {boletEditing && (
+          <div className="filter-line">
+            <div className="filter-line-header">
+              <span className="filter-line-label">Bolets</span>
+              <span className="range-value">
+                {SPECIES[draftBolet.species]?.name} · puntuació ≥ {Math.round(draftBolet.threshold * 100)} %
+              </span>
+              <div className="filter-line-actions">
+                <div
+                  className="sel-button filter-line-ok"
+                  title="D'acord"
+                  onClick={() => {
+                    onApplyBolet?.(draftBolet);
+                    setBoletEditing(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCheck} />
+                </div>
+                <div
+                  className="sel-button filter-line-cancel"
+                  title="Cancel·la"
+                  onClick={() => setBoletEditing(false)}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </div>
+              </div>
+            </div>
+            <div className="filter-legend">
+              {SPECIES_KEYS.map(key => {
+                const s = SPECIES[key];
+                return (
+                  <button
+                    type="button"
+                    key={key}
+                    className={`mcsc-legend-row${draftBolet.species === key ? ' on' : ''}`}
+                    onClick={() => setDraftBolet(d => ({ ...d, species: key }))}
+                  >
+                    <span className="mcsc-legend-label">{s.name}</span>
+                    <span className="mcsc-legend-sub">{s.latin}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="filter-editor-row">
+              <div className="filter-editor-label">
+                <span>Llindar de puntuació</span>
+                <span className="range-value">≥ {Math.round(draftBolet.threshold * 100)} %</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={draftBolet.threshold}
+                onChange={e => setDraftBolet(d => ({ ...d, threshold: Number(e.target.value) }))}
+                aria-label="Llindar de puntuació"
+              />
+            </div>
+            <div className="mcsc-legend-footer">Regles d'espècie en proves (rovellons/ceps primer)</div>
+          </div>
+        )}
+
+        {!boletEditing && boletFilter && (
+          <div className="filter-line applied">
+            <div className="filter-line-header">
+              <span className="filter-line-label">Bolets</span>
+              <span className="range-value">
+                {SPECIES[boletFilter.species]?.name} · ≥ {Math.round(boletFilter.threshold * 100)} %
+              </span>
+              <div className="filter-line-actions">
+                <div
+                  className="sel-button filter-line-cancel"
+                  title="Treu el filtre"
+                  onClick={() => onApplyBolet?.(null)}
                 >
                   <FontAwesomeIcon icon={faXmark} />
                 </div>

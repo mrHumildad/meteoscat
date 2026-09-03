@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { fmt, fmtNum } from '../logic/utils.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDroplet, faSeedling, faTemperatureLow, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faCarrot, faDroplet, faSeedling, faTemperatureLow, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { fmtDayCat } from '../logic/utils.js';
+import { SPECIES } from '../logic/speciesRules.js';
 
-const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation }) => {
+const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation, boletFilter, boletScores }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   // global min/max from dayStats (hooks must run before the early return)
@@ -166,6 +167,22 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation 
           </div>
         </div>
       </div>
+      {boletFilter && (
+        <div className="st-block bolet">
+          <div className="block-left">
+            <span className="st-block-icon">
+              <FontAwesomeIcon icon={faCarrot} />
+            </span>
+            <span className="st-block-value">
+              {SPECIES[boletFilter.species]?.name ?? boletFilter.species}:{' '}
+              {fmtScore(boletScores, station.properties?.codi)}
+            </span>
+          </div>
+          <div className="block-right">
+            {scoreDetail(boletScores, station.properties?.codi)}
+          </div>
+        </div>
+      )}
       <div id="st-days" className="bars horizontal">
         {chartData.map((d, i) => (
           <div key={i} className="bar day">
@@ -175,6 +192,27 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation 
       </div>
     </div>
   );
+};
+
+// Show the bolet score for a station code as a whole percentage, or '—'.
+const fmtScore = (boletScores, code) => {
+  const s = boletScores?.find(x => x.code === code);
+  if (s?.score == null) return '—';
+  return `${Math.round(s.score * 100)} %`;
+};
+
+// Compact trigger detail under the score (rain window / temp / flush lag).
+const scoreDetail = (boletScores, code) => {
+  const s = boletScores?.find(x => x.code === code);
+  if (!s?.stats) return null;
+  const { rainTotalMm, tempMeanC, daysSinceBigRain } = s.stats;
+  const bits = [];
+  if (rainTotalMm != null) bits.push(`${fmtNum(rainTotalMm, 0)} mm`);
+  if (tempMeanC != null) bits.push(`${fmtNum(tempMeanC, 1)} °C`);
+  if (daysSinceBigRain != null) bits.push(`pluja forta fa ${daysSinceBigRain} d`);
+  return bits.length ? (
+    <span className="st-block-sub">{bits.join(' · ')}</span>
+  ) : null;
 };
 
 export default StationPanel;
