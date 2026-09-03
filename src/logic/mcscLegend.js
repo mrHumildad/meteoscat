@@ -17,6 +17,12 @@
 //   228→14, 229→15, 230–234 → 16-20, 341–355 → 21-35, 461–466 → 36-41.
 // Data source: Institut Cartogràfic i Geològic de Catalunya (ICGC) i CREAF,
 // Mapa de Cobertes del Sòl de Catalunya v1.0 — CC BY 4.0.
+
+// Colour shared by all water classes (mar, llacs, embassaments). Also used to
+// paint the open sea: the MCSC raster leaves the ocean outside its tiles, so
+// the app fills it with this colour to match the water terrain.
+export const MCSC_WATER_COLOR = '#000080';
+
 export const MCSC_LEGEND = [
   { color: '#33cc33', label: "Bosc d'aciculifolis (pins, avets)", codes: '221/225', values: [7, 11] },
   { color: '#66ff33', label: 'Bosc de caducifolis (roures, fagedes)', codes: '222/226', values: [8, 12] },
@@ -26,7 +32,7 @@ export const MCSC_LEGEND = [
   { color: '#c3c3a0', label: 'Prats i herbassars', codes: '228', values: [14] },
   { color: '#ffff00', label: 'Conreus', codes: '111–116', values: [1, 2, 3, 4, 5, 6] },
   { color: '#ff007d', label: 'Zones urbanes', codes: '341–355', values: [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35] },
-  { color: '#000080', label: 'Aigües (mar, llacs, embassaments)', codes: '461–466', values: [36, 37, 38, 39, 40, 41] },
+  { color: MCSC_WATER_COLOR, label: 'Aigües (mar, llacs, embassaments)', codes: '461–466', values: [36, 37, 38, 39, 40, 41] },
 ];
 
 // Single grey shared by every dimmed / not-selected class.

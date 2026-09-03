@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { lngLatToTileXY, terrariumElevation, clamp } from './elevation.js';
+import { lngLatToTileXY, tileXYToLngLat, terrariumElevation, clamp } from './elevation.js';
 
 describe('lngLatToTileXY', () => {
   it('maps the meridian/equator intersection onto tile (1,1) at z1, pixel origin', () => {
@@ -29,6 +29,35 @@ describe('lngLatToTileXY', () => {
       expect(Number.isFinite(t.y)).toBe(true);
       expect(Number.isFinite(t.px)).toBe(true);
       expect(Number.isFinite(t.py)).toBe(true);
+    }
+  });
+});
+
+describe('tileXYToLngLat', () => {
+  it('round-trips lng/lat through tile pixel coordinates', () => {
+    for (const [lng, lat] of [[0, 0], [1.9, 41.9], [-1, 40], [4, 44]]) {
+      for (const z of [7, 12, 15]) {
+        const t = lngLatToTileXY(lng, lat, z);
+        const back = tileXYToLngLat(z, t.x, t.y, t.px, t.py);
+        expect(back.lng).toBeCloseTo(lng, 5);
+        expect(back.lat).toBeCloseTo(lat, 5);
+      }
+    }
+  });
+
+  it('maps a tile origin to the tile corner', () => {
+    // z1 tile (1,1) origin = meridian/equator (lngLatToTileXY(0,0,1) lands
+    // exactly on that pixel), i.e. lng 0, lat 0
+    const { lng, lat } = tileXYToLngLat(1, 1, 1, 0, 0);
+    expect(lng).toBeCloseTo(0, 5);
+    expect(lat).toBeCloseTo(0, 5);
+  });
+
+  it('returns finite lng/lat across the app bounds at tile zoom', () => {
+    for (const z of [7, 12, 15]) {
+      const { lng, lat } = tileXYToLngLat(z, 0, 0, 128, 128);
+      expect(Number.isFinite(lng)).toBe(true);
+      expect(Number.isFinite(lat)).toBe(true);
     }
   });
 });

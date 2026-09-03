@@ -1,7 +1,7 @@
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDroplet, faSeedling, faTemperatureLow, faCalendarDays, faRightFromBracket, faTree, faMountain, faMountainSun, faRulerVertical } from '@fortawesome/free-solid-svg-icons';
+import { faDroplet, faSeedling, faTemperatureLow, faCalendarDays, faRightFromBracket, faRulerVertical } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from 'react';
 import RangeSlider from 'react-range-slider-input';
 import { filterStationCodes } from '../logic/filterStations.js';
@@ -15,15 +15,9 @@ const Selectors = ({
   handleSelect,
   minDate,
   maxDate,
-  setSelectedVariable,
+  setLabelMode,
   showCalendar,
   setShowCalendar,
-  showForestOverlay,
-  setShowForestOverlay,
-  showRelief,
-  setShowRelief,
-  showTerrain3D,
-  setShowTerrain3D,
   setAltBand
 }) => {
   // Local state for each range
@@ -68,7 +62,7 @@ const Selectors = ({
             </div>
           <div
             className="sel-button rain"
-            onClick={() => setSelectedVariable('precAcc')}
+            onClick={() => setLabelMode('precAcc')}
           >
             <FontAwesomeIcon icon={faDroplet} />
           </div>
@@ -87,7 +81,7 @@ const Selectors = ({
             </div>
           <div
             className="sel-button humidity"
-            onClick={() => setSelectedVariable('humAvg')}
+            onClick={() => setLabelMode('humAvg')}
           >
             <FontAwesomeIcon icon={faSeedling} />
           </div>
@@ -106,7 +100,7 @@ const Selectors = ({
             </div>
           <div
             className="sel-button temp"
-            onClick={() => setSelectedVariable('tempAvg')}
+            onClick={() => setLabelMode('tempAvg')}
           >
             <FontAwesomeIcon icon={faTemperatureLow} />
           </div>
@@ -125,37 +119,10 @@ const Selectors = ({
             </div>
           <div
             className="sel-button altitude"
-            onClick={() => setSelectedVariable('altitud')}
+            onClick={() => setLabelMode('altitud')}
           >
             <FontAwesomeIcon icon={faRulerVertical} />
           </div>
-        </div>
-
-        {/* MCSC forest / land-cover overlay toggle */}
-        <div
-          className={`sel-button forest${showForestOverlay ? ' on' : ''}`}
-          title="Cobertes del sòl (MCSC)"
-          onClick={() => setShowForestOverlay(!showForestOverlay)}
-        >
-          <FontAwesomeIcon icon={faTree} />
-        </div>
-
-        {/* Elevation — flat hillshade relief overlay */}
-        <div
-          className={`sel-button relief${showRelief ? ' on' : ''}`}
-          title="Relleu (ombrejat del terreny)"
-          onClick={() => setShowRelief(!showRelief)}
-        >
-          <FontAwesomeIcon icon={faMountain} />
-        </div>
-
-        {/* Elevation — 3D terrain (tilts the camera) */}
-        <div
-          className={`sel-button terrain3d${showTerrain3D ? ' on' : ''}`}
-          title="Terreny 3D"
-          onClick={() => setShowTerrain3D(!showTerrain3D)}
-        >
-          <FontAwesomeIcon icon={faMountainSun} />
         </div>
 
         {/* Calendar toggle */}

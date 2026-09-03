@@ -1,16 +1,21 @@
 import Map from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import logo from './assets/logo.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBan, faDroplet, faFilter, faMountainSun, faRulerVertical, faSeedling, faTemperatureLow, faTree } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadAvailableDays, loadSummaries } from './logic/refineData.js'
 import { getDaysInRange, fmt, daysCount, fmtDayCat, fmtDateCat, parseDay } from './logic/utils.js';
 import './App.css'
 
 import { computeGeoValues } from './logic/computeGeoValues.js';
-import { MCSC_LEGEND, MCSC_GREY, renderMcscSld } from './logic/mcscLegend.js';
+import { MCSC_LEGEND, MCSC_GREY, MCSC_WATER_COLOR, renderMcscSld } from './logic/mcscLegend.js';
 import { ELEVATION_TILES, ELEVATION_ATTRIBUTION, sampleElevation } from './logic/elevation.js';
 import { registerAltitudeProtocol } from './logic/altitudeOverlay.js';
-import Selectors from './comps/Selectors.jsx';
+import { registerMeteoProtocol } from './logic/meteoOverlay.js';
+import { registerSeaProtocol } from './logic/seaOverlay.js';
+// import Selectors from './comps/Selectors.jsx'; // commented out — kept as reference while rebuilding the filter section
+import FilterPanel from './comps/FilterPanel.jsx';
 import StationPanel from './comps/StationPanel.jsx';
 
 // Catalonia bounding box (west,south) , (east,north)
@@ -26,6 +31,52 @@ const valueField = variable => [
   ['==', ['get', variable], null],
   '',
   ['to-string', ['get', variable]]
+];
+
+// Value label expression that also hides the number on filtered-out (dimmed)
+// stations: the source feature carries `inRange` = true/false.
+const valueFieldDimmed = variable => [
+  'case',
+  ['!', ['get', 'inRange']],
+  '',
+  valueField(variable)
+];
+
+// Cycle order of the bottom-left station-info button, and the icon it shows
+// for each mode so the rendered info is visible at a glance.
+const LABEL_MODES = ['none', 'precAcc', 'altitud', 'tempAvg', 'humAvg'];
+const LABEL_ICONS = {
+  none: faBan,
+  precAcc: faDroplet,
+  altitud: faRulerVertical,
+  tempAvg: faTemperatureLow,
+  humAvg: faSeedling
+};
+// Background colours reuse the variable buttons' classes (blue rain, green
+// humidity, red temp, purple altitude); 'none' keeps the amber stationinfo.
+const LABEL_CLASSES = {
+  none: 'stationinfo',
+  precAcc: 'rain',
+  altitud: 'altitude',
+  tempAvg: 'temp',
+  humAvg: 'humidity'
+};
+
+// Hex colour (no '#') for the open sea, matching the MCSC water class — and
+// greying out with it when the Aigües legend entry is dimmed, so the sea
+// behaves exactly like the rest of the water terrain.
+const seaColorHex = (offCodes) => {
+  const aigues = MCSC_LEGEND.find(e => e.label.startsWith('Aigües'));
+  return (aigues && offCodes.has(aigues.codes) ? MCSC_GREY : MCSC_WATER_COLOR).slice(1);
+};
+
+// Meteo area filters: rain/humidity/temperature station values interpolated
+// onto a continuous field (meteoGrid.js) and served through the meteo://
+// protocol — one raster layer per variable so active bands stack on the map.
+const METEO_VARS = [
+  { variable: 'precAcc', key: 'rain' },
+  { variable: 'humAvg', key: 'hum' },
+  { variable: 'tempAvg', key: 'temp' },
 ];
 
 // ICGC/CREAF MCSC land-cover map (cobertes-sol, layer cobertes_2024), served
@@ -58,24 +109,32 @@ const App = ()  => {
   const [minDate, setMinDate] = useState(null);
   const [maxDate, setMaxDate] = useState(null);
   const [daysRange, setDaysRange] = useState(null);
-  const [selectedVariable, setSelectedVariable] = useState('humAvg');
+  const [labelMode, setLabelMode] = useState('humAvg'); // station-circle info: 'none' | 'precAcc' | 'altitud' | 'tempAvg' | 'humAvg'
   const [stationsGeo, setStationsGeo] = useState(null);
   const [geoWithData, setGeoWithData] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [showForestOverlay, setShowForestOverlay] = useState(false);
-  const [showRelief, setShowRelief] = useState(false);          // flat hillshade
-  const [showTerrain3D, setShowTerrain3D] = useState(false);    // 3D terrain
+  const [showLegend, setShowLegend] = useState(false);           // MCSC legend panel (overlay is always on)
+  const [showTerrain3D, setShowTerrain3D] = useState(true);     // 3D terrain (tilts the camera)
+  const [mapReady, setMapReady] = useState(false); // true once onMapLoad has added every layer
   const [mcscOff, setMcscOff] = useState(() => new Set()); // codes of dimmed legend entries
   const [filteredStationsCodes, setFilteredStationsCodes] = useState([]);
   const [rangeLimits, setRangeLimits] = useState(null);
   const [dataLoading, setDataLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
   const [clickedElevation, setClickedElevation] = useState(null); // DEM sample, m
-  const [altBand, setAltBand] = useState(null); // [lo, hi] from the altitude slider; null = off
+  const [showFilter, setShowFilter] = useState(false); // rebuilt filter panel open state
+  const [reliefRange, setReliefRange] = useState(null); // applied altitude filter [lo, hi]; null = off
+  const [rainRange, setRainRange] = useState(null);     // applied rain band [lo, hi]; null = off
+  const [humRange, setHumRange] = useState(null);       // applied humidity band [lo, hi]; null = off
+  const [tempRange, setTempRange] = useState(null);     // applied temperature band [lo, hi]; null = off
+  // The altitude-band overlay state is derived from the applied relief range.
+  const altBand = reliefRange;
   const mapRef = useRef(null);
   const dataReqRef = useRef(0);
   const selectedStationRef = useRef(null); // stale-guard for async takeElevation
   const altBandRef = useRef(null); // band read by the alt:// tile protocol
+  const windowKeyRef = useRef(''); // data-window key read by the meteo:// tile protocol
+  const geoWithDataRef = useRef(null); // latest features read by the meteo:// tile protocol
 
   // SLD-classified tile URL for the MCSC raster, rebuilt whenever a legend
   // switch dims / restores a class (unselected and unlisted band values grey).
@@ -83,6 +142,16 @@ const App = ()  => {
     const sld = renderMcscSld(MCSC_LEGEND, mcscOff);
     return `${MCSC_WMS_TILES}&SLD_BODY=${encodeURIComponent(sld)}`;
   }, [mcscOff]);
+
+  // Applied area filters, memoized so FilterPanel's sync effect doesn't
+  // re-run on every App render (object identity is part of its deps).
+  const areaRanges = useMemo(
+    () => ({ relief: reliefRange, rain: rainRange, hum: humRange, temp: tempRange }),
+    [reliefRange, rainRange, humRange, tempRange]
+  );
+  // Stable feature list for the same data window (the `?? []` fallback would
+  // otherwise create a new array on every render).
+  const stationsFeatures = useMemo(() => geoWithData?.features ?? [], [geoWithData]);
 
   // 0️⃣ Load the list of available days once, then open on the first day
   useEffect(() => {
@@ -208,7 +277,7 @@ const App = ()  => {
         source: 'stations',
         layout: {
           // show empty string when avg is null, otherwise show avg as string
-          'text-field': valueField(selectedVariable),
+          'text-field': valueField(labelMode),
           'text-size': 24,
           'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
           'text-allow-overlap': true,
@@ -242,7 +311,7 @@ const App = ()  => {
           id: 'mcsc',
           type: 'raster',
           source: 'mcsc',
-          layout: { visibility: showForestOverlay ? 'visible' : 'none' },
+          layout: { visibility: 'visible' }, // the MCSC overlay is always on
           paint: { 'raster-opacity': 0.85 }
         }, 'stations-circle');
       }
@@ -266,7 +335,7 @@ const App = ()  => {
         id: 'hillshade',
         type: 'hillshade',
         source: 'elevation-dem',
-        layout: { visibility: showRelief ? 'visible' : 'none' },
+        layout: { visibility: 'visible' },
         paint: {
           'hillshade-exaggeration': 0.4,
           'hillshade-illumination-direction': 315
@@ -275,9 +344,10 @@ const App = ()  => {
     }
 
     // Altitude-band area overlay: client-classified terrarium tiles served
-    // through the custom `alt://` protocol. In-band ⟶ amber, out-of-band ⟶
-    // the same grey as unselected MCSC classes; the band comes from the
-    // altitude slider via altBandRef so tiles regenerate only on band change.
+    // through the custom `alt://` protocol. In-band ⟶ transparent (the map
+    // shows through), out-of-band ⟶ the same grey as unselected MCSC classes;
+    // the band comes from the relief slider via altBandRef so tiles
+    // regenerate only on band change.
     registerAltitudeProtocol(map, () => altBandRef.current);
     if (!map.getSource('altitude-band')) {
       map.addSource('altitude-band', {
@@ -289,13 +359,73 @@ const App = ()  => {
       });
     }
     if (!map.getLayer('altitude-band')) {
+      // Inserted BELOW the hillshade so the grey mask keeps the relief shading
+      // on top — exactly how dimmed MCSC legend classes look (grey + relief).
       map.addLayer({
         id: 'altitude-band',
         type: 'raster',
         source: 'altitude-band',
         layout: { visibility: 'none' },
-        paint: { 'raster-opacity': 0.85 }
-      }, 'stations-circle');
+        paint: { 'raster-opacity': 0.85 } // transparent in-band pixels + grey mask
+      }, 'hillshade');
+    }
+
+    // Meteo area overlays (rain/humidity/temp): station values interpolated
+    // per pixel through the custom `meteo://` protocol, one raster layer per
+    // variable so active bands stack. Same mask semantics as the altitude
+    // band (in-band transparent, out-of-band grey, sea transparent); the
+    // variable, data window and band come from the tile URL, so tiles
+    // regenerate only when a band or the data window changes.
+    registerMeteoProtocol(map, () => ({
+      windowKey: windowKeyRef.current,
+      features: geoWithDataRef.current?.features ?? [],
+    }));
+    METEO_VARS.forEach(({ variable }) => {
+      const bandId = `${variable}-band`;
+      if (!map.getSource(bandId)) {
+        map.addSource(bandId, {
+          type: 'raster',
+          tiles: ['meteo://{z}/{x}/{y}?v=off'],
+          tileSize: 256,
+          minzoom: 7,
+          maxzoom: 15
+        });
+      }
+      if (!map.getLayer(bandId)) {
+        // Inserted BELOW the hillshade, like the altitude band, so the grey
+        // mask keeps the relief shading on top.
+        map.addLayer({
+          id: bandId,
+          type: 'raster',
+          source: bandId,
+          layout: { visibility: 'none' },
+          paint: { 'raster-opacity': 0.85 }
+        }, 'hillshade');
+      }
+    });
+
+    // Sea overlay: paints the ocean (elevation <= 0, from the same DEM the
+    // relief uses) with the water colour. It sits ABOVE the hillshade — which
+    // would otherwise render the flat/bathy sea grey — and BELOW the MCSC
+    // layer, so the land-cover water class draws on top with the same colour.
+    registerSeaProtocol();
+    if (!map.getSource('sea')) {
+      map.addSource('sea', {
+        type: 'raster',
+        tiles: [`sea://{z}/{x}/{y}?c=${seaColorHex(mcscOff)}`],
+        tileSize: 256,
+        minzoom: 7,
+        maxzoom: 15
+      });
+    }
+    if (!map.getLayer('sea')) {
+      map.addLayer({
+        id: 'sea',
+        type: 'raster',
+        source: 'sea',
+        layout: { visibility: 'visible' },
+        paint: { 'raster-opacity': 1 }
+      }, 'mcsc');
     }
 
     map.on('click', 'stations-circle', (e) => {
@@ -322,6 +452,10 @@ const App = ()  => {
 
     map.on('mouseenter', 'stations-circle', () => map.getCanvas().style.cursor = 'pointer');
     map.on('mouseleave', 'stations-circle', () => map.getCanvas().style.cursor = '');
+
+    // layers are all in place now — let the terrain effect apply the initial
+    // (default-on) 3D state, since it can't run before the map exists
+    setMapReady(true);
   };
 
   // 1️⃣ Compute geoWithData
@@ -358,23 +492,30 @@ const App = ()  => {
       altMin: Math.min(...allAlts),
       altMax: Math.max(...allAlts),
     });
-  }, [daysRange, stationsGeo, selectedVariable, data]);
+  }, [daysRange, stationsGeo, data]);
 
-  // 2.5️⃣ Keep the on-circle value labels in sync with the selected variable.
-  // MapLibre layout properties are baked in at layer creation, so clicking a
-  // variable button must update the layer explicitly — React state alone doesn't.
+  // 2.5️⃣ Keep station markers + their labels in sync with the station-info
+  // mode. 'none' hides the circles (and their name labels, which would float
+  // alone) plus the value layer; any other mode restores them and sets the
+  // value layer's text-field. MapLibre layout properties are baked in at layer
+  // creation, so updating the layer explicitly is required — React state
+  // alone doesn't do it.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !map.getLayer('stations-value')) return;
-    map.setLayoutProperty('stations-value', 'text-field', valueField(selectedVariable));
-  }, [selectedVariable]);
-
-  // 2.6️⃣ Toggle the MCSC land-cover overlay
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !map.getLayer('mcsc')) return;
-    map.setLayoutProperty('mcsc', 'visibility', showForestOverlay ? 'visible' : 'none');
-  }, [showForestOverlay]);
+    if (!map) return;
+    if (labelMode === 'none') {
+      if (map.getLayer('stations-circle')) map.setLayoutProperty('stations-circle', 'visibility', 'none');
+      if (map.getLayer('stations-label')) map.setLayoutProperty('stations-label', 'visibility', 'none');
+      if (map.getLayer('stations-value')) map.setLayoutProperty('stations-value', 'visibility', 'none');
+    } else {
+      if (map.getLayer('stations-circle')) map.setLayoutProperty('stations-circle', 'visibility', 'visible');
+      if (map.getLayer('stations-label')) map.setLayoutProperty('stations-label', 'visibility', 'visible');
+      if (map.getLayer('stations-value')) {
+        map.setLayoutProperty('stations-value', 'visibility', 'visible');
+        map.setLayoutProperty('stations-value', 'text-field', valueFieldDimmed(labelMode));
+      }
+    }
+  }, [labelMode]);
 
   // 2.7️⃣ Rebuild the MCSC raster tiles when a legend switch dims / restores a
   // class (each switch state produces a different SLD_BODY URL).
@@ -387,6 +528,16 @@ const App = ()  => {
     }
   }, [mcscTiles]);
 
+  // 2.7.1️⃣ Keep the open sea in sync with the Aigües legend switch: blue by
+  // default, grey when the water class is dimmed (so the sea behaves exactly
+  // like the rest of the water terrain). The colour bakes into the tile URL,
+  // regenerating the overlay tiles on each change.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.getSource('sea')) return;
+    map.getSource('sea').setTiles([`sea://{z}/{x}/{y}?c=${seaColorHex(mcscOff)}`]);
+  }, [mcscOff]);
+
   // keep the latest selected station in a ref so async DEM samples can check
   // they still match the station the user last clicked
   useEffect(() => { selectedStationRef.current = selectedStation; }, [selectedStation]);
@@ -394,17 +545,19 @@ const App = ()  => {
   // keep the altitude band in a ref so the alt:// tile protocol can read it
   useEffect(() => { altBandRef.current = altBand; }, [altBand]);
 
-  // 2.8️⃣ Toggle the hillshade (relief) overlay
+  // keep the current data window + features in refs so the meteo:// tile
+  // protocol can (re)build its interpolation grid for the right window
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !map.getLayer('hillshade')) return;
-    map.setLayoutProperty('hillshade', 'visibility', showRelief ? 'visible' : 'none');
-  }, [showRelief]);
+    windowKeyRef.current = daysRange?.from
+      ? `${fmt(daysRange.from)}-${fmt(daysRange.to ?? daysRange.from)}`
+      : '';
+  }, [daysRange]);
+  useEffect(() => { geoWithDataRef.current = geoWithData; }, [geoWithData]);
 
   // 2.9️⃣ Toggle 3D terrain (raster-dem source + tilted camera)
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    if (!mapReady || !map) return;
     if (showTerrain3D && map.getSource('elevation-dem')) {
       map.setTerrain({ source: 'elevation-dem', exaggeration: 1.3 });
       map.easeTo({ pitch: 55, bearing: -20, duration: 800 });
@@ -412,7 +565,7 @@ const App = ()  => {
       map.setTerrain(null);
       map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
     }
-  }, [showTerrain3D]);
+  }, [showTerrain3D, mapReady]);
 
   // 2.10️⃣ Altitude-band overlay: visible only while the altitude slider is
   // narrowed below its full span; the band bakes into the tile URL so each
@@ -428,7 +581,33 @@ const App = ()  => {
     ]);
   }, [altBand, rangeLimits]);
 
-  // 2️⃣ Update map once geoWithData is ready (and apply the slider filter)
+  // 2.11️⃣ Meteo bands: one raster layer per variable, visible only while its
+  // slider is narrowed below the full span. Variable, data window and band
+  // bake into the tile URL so each change regenerates the classified tiles.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const w = windowKeyRef.current;
+    const bandOf = { rain: rainRange, hum: humRange, temp: tempRange };
+    for (const { variable, key } of METEO_VARS) {
+      const bandId = `${variable}-band`;
+      if (!map.getSource(bandId)) continue;
+      const band = bandOf[key];
+      const active = !!band && !!rangeLimits &&
+        (band[0] !== rangeLimits[`${key}Min`] || band[1] !== rangeLimits[`${key}Max`]);
+      map.setLayoutProperty(bandId, 'visibility', active ? 'visible' : 'none');
+      map.getSource(bandId).setTiles([
+        active
+          ? `meteo://{z}/{x}/{y}?v=${variable}&w=${w}&b=${band[0]}_${band[1]}`
+          : 'meteo://{z}/{x}/{y}?v=off'
+      ]);
+    }
+  }, [rainRange, humRange, tempRange, rangeLimits, daysRange]);
+
+  // 2️⃣ Update map once geoWithData is ready (and apply the slider filter).
+  // All stations stay in the source; out-of-range ones carry inRange=false and
+  // are dimmed to MCSC_GREY (same grey as deselected terrain classes) instead
+  // of being removed, so you can see what's being filtered out.
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -436,22 +615,49 @@ const App = ()  => {
       // prefer geoWithData (computed averages) when available
       const dataToSet = geoWithData || stationsGeo;
       if (!dataToSet) return;
-      // only filter once the user narrows a slider (non-empty code list)
-      const featureCollection = filteredStationsCodes.length && geoWithData
-        ? { ...geoWithData, features: geoWithData.features.filter(f => filteredStationsCodes.includes(f.properties?.codi)) }
-        : dataToSet;
+      // filtering is active only once a slider has been narrowed (non-empty list)
+      const filteringOn = filteredStationsCodes.length > 0;
+      const features = (dataToSet.features ?? []).map(f => ({
+        ...f,
+        properties: {
+          ...f.properties,
+          inRange: filteringOn ? filteredStationsCodes.includes(f.properties?.codi) : true,
+        },
+      }));
+      const featureCollection = { ...dataToSet, features };
       if (map.getSource('stations')) {
         map.getSource('stations').setData(featureCollection);
       } else {
         map.addSource('stations', { type: 'geojson', data: featureCollection });
       }
+      // Dim filtered-out stations (MCSC_GREY, lower opacity, smaller) + dim
+      // their name labels; hide the value number inside their circles.
+      const dim = ['!', ['get', 'inRange']];
+      if (map.getLayer('stations-circle')) {
+        map.setPaintProperty('stations-circle', 'circle-color',
+          ['case', ['get', 'inRange'], '#888', MCSC_GREY]);
+        map.setPaintProperty('stations-circle', 'circle-opacity',
+          ['case', ['get', 'inRange'], 1, 0.3]);
+        map.setPaintProperty('stations-circle', 'circle-stroke-opacity',
+          ['case', ['get', 'inRange'], 1, 0.2]);
+        map.setPaintProperty('stations-circle', 'circle-radius',
+          ['case', ['get', 'inRange'], 6, 3]);
+      }
+      if (map.getLayer('stations-label')) {
+        map.setPaintProperty('stations-label', 'text-color',
+          ['case', dim, '#999', '#222']);
+        map.setPaintProperty('stations-label', 'text-opacity',
+          ['case', ['get', 'inRange'], 1, 0.4]);
+      }
+      if (map.getLayer('stations-value')) {
+        map.setLayoutProperty('stations-value', 'text-field', valueFieldDimmed(labelMode));
+      }
     } catch (e) {
       console.warn('Error updating stations source after load', e);
     }
-  }, [stationsGeo, geoWithData, filteredStationsCodes]);
+  }, [stationsGeo, geoWithData, filteredStationsCodes, labelMode]);
 
   //const daysNum = daysCount(daysRange);
-  //const log = `dades de ${daysNum} dies i ${stationsCodes.length} estacions loaded. Variable mostrada: ${selectedVariable}. Selected: ${fmtDayCat(daysRange?.from)} -> ${fmtDayCat(daysRange?.to)}`;
   let headerdays = fmtDayCat(daysRange?.from)
   if (daysRange?.to && daysRange.to.getTime() !== daysRange.from.getTime()) {
     headerdays += ` - ${fmtDayCat(daysRange?.to)}`;
@@ -478,6 +684,12 @@ const App = ()  => {
   const stationObj = selectedStation
   ? geoWithData?.features?.find(f => f.properties.codi === selectedStation)
   : null;
+  const applyAreaRange = (key, range) => {
+    if (key === 'relief') setReliefRange(range);
+    else if (key === 'rain') setRainRange(range);
+    else if (key === 'hum') setHumRange(range);
+    else if (key === 'temp') setTempRange(range);
+  };
   //console.log(rangeLimits)
   return (
     <div className='app'>
@@ -496,10 +708,38 @@ const App = ()  => {
         )}
       </div>}
       {/* {log} */}
+      {/* Rebuilt filter section: single button toggling the panel */}
+      {data && (
+        <div className="top-buttons">
+          <div
+            className={`sel-button filter-button${showFilter ? ' on' : ''}`}
+            title="Filtres"
+            onClick={() => setShowFilter(!showFilter)}
+          >
+            <FontAwesomeIcon icon={faFilter} />
+          </div>
+          {showFilter && (
+            <FilterPanel
+              onClose={() => setShowFilter(false)}
+              onApply={() => setShowFilter(false)}
+              rangeLimits={rangeLimits}
+              stations={stationsFeatures}
+              areaRanges={areaRanges}
+              onApplyAreaRange={applyAreaRange}
+              // Forest filter reuses the legend's dim state (mcscOff) — the
+              // tree filter is a copy of the legend and drives the same tiles.
+              filteredForestCodes={mcscOff}
+              onApplyForest={setMcscOff}
+              setFilteredStationsCodes={setFilteredStationsCodes}
+            />
+          )}
+        </div>
+      )}
+      {/* Selectors kept as reference while rebuilding the filter section */}
+      {/*
       {data && rangeLimits && minDate && maxDate && (
         <Selectors
-          selectedVariable={selectedVariable}
-          setSelectedVariable={setSelectedVariable}
+          setLabelMode={setLabelMode}
           stations={geoWithData?.features ?? []}
           daysRange={daysRange}
           handleSelect={handleSelect}
@@ -507,18 +747,41 @@ const App = ()  => {
           maxDate={maxDate}
           showCalendar={showCalendar} 
           setShowCalendar={setShowCalendar}
-          showForestOverlay={showForestOverlay}
-          setShowForestOverlay={setShowForestOverlay}
-          showRelief={showRelief}
-          setShowRelief={setShowRelief}
-          showTerrain3D={showTerrain3D}
-          setShowTerrain3D={setShowTerrain3D}
           setAltBand={setAltBand}
           rangeLimits={rangeLimits}
           filteredStationsCodes={filteredStationsCodes}
           setFilteredStationsCodes={setFilteredStationsCodes}
         /> 
       )}
+      */}
+      {/* Bottom-left button stack: legend (forest), 3D terrain, station info */}
+      <div className="bottom-buttons">
+        <div
+          className={`sel-button forest${showLegend ? ' on' : ''}`}
+          title="Llegenda (MCSC)"
+          onClick={() => setShowLegend(!showLegend)}
+        >
+          <FontAwesomeIcon icon={faTree} />
+        </div>
+        <div
+          className={`sel-button terrain3d${showTerrain3D ? ' on' : ''}`}
+          title="Terreny 3D"
+          onClick={() => setShowTerrain3D(!showTerrain3D)}
+        >
+          <FontAwesomeIcon icon={faMountainSun} />
+        </div>
+        {/* Station-info cycle: none → rain → altitude → temp → humidity */}
+        <div
+          className={`sel-button ${LABEL_CLASSES[labelMode] ?? 'stationinfo'}${labelMode !== 'none' ? ' on' : ''}`}
+          title="Valor a les estacions (cap / pluja / altitud / temp / humitat)"
+          onClick={() => {
+            const i = LABEL_MODES.indexOf(labelMode);
+            setLabelMode(LABEL_MODES[(i + 1) % LABEL_MODES.length]);
+          }}
+        >
+          <FontAwesomeIcon icon={LABEL_ICONS[labelMode] ?? faBan} />
+        </div>
+      </div>
       <Map
         key={styleUrl}
         initialViewState={{
@@ -543,30 +806,25 @@ const App = ()  => {
         setSelectedStation={setSelectedStation}
         elevation={clickedElevation}
       />}
-      {showForestOverlay && (
+      {showLegend && (
         <div className="mcsc-legend">
           <div className="mcsc-legend-title">Cobertes del sòl (MCSC)</div>
+          {/* Info-only legend: dimming terrain types is done from the filter
+              panel (Bosc), so these rows are not interactive. They still show
+              the current map state — dimmed classes appear grey. */}
           {MCSC_LEGEND.map(entry => {
             const off = mcscOff.has(entry.codes);
             return (
-              <button
-                type="button"
+              <div
                 key={entry.codes}
-                className={`mcsc-legend-row${off ? ' off' : ''}`}
-                title={off ? 'Ressaltar' : 'Atenuar'}
-                onClick={() => setMcscOff(prev => {
-                  const next = new Set(prev);
-                  if (next.has(entry.codes)) next.delete(entry.codes);
-                  else next.add(entry.codes);
-                  return next;
-                })}
+                className={`mcsc-legend-row info${off ? ' off' : ''}`}
               >
                 <span className="mcsc-legend-swatch" style={{ backgroundColor: off ? MCSC_GREY : entry.color }} />
                 <span className="mcsc-legend-label">{entry.label}</span>
-              </button>
+              </div>
             );
           })}
-          <div className="mcsc-legend-footer">Cliqueu una classe per ressaltar-la o atenuar-la (gris) · ICGC &amp; CREAF · CC BY 4.0</div>
+          <div className="mcsc-legend-footer">ICGC &amp; CREAF · CC BY 4.0</div>
         </div>
       )}
     </div>

@@ -30,6 +30,19 @@ export const lngLatToTileXY = (lng, lat, z) => {
   return { z, x, y, px: (worldX - x) * 256, py: (worldY - y) * 256 };
 };
 
+// Web Mercator inverse: pixel coordinates inside tile (z, x, y) → lng/lat
+// (inverse of lngLatToTileXY; the meteo overlay uses it to sample its
+// interpolated grid at every tile pixel). Pure, unit-testable.
+export const tileXYToLngLat = (z, x, y, px = 0, py = 0) => {
+  const n = 2 ** z;
+  const worldX = (x + px / 256) / n;
+  const worldY = (y + py / 256) / n;
+  const lng = worldX * 360 - 180;
+  const latRad = Math.atan(Math.sinh(Math.PI * (1 - 2 * worldY)));
+  const lat = (latRad * 180) / Math.PI;
+  return { lng, lat };
+};
+
 export const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
 // Terrarium encoding: elevation (m) = (R * 256 + G + B / 256) - 32768

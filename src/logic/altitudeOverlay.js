@@ -5,7 +5,8 @@
  * a custom MapLibre tile protocol (`alt://`) classifies the same terrarium
  * DEM tiles the relief/3D terrain use, per pixel:
  *
- *   - inside [lo, hi]  → amber highlight
+ *   - inside [lo, hi]  → transparent (the real map shows through, so the
+ *                        band reads as the "selected" area of a mask)
  *   - outside [lo, hi] → the same grey as unselected MCSC legend classes
  *                        (MCSC_GREY, so it reads as "deselected" alongside
  *                        the land-cover overlay)
@@ -18,17 +19,30 @@
 
 import { loadTileImageData, terrariumElevation } from './elevation.js';
 import { MCSC_GREY } from './mcscLegend.js';
+// MapLibre v5+ registers custom protocols globally via the module-level
+// `addProtocol` export (config.REGISTERED_PROTOCOLS) — there is no
+// `map.addProtocol` method anymore.
+import { addProtocol } from 'maplibre-gl';
 
 const TILE_SIZE = 256;
 
-// Amber highlight for the in-band pixels (#ffb300) — pops on the dark basemap.
-export const ALT_BAND_HIGHLIGHT = [255, 179, 0];
-// Matches MCSC_GREY ('#8a8a8a') so out-of-band areas look "unselected".
-export const ALT_BAND_GREY = [138, 138, 138];
+// In-band pixels are fully transparent ([r, g, b, a]) so the selected area of
+// the mask shows the real map underneath.
+export const ALT_BAND_TRANSPARENT = [0, 0, 0, 0];
+// Matches MCSC_GREY ('#8a8a8a') so out-of-band areas look "unselected" — the
+// same grey as a dimmed terrain-type class.
+export const ALT_BAND_GREY = [138, 138, 138, 255];
 
-// Pure classification (unit-testable): inclusive bounds.
-export const classifyElevation = (elev, lo, hi) =>
-  elev >= lo && elev <= hi ? ALT_BAND_HIGHLIGHT : ALT_BAND_GREY;
+// Pure classification (unit-testable): inclusive bounds. Returns a 4-channel
+// colour:
+//   - sea / no-data (elev <= 0) → transparent, so the mask stops at the coast
+//     exactly like the MCSC overlay (no grey over the sea)
+//   - land inside the band  → transparent (the selected area shows the map)
+//   - land outside the band → grey, styled like an unselected terrain class
+export const classifyElevation = (elev, lo, hi) => {
+  if (!Number.isFinite(elev) || elev <= 0) return ALT_BAND_TRANSPARENT;
+  return elev >= lo && elev <= hi ? ALT_BAND_TRANSPARENT : ALT_BAND_GREY;
+};
 
 const makeCanvas = (w, h) =>
   typeof OffscreenCanvas !== 'undefined'
@@ -59,17 +73,19 @@ async function buildTile(z, x, y, band) {
   for (let i = 0, o = 0; i < s.length; i += 4, o += 4) {
     const elev = terrariumElevation(s[i], s[i + 1], s[i + 2]);
     const c = classifyElevation(elev, lo, hi);
-    d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = 255;
+    d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = c[3];
   }
   ctx.putImageData(out, 0, 0);
   return (await canvasToBlob(canvas)).arrayBuffer();
 }
 
 /**
- * Register the `alt://{z}/{x}/{y}?b=lo-hi` protocol on a MapLibre map.
+ * Register the `alt://{z}/{x}/{y}?b=lo-hi` protocol (global in MapLibre v5+).
  * `getBand` is called per tile and must return [lo, hi] or null (off).
  * The band is also baked into the tile URL, so the app just calls
  * `source.setTiles([...])` with the new URL to regenerate an overlay.
+ * Re-registering (e.g. on map remount) just overwrites the global handler;
+ * the `getBand` closure reads App's stable altBandRef, so it stays valid.
  */
 export const registerAltitudeProtocol = (map, getBand) => {
   const cache = new Map(); // `${z}/${x}/${y}|<band>` -> Promise<{ data }>
@@ -91,7 +107,7 @@ export const registerAltitudeProtocol = (map, getBand) => {
   };
 
   try {
-    map.addProtocol('alt', handler);
+    addProtocol('alt', handler);
   } catch (err) {
     console.warn('Could not register alt:// protocol:', err?.message ?? err);
   }

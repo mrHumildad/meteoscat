@@ -225,32 +225,151 @@
 .terrain3d {
   background-color: #6e8ca0;
 }
+.stationinfo {
+  background-color: #ffb703;
+}
 .sel-button.on {
   outline: 3px solid #ffffff;
 }
+
+.top-buttons {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.filter-button {
+  background-color: #ffb703;
+}
+.filter-panel {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
+  color: white;
+  padding: 10px;
+  min-width: 200px;
+}
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.filter-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.filter-actions {
+  display: flex;
+  gap: 10px;
+}
+.filter-panel .sel-button {
+  width: max(3vw, 3vh);
+  height: max(3vw, 3vh);
+  font-size: max(2.5vw, 2.5vh);
+}
+.filter-apply {
+  background-color: limegreen;
+}
+.filter-close {
+  background-color: #ff7575;
+}
+.filter-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+}
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.mountain {
+  background-color: #9575cd;
+}
+.filter-line {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.filter-line-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.filter-line-label {
+  font-weight: bold;
+}
+.filter-line-actions {
+  display: flex;
+  gap: 6px;
+}
+.filter-line .sel-button {
+  width: max(2.5vw, 2.5vh);
+  height: max(2.5vw, 2.5vh);
+  font-size: max(2vw, 2vh);
+}
+.filter-line-ok {
+  background-color: limegreen;
+}
+.filter-line-cancel {
+  background-color: #ff7575;
+}
+.filter-line.applied {
+  outline: 1px solid limegreen;
+}
+.filter-legend {
+  max-height: 30vh;
+  overflow-y: auto;
+}
+.filter-legend .mcsc-legend-row {
+  font-size: 0.75rem;
+}
+.filter-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.bottom-buttons {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 .mcsc-legend {
   position: absolute;
-  bottom: 28px;
+  bottom: calc(58px + 3 * max(5vw, 5vh));
   left: 10px;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
-  font-size: 0.75rem;
-  padding: 8px 10px;
+  font-size: 0.62rem;
+  padding: 6px 8px;
   border-radius: 6px;
-  max-width: 250px;
+  max-width: 200px;
 }
 .mcsc-legend-title {
   font-weight: bold;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 .mcsc-legend-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 3px 0;
+  gap: 6px;
+  margin: 2px 0;
   width: 100%;
-  padding: 3px 4px;
+  padding: 2px 3px;
   background: none;
   border: none;
   border-radius: 4px;
@@ -263,13 +382,21 @@
 .mcsc-legend-row:hover {
   background-color: rgba(255, 255, 255, 0.12);
 }
+/* Info-only rows (map legend): not clickable, so no pointer/hover feedback.
+   The interactive rows (filter panel's Bosc editor) keep the affordances. */
+.mcsc-legend-row.info {
+  cursor: default;
+}
+.mcsc-legend-row.info:hover {
+  background-color: transparent;
+}
 .mcsc-legend-row.off .mcsc-legend-label {
   opacity: 0.55;
 }
 .mcsc-legend-swatch {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
   border: 1px solid rgba(255, 255, 255, 0.4);
   flex-shrink: 0;
 }
@@ -277,8 +404,8 @@
   line-height: 1.2;
 }
 .mcsc-legend-footer {
-  margin-top: 6px;
-  font-size: 0.65rem;
+  margin-top: 4px;
+  font-size: 0.58rem;
   opacity: 0.7;
 }
 #st-days {
@@ -291,6 +418,175 @@
   color: white;
   font-size: 0.7rem;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FilterPanel v2 sketch — per-filter time ranges (FILTER_REFACTOR_PLAN.md §6)
+   New zones: header (title + reference-day anchor + single ✕), single
+   filters (unchanged .filter-line), and the "Mètriques" instance area:
+   add-buttons row + stacked instance rows (applied / inert / editing).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* v2 editors carry two full-width sliders, so the panel must stop growing
+   with the lib's default max(20vw, 20vh) slider width */
+.filter-panel {
+  max-width: min(92vw, 440px);
+}
+
+/* Reference-day anchor in the header ("fins a les dades del 02 set") */
+.filter-anchor {
+  margin-left: auto;
+  font-size: 0.68rem;
+  opacity: 0.65;
+  white-space: nowrap;
+}
+
+/* Section divider for the instance area */
+.filter-section-label {
+  margin-top: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.65;
+}
+
+/* ── Add-instance buttons ────────────────────────────────────────────── */
+.filter-add-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.filter-add-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--type-color, #666);
+  color: black;
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.filter-add-btn:hover:not(:disabled) {
+  outline: 2px solid #ffffff;
+}
+/* Each add button wears its variable's colour (order matters: the disabled
+   rule below must win at equal specificity) */
+.filter-add-btn.rain     { --type-color: #4aa3ff; }
+.filter-add-btn.humidity { --type-color: #8aff9d; }
+.filter-add-btn.temp     { --type-color: #ff7575; }
+/* Cap reached (5 per type): greyed out, no pointer */
+.filter-add-btn:disabled,
+.filter-add-btn.at-cap {
+  --type-color: #555;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ── Instance rows (applied / inert / editing) ──────────────────────── */
+.filter-instance {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-left: 3px solid var(--type-color, rgba(255, 255, 255, 0.3));
+  outline: 1px solid transparent;
+  transition: background-color 0.15s ease, outline-color 0.15s ease;
+}
+.filter-instance.rain     { --type-color: #4aa3ff; }
+.filter-instance.humidity { --type-color: #8aff9d; }
+.filter-instance.temp     { --type-color: #ff7575; }
+/* The whole row is the edit affordance */
+.filter-instance:not(.editing):hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+}
+.filter-instance-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.filter-instance-title {
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+.filter-instance-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+.filter-instance .sel-button {
+  width: max(2.5vw, 2.5vh);
+  height: max(2.5vw, 2.5vh);
+  font-size: max(2vw, 2vh);
+}
+.filter-instance-meta {
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+.filter-instance-value {
+  font-size: 0.8rem;
+}
+
+/* Inert instance: value at full span — dashed outline, muted, "inactiu" */
+.filter-instance.inert {
+  outline: 1px dashed rgba(255, 255, 255, 0.25);
+  opacity: 0.7;
+}
+.filter-instance.inert .filter-instance-value {
+  color: #aaa;
+  font-style: italic;
+}
+
+/* Editing: expanded in place, brighter than the collapsed rows around it */
+.filter-instance.editing {
+  background-color: rgba(255, 255, 255, 0.14);
+  outline: 1px solid #ffffff;
+  cursor: default;
+}
+
+/* ── Two-slider editor (inside .filter-instance.editing) ────────────── */
+.filter-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  animation: filter-editor-in 0.15s ease-out;
+}
+@keyframes filter-editor-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+.filter-editor-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.filter-editor-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.78rem;
+}
+.filter-editor-label .range-value {
+  font-size: 0.75rem;
+}
+/* Full-width sliders inside the editor (override the lib's max(20vw, 20vh)) */
+.filter-editor .range-slider {
+  width: 100%;
+}
+.filter-editor-hint {
+  font-size: 0.68rem;
+  font-style: italic;
+  opacity: 0.6;
+}
+
 
 
 
