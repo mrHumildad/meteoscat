@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCarrot, faCheck, faDroplet, faLayerGroup, faMountain, faSeedling, faTemperatureLow, faTree, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import RangeSlider from 'react-range-slider-input';
-import { limitsForWindow, TYPE_TO_VARIABLE, windowToDates } from '../logic/filterAggregate.js';
+import { DEFAULTDAYRANGE, dayRangeLabel, limitsForWindow, TYPE_TO_VARIABLE, windowToDates } from '../logic/filterAggregate.js';
 import { fmtNum, fmtShortCat } from '../logic/utils.js';
 import { MCSC_LEGEND, MCSC_GREY } from '../logic/mcscLegend.js';
 import { SPECIES, SPECIES_KEYS } from '../logic/speciesRules.js';
@@ -14,7 +14,8 @@ import './rangesliders.css';
 // the same type can stack (they AND together). Altitude and terrain stay
 // single and timeless, above the "Mètriques" section.
 const MAX_PER_TYPE = 5;      // hard cap per type (panel readability + layer bound)
-const DAY_DEFAULT = 60;      // new-instance day range: last 60 days
+// New-instance day range: last DEFAULTDAYRANGE days — the shared reference
+// constant (filterAggregate.js), also used by the station value windows.
 
 // Humidity works in whole % everywhere: the window aggregates are rounded to
 // integers (filterAggregate.js), so slider bounds/step 1, the stored band and
@@ -75,11 +76,7 @@ const FilterPanel = ({
   };
   const datesOf = f => (refDay ? windowToDates(refDay, f.from, f.to) : { from: null, to: null });
   const shortDate = d => (d ? fmtShortCat(d) : '');
-  const dayLabel = f => {
-    if (f.to === 0) return `darrers ${f.from} dies`;
-    if (f.from === f.to) return `fa ${f.from} dies`;
-    return `fa ${f.from} → fa ${f.to} dies`;
-  };
+  const dayLabel = f => dayRangeLabel(f.from, f.to); // shared wording with the station-info span
 
   // While editing, the day labels must follow the LIVE draft (slider
   // onInput), not the committed instance `f` — dates and day count recompute

@@ -3,6 +3,8 @@ import {
   buildAggregateTable,
   aggregateWindow,
   aggregateWindowByDates,
+  dayRangeLabel,
+  DEFAULTDAYRANGE,
   limitsForWindow,
   windowToDates,
 } from './filterAggregate.js';
@@ -200,6 +202,19 @@ describe('windowToDates', () => {
 
   it('accepts a Date reference day', () => {
     expect(windowToDates(new Date(2026, 7, 3), 2, 0)).toEqual({ from: '2026-08-01', to: '2026-08-03' });
+  });
+});
+
+describe('DEFAULTDAYRANGE / dayRangeLabel', () => {
+  it('is the single 60-day reference (station values, filter defaults, chart)', () => {
+    expect(DEFAULTDAYRANGE).toBe(60);
+  });
+
+  it('labels the three window shapes used by the station-info span and filter rows', () => {
+    expect(dayRangeLabel(60, 0)).toBe('darrers 60 dies');
+    expect(dayRangeLabel(14, 0)).toBe('darrers 14 dies');
+    expect(dayRangeLabel(14, 7)).toBe('fa 14 → fa 7 dies');
+    expect(dayRangeLabel(3, 3)).toBe('fa 3 dies');
   });
 });
 

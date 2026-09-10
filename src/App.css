@@ -356,6 +356,34 @@
   flex-direction: column;
   gap: 10px;
 }
+/* Station-info button + the span saying which day range its values cover
+   (default last DEFAULTDAYRANGE days, or the active filter's range). */
+.stationinfo-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stationinfo-range {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.65);
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+/* StationPanel chart highlight: bars inside the variable's current day range
+   keep full colour (with a light outline), bars outside are dimmed — the
+   chart itself stays fixed on the 60-day window. */
+.bars.horizontal .bar.rain.hl,
+.bars.horizontal .bar.humidity.hl,
+.bars.horizontal .bar.temp.hl {
+  outline: 1px solid rgba(255, 255, 255, 0.9);
+}
+.bars.horizontal .bar.rain:not(.hl),
+.bars.horizontal .bar.humidity:not(.hl),
+.bars.horizontal .bar.temp:not(.hl) {
+  opacity: 0.25;
+}
 .mcsc-legend {
   position: absolute;
   bottom: calc(72px + 5 * max(5vw, 5vh)); /* 5 stacked buttons + gaps */

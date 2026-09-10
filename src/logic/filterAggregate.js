@@ -152,6 +152,24 @@ export const windowToDates = (refDay, fromOffset, toOffset) => {
   return { from: fmt(from), to: fmt(to) };
 };
 
+// Reference day range for station values (and the default for new filter
+// instances): everything looks back DEFAULTDAYRANGE days from the reference
+// day (last available data day). ONE constant so the station circle labels,
+// the StationPanel chart, the filter panel defaults and the station-info
+// span can never drift apart (replaces the old DISPLAY_DAYS /
+// STATION_VALUE_DAYS / DAY_DEFAULT trio).
+export const DEFAULTDAYRANGE = 60;
+
+// Catalan label for a day-offset window, e.g. "darrers 60 dies" (to === 0),
+// "fa 14 dies" (single day) or "fa 14 → fa 7 dies". Shared by the filter
+// instance rows (FilterPanel) and the station-info button span so both
+// always describe the same window the same way.
+export const dayRangeLabel = (from, to) => {
+  if (to === 0) return `darrers ${from} dies`;
+  if (from === to) return `fa ${from} dies`;
+  return `fa ${from} → fa ${to} dies`;
+};
+
 // Value-slider limits per window (FILTER_REFACTOR_PLAN.md §4.2): the min/max
 // of a variable across ALL stations over the given window. Memoized per
 // aggregate table (WeakMap) with a small LRU, so re-built tables never read

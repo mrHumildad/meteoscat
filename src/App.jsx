@@ -11,13 +11,13 @@ setWorkerUrl(maplibreWorkerUrl);
 import logo from './assets/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faCar, faDroplet, faFilter, faLayerGroup, faList, faMountainSun, faRulerVertical, faSeedling, faTemperatureLow, faTree } from '@fortawesome/free-solid-svg-icons';
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import { loadAvailableDays, loadSummaries } from './logic/refineData.js'
-import { getDaysInRange, fmtDateCat, parseDay } from './logic/utils.js';
+import { getDaysInRange, fmtDateCat, fmtShortCat, parseDay } from './logic/utils.js';
 import './App.css'
 
 import { computeGeoValues } from './logic/computeGeoValues.js';
-import { aggregateWindow, buildAggregateTable, limitsForWindow, windowToDates, TYPE_TO_VARIABLE } from './logic/filterAggregate.js';
+import { aggregateWindow, buildAggregateTable, DEFAULTDAYRANGE, limitsForWindow, windowToDates, TYPE_TO_VARIABLE } from './logic/filterAggregate.js';
 import { scoreStations, scoreByCode } from './logic/boletEngine.js';
 import { MCSC_LEGEND, MCSC_GREY, MCSC_WATER_COLOR, MCSC_WATER_ENTRY } from './logic/mcscLegend.js';
 import { ELEVATION_TILES, ELEVATION_ATTRIBUTION, sampleElevation } from './logic/elevation.js';
@@ -49,13 +49,10 @@ const fittedMinZoom = (w, h) => {
 };
 
 // Default display window: StationPanel chart + totals are computed over the
-// last DISPLAY_DAYS days from the reference day (filters are independent —
-// each has its own window).
-const DISPLAY_DAYS = 60;
-// Station circles: area filters never dim stations (Phase A). The circle
-// label shows a value over the last STATION_VALUE_DAYS days (configurable
-// later); the StationPanel chart + totals still use the 60-day displayWindow.
-const STATION_VALUE_DAYS = 15;
+// last DEFAULTDAYRANGE days from the reference day (filters are independent
+// — each has its own window). Station circle labels start on the SAME range
+// and follow each variable's active filter when one is applied (see
+// stationDayRange below) — one reference constant everywhere.
 
 // MapLibre expression for the value shown inside each station circle.
 // Data-driven: reads the feature property `variable` and renders it as text.
@@ -67,8 +64,9 @@ const valueField = variable => [
 ];
 
 // Station-info cycle (Phase A): none (hidden) → altitude (static) → rain Σ →
-// temp mean → humidity mean, all last 15 days (STATION_VALUE_DAYS), then none.
-// Later the window becomes configurable per variable.
+// temp mean → humidity mean, then none. Each meteo value is aggregated over
+// its variable's stationDayRange: default last DEFAULTDAYRANGE days, or the
+// last ACTIVE filter's day range when one is applied.
 const LABEL_MODES = ['none', 'altitud', 'precAcc', 'tempAvg', 'humAvg'];
 const LABEL_ICONS = {
   none: faBan,
@@ -86,10 +84,20 @@ const LABEL_CLASSES = {
 };
 const LABEL_PROP = {
   altitud: 'altitud',
-  precAcc: 'precAcc15',
-  tempAvg: 'tempAvg15',
-  humAvg: 'humAvg15'
+  precAcc: 'precAccVal',
+  tempAvg: 'tempAvgVal',
+  humAvg: 'humAvgVal'
 };
+// labelMode → the meteo variable whose day range drives that label (and the
+// StationPanel chart highlight); altitud is static so it has no window.
+const LABEL_TYPE = {
+  precAcc: 'rain',
+  tempAvg: 'temp',
+  humAvg: 'hum'
+};
+// Default station value window (shared initial state for the 3 variables):
+// the reference day (last data day, offset 0) and DEFAULTDAYRANGE days back.
+const defaultRange = () => ({ from: DEFAULTDAYRANGE, to: 0 });
 
 // Cycle order of the bottom-left render-mode button, and the icon / button
 // colour of each state: 'terrain' paints MCSC land-cover colours (green
@@ -134,13 +142,14 @@ const App = ()  => {
   const [selectedStation, setSelectedStation] = useState(null);
   const [days, setDays] = useState([]);           // available 'YYYY-MM-DD' days, oldest first
   const [data, setData] = useState(null);         // all daily shards (every available day)
-  const [labelMode, setLabelMode] = useState('none'); // station-circle value: 'none' default (hidden) → altitud → rain Σ 15d → temp mean 15d → hum mean 15d → none
+  const [labelMode, setLabelMode] = useState('none'); // station-circle value: 'none' default (hidden) → altitud → rain Σ → temp mean → hum mean → none (each over its stationDayRange)
   const [stationsGeo, setStationsGeo] = useState(null);
   const [geoWithData, setGeoWithData] = useState(null);
   const [showLegend, setShowLegend] = useState(false);           // legend panel of the ACTIVE rendering mode
   const [terrainMode, setTerrainMode] = useState('terrain');    // painted areas: 'terrain' (MCSC) | 'substrate' (geology) | 'none' (relief only)
   const [showTerrain3D, setShowTerrain3D] = useState(true);     // 3D terrain (tilts the camera)
   const [mapReady, setMapReady] = useState(false); // true once the heavy area overlays exist (added on first idle — see onMapLoad)
+  const [mapLoaded, setMapLoaded] = useState(false); // true once the map + stations source/layers exist (onMapLoad) — re-syncs the station source data
   const [mcscOff, setMcscOff] = useState(() => new Set()); // codes of dimmed legend entries
   const [geoOff, setGeoOff] = useState(() => new Set()); // keys of dimmed substrate families
   const [lithoGrid, setLithoGrid] = useState(null); // decoded substrate grid (lithology.js)
@@ -172,16 +181,36 @@ const App = ()  => {
   // value-slider limits and the stacked-overlay grids.
   const agg = useMemo(() => buildAggregateTable(data ?? {}), [data]);
 
-  // Display window (last DISPLAY_DAYS days from the reference day) — the
-  // values shown in the StationPanel chart / totals. Station circle labels
-  // use a separate window: rain Σ over last STATION_VALUE_DAYS days (see
-  // labelMode below) — area filters never dim stations (Phase A).
+  // Display window (last DEFAULTDAYRANGE days from the reference day) — the
+  // values shown in the StationPanel chart / totals (the chart stays on this
+  // fixed window; the ACTIVE day range is highlighted inside it). Station
+  // circle labels follow stationDayRange instead (see below) — area filters
+  // never dim stations (Phase A).
   const displayWindow = useMemo(() => {
     if (!refDay || !data) return null;
     const from = new Date(refDay);
-    from.setDate(from.getDate() - (DISPLAY_DAYS - 1));
+    from.setDate(from.getDate() - (DEFAULTDAYRANGE - 1));
     return { from, to: new Date(refDay) };
   }, [refDay, data]);
+
+  // Station value day ranges — 3 states, one per meteo variable, initialised
+  // to the default (last data day, DEFAULTDAYRANGE days back). The sync
+  // effect below follows the filters: when a variable has an ACTIVE filter
+  // (band narrower than its window's full span — inert "qualsevol valor"
+  // instances don't filter) its state takes that filter's day range (the
+  // LAST one added wins); when the filter is removed or widened back to full
+  // span, the state reverts to the default.
+  const [stationDayRange, setStationDayRange] = useState(() => ({
+    rain: defaultRange(),
+    temp: defaultRange(),
+    hum: defaultRange(),
+  }));
+  // Day offsets can't reach back past the oldest available day — clamp the
+  // reference range to maxDays − 1 at every use site (labels, values, chart).
+  const effectiveRange = useCallback(r => ({
+    from: r ? Math.min(r.from, Math.max(0, maxDays - 1)) : 0,
+    to: r ? Math.min(r.to, Math.max(0, maxDays - 1)) : 0,
+  }), [maxDays]);
 
   // Altitude slider limits: static station metadata (min–max altitud).
   const altLimits = useMemo(() => {
@@ -369,12 +398,17 @@ const App = ()  => {
     map.setMaxZoom(maxZoom);
     map.jumpTo({ center, zoom: Math.min(floorZoom + 1, maxZoom) });
 
-    // ensure a 'stations' source exists immediately (empty fallback)
+    // ensure a 'stations' source exists immediately. Prefer the enriched
+    // geoWithData (value props) when it already arrived — the enrichment
+    // usually finishes BEFORE the map does (local fetches vs remote tiles),
+    // and the station-source effect below re-syncs on mapLoaded anyway, so
+    // the map can never be stuck on the value-less base features.
     const emptyGeo = { type: 'FeatureCollection', features: [] };
+    const initialStations = geoWithDataRef.current || stationsGeo || emptyGeo;
     if (!map.getSource('stations')) {
-      map.addSource('stations', { type: 'geojson', data: stationsGeo || emptyGeo });
-    } else if (stationsGeo) {
-      map.getSource('stations').setData(stationsGeo);
+      map.addSource('stations', { type: 'geojson', data: initialStations });
+    } else if (initialStations) {
+      map.getSource('stations').setData(initialStations);
     }
 
     // layers can now be safely added (source guaranteed)
@@ -408,9 +442,10 @@ const App = ()  => {
       });
     }
 
-    // value label layer: station value inside circle (rain Σ last 15 days when
-    // labelMode is 'precAcc', hidden when 'none'). Always visible in area-
-    // filter mode — no dimming by filters.
+    // value label layer: station value inside circle (aggregated over the
+    // variable's stationDayRange — default last DEFAULTDAYRANGE days, or the
+    // active filter's range; hidden when labelMode is 'none'). Always
+    // visible in area-filter mode — no dimming by filters.
     if (!map.getLayer('stations-value')) {
       const prop = LABEL_PROP[labelMode] ?? labelMode;
       map.addLayer({
@@ -438,6 +473,7 @@ const App = ()  => {
     // settles — see addAreaOverlays below, so the first paint is light.
     // Painting context (agg / features / lithoGrid) travels to the pipeline
     // separately — see the pushTerrainContext effect further down.
+    setMapLoaded(true); // stations source/layers exist — station-source effect re-syncs now
     registerTerrainProtocol(map, () => terrainStateRef.current);
     registerSeaProtocol();
 
@@ -598,9 +634,12 @@ const App = ()  => {
 
   // 1️⃣ Compute geoWithData over the DISPLAY window (StationPanel chart +
   // totals; filters evaluate their own windows via the aggregate table).
-  // Phase A also attaches rain/temp/hum over last STATION_VALUE_DAYS days
-  // (altitud is static) so the circle label stays readable outside filtered
-  // areas and outside the display window. No station is ever filtered.
+  // Phase A also attaches rain/temp/hum over EACH variable's stationDayRange
+  // (default last DEFAULTDAYRANGE days, or the active filter's range when one
+  // is applied; altitud is static) so the circle label stays readable
+  // outside filtered areas and outside the display window. Re-runs when a
+  // range changes — O(3 × stations) aggregate lookups, no terrain repaint.
+  // No station is ever filtered.
   useEffect(() => {
     if (!stationsGeo || !data || !displayWindow) return;
     const daysInRange = getDaysInRange(data, displayWindow.from, displayWindow.to);
@@ -609,33 +648,39 @@ const App = ()  => {
       setGeoWithData(base);
       return;
     }
+    const eff = {
+      rain: effectiveRange(stationDayRange.rain),
+      temp: effectiveRange(stationDayRange.temp),
+      hum: effectiveRange(stationDayRange.hum),
+    };
     const enriched = {
       ...base,
       features: base.features.map(f => {
         const code = f.properties?.codi;
-        const precAcc15 = code ? aggregateWindow(agg, code, 'rain', STATION_VALUE_DAYS - 1, 0) : null;
-        const tempAvg15 = code ? aggregateWindow(agg, code, 'temp', STATION_VALUE_DAYS - 1, 0) : null;
-        const humAvg15 = code ? aggregateWindow(agg, code, 'hum', STATION_VALUE_DAYS - 1, 0) : null;
+        const precAccVal = code ? aggregateWindow(agg, code, 'rain', eff.rain.from, eff.rain.to) : null;
+        const tempAvgVal = code ? aggregateWindow(agg, code, 'temp', eff.temp.from, eff.temp.to) : null;
+        const humAvgVal = code ? aggregateWindow(agg, code, 'hum', eff.hum.from, eff.hum.to) : null;
         return {
           ...f,
           properties: {
             ...f.properties,
-            precAcc15: precAcc15 == null ? null : Math.round(precAcc15 * 10) / 10,
-            tempAvg15: tempAvg15 == null ? null : Math.round(tempAvg15 * 10) / 10,
-            humAvg15: humAvg15 == null ? null : Math.round(humAvg15),
+            precAccVal: precAccVal == null ? null : Math.round(precAccVal * 10) / 10,
+            tempAvgVal: tempAvgVal == null ? null : Math.round(tempAvgVal * 10) / 10,
+            humAvgVal: humAvgVal == null ? null : Math.round(humAvgVal),
           },
         };
       }),
     };
     setGeoWithData(enriched);
-  }, [stationsGeo, data, displayWindow, agg]);
+  }, [stationsGeo, data, displayWindow, agg, stationDayRange, effectiveRange]);
 
   // 2.5️⃣ Keep station markers + their labels in sync with the station-info
   // toggle. Stations are NEVER dimmed — the button cycles none (hidden) →
-  // altitud (static m) → rain Σ 15d → temp mean 15d → humidity mean 15d →
-  // none. 'none' hides circles + name labels + value layer so no floating
-  // names remain. All meteo values are over STATION_VALUE_DAYS days via
-  // aggregateWindow (altitud is static metadata).
+  // altitud (static m) → rain Σ → temp mean → humidity mean → none (each
+  // meteo value over its variable's stationDayRange). 'none' hides circles +
+  // name labels + value layer so no floating names remain. Values come from
+  // the precAccVal/tempAvgVal/humAvgVal properties (effect 1️⃣; altitud is
+  // static metadata).
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -652,7 +697,9 @@ const App = ()  => {
         map.setLayoutProperty('stations-value', 'text-field', valueField(prop));
       }
     }
-  }, [labelMode]);
+    // mapLoaded: re-apply once the map exists, in case the toggle was
+    // clicked before the map finished loading (the layer wasn't there yet).
+  }, [labelMode, mapLoaded]);
 
   // 2.7️⃣ Rebuild the stacked-terrain tiles when any filter changes — a
   // legend switch, the altitude band, the rendering mode, or a meteo
@@ -810,7 +857,10 @@ const App = ()  => {
     } catch (e) {
       console.warn('Error updating stations source after load', e);
     }
-  }, [stationsGeo, geoWithData, boletScores]);
+    // mapLoaded re-runs this effect once the map exists, so the source gets
+    // the enriched (value-carrying) features even when geoWithData finished
+    // before the map finished loading.
+  }, [stationsGeo, geoWithData, boletScores, mapLoaded]);
 
   // ── Repaint input gate ────────────────────────────────────────────────
   // Applying a filter / dimming a legend entry asks the painting pipeline to
@@ -862,7 +912,7 @@ const App = ()  => {
   // Filter instance handlers (lifted to App so the map + stations share one
   // source of truth)
   const addFilter = (type) => {
-    const from = maxDays > 0 ? Math.min(60, maxDays - 1) : 0;
+    const from = maxDays > 0 ? Math.min(DEFAULTDAYRANGE, maxDays - 1) : 0;
     const span = agg?.days.length ? limitsForWindow(agg, type, from, 0) : null;
     const inst = { id: `f${nextFilterId}`, type, from, to: 0, range: span ? [span[0], span[1]] : [0, 0] };
     setMeteoFilters(prev => [...prev, inst]);
@@ -913,6 +963,63 @@ const App = ()  => {
     if (!inertInstance(inst) && !beginRepaint()) return;
     removeFilter(id);
   };
+
+  // Station value day ranges follow the filters: for each variable, the LAST
+  // ACTIVE filter's window wins (a filter is active when its band is narrower
+  // than its window's full span — inert instances don't filter); no active
+  // filter → default (last DEFAULTDAYRANGE days). Updated here so every
+  // add/update/remove path converges on the same rule; unchanged states keep
+  // their identity (no pointless re-renders).
+  useEffect(() => {
+    const next = { rain: defaultRange(), temp: defaultRange(), hum: defaultRange() };
+    for (const type of ['rain', 'temp', 'hum']) {
+      // Active = band narrower than its window's full span (the same
+      // full-span-means-off contract as inertInstance / terrainState).
+      const active = meteoFilters.filter(f => {
+        if (f.type !== type) return false;
+        const span = agg?.days.length ? limitsForWindow(agg, f.type, f.from, f.to) : null;
+        return span != null && (f.range[0] !== span[0] || f.range[1] !== span[1]);
+      });
+      if (active.length) {
+        const last = active[active.length - 1];
+        next[type] = { from: last.from, to: last.to };
+      }
+    }
+    setStationDayRange(prev => (
+      prev.rain.from === next.rain.from && prev.rain.to === next.rain.to &&
+      prev.temp.from === next.temp.from && prev.temp.to === next.temp.to &&
+      prev.hum.from === next.hum.from && prev.hum.to === next.hum.to
+        ? prev
+        : next
+    ));
+  }, [meteoFilters, agg]);
+
+  // Day-range info for the span next to the station-info button: the window
+  // of the value currently shown (or null for none/altitud — altitude is
+  // static). The span reads the CONCRETE window — "start day – stop day"
+  // (compact Catalan) — so the user sees exactly which days the circle
+  // values cover; the title adds the day count + full ISO dates.
+  const currentType = LABEL_TYPE[labelMode] ?? null;
+  const currentRange = currentType ? effectiveRange(stationDayRange[currentType]) : null;
+  const stationRangeWindow = currentRange && refDay ? windowToDates(refDay, currentRange.from, currentRange.to) : null;
+  const stationRangeLabel = stationRangeWindow
+    ? `${fmtShortCat(stationRangeWindow.from)} – ${fmtShortCat(stationRangeWindow.to)}`
+    : null;
+  // Day count = days the window covers (from − to + 1): the default
+  // { from: DEFAULTDAYRANGE, to: 0 } with a 60-day dataset clamps to
+  // from = maxDays − 1 = 59 for the aggregation but still covers 60 days.
+  const stationRangeCount = currentRange ? `darrers ${currentRange.from - currentRange.to + 1} dies` : null;
+  const stationRangeDates = stationRangeWindow ? `${stationRangeWindow.from} – ${stationRangeWindow.to}` : null;
+
+  // Altitude has no day window (static metadata), but while the button is in
+  // altitude mode a label shows the APPLIED relief band ("100m – 600m") — and
+  // only when the filter really filters: narrowed below the stations' full
+  // altitud span, the same full-span-means-off contract as terrainState.alt.
+  const reliefApplied = reliefRange != null && altLimits != null &&
+    (reliefRange[0] !== altLimits[0] || reliefRange[1] !== altLimits[1]);
+  const stationAltLabel = labelMode === 'altitud' && reliefApplied
+    ? `${reliefRange[0]}m – ${reliefRange[1]}m`
+    : null;
 
   // latest available data day (index.json is oldest-first) + staleness hint
   const latestDate = days.length ? new Date(days[days.length - 1]) : null;
@@ -1024,16 +1131,43 @@ const App = ()  => {
         >
           <FontAwesomeIcon icon={faMountainSun} />
         </div>
-        {/* Station value: none → altitud → rain 15d → temp 15d → hum 15d → none. Never dimmed — area filters paint pixels only. */}
-        <div
-          className={`sel-button ${LABEL_CLASSES[labelMode] ?? 'stationinfo'}${labelMode !== 'none' ? ' on' : ''}`}
-          title={labelMode === 'none' ? 'Mostra altitud (m)' : labelMode === 'altitud' ? 'Mostra pluja darrers 15 dies (mm)' : labelMode === 'precAcc' ? 'Mostra temperatura mitjana darrers 15 dies (°C)' : labelMode === 'tempAvg' ? 'Mostra humitat mitjana darrers 15 dies (%)' : 'Amaga els valors de les estacions'}
-          onClick={() => {
-            const i = LABEL_MODES.indexOf(labelMode);
-            setLabelMode(LABEL_MODES[(i + 1) % LABEL_MODES.length]);
-          }}
-        >
-          <FontAwesomeIcon icon={LABEL_ICONS[labelMode] ?? faBan} />
+        {/* Station value: none → altitud → rain → temp → hum → none. Never
+            dimmed — area filters paint pixels only. Each meteo value covers
+            its variable's stationDayRange: the default (last
+            DEFAULTDAYRANGE days) or the last ACTIVE filter's range; the span
+            on the right says which window the numbers come from. In altitude
+            mode the span shows the applied relief band instead. */}
+        <div className="stationinfo-row">
+          <div
+            className={`sel-button ${LABEL_CLASSES[labelMode] ?? 'stationinfo'}${labelMode !== 'none' ? ' on' : ''}`}
+            title={labelMode === 'none'
+              ? 'Mostra altitud (m)'
+              : labelMode === 'altitud'
+                ? 'Mostra altitud (m)'
+                : `${labelMode === 'precAcc' ? 'Pluja acumulada' : labelMode === 'tempAvg' ? 'Temperatura mitjana' : 'Humitat mitjana'} · ${stationRangeLabel ?? ''}${stationRangeCount && stationRangeDates ? ` (${stationRangeCount} · ${stationRangeDates})` : ''}`}
+            onClick={() => {
+              const i = LABEL_MODES.indexOf(labelMode);
+              setLabelMode(LABEL_MODES[(i + 1) % LABEL_MODES.length]);
+            }}
+          >
+            <FontAwesomeIcon icon={LABEL_ICONS[labelMode] ?? faBan} />
+          </div>
+          {stationRangeLabel && (
+            <span
+              className="stationinfo-range"
+              title={stationRangeCount && stationRangeDates ? `${stationRangeCount} · ${stationRangeDates}` : undefined}
+            >
+              {stationRangeLabel}
+            </span>
+          )}
+          {stationAltLabel && (
+            <span
+              className="stationinfo-range"
+              title={`Relleu aplicat: ${reliefRange[0]} – ${reliefRange[1]} m`}
+            >
+              {stationAltLabel}
+            </span>
+          )}
         </div>
         {/* Directions: arm the map so the next click opens Google Maps routes */}
         <div
@@ -1069,6 +1203,9 @@ const App = ()  => {
         elevation={clickedElevation}
         boletFilter={boletFilter}
         boletScores={boletScores}
+        // Highlights the active day range inside each fixed-60-day chart
+        // (the window the circle values are aggregated over).
+        stationDayRange={stationDayRange}
       />}
       {showLegend && (
         <div className="mcsc-legend">

@@ -5,7 +5,7 @@ import { faCarrot, faDroplet, faSeedling, faTemperatureLow, faRightFromBracket }
 import { fmtDayCat } from '../logic/utils.js';
 import { SPECIES } from '../logic/speciesRules.js';
 
-const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation, boletFilter, boletScores }) => {
+const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation, boletFilter, boletScores, stationDayRange }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   // global min/max from dayStats (hooks must run before the early return)
@@ -20,12 +20,17 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
     return { precMin, precMax, humMin, humMax, tempMin, tempMax };
   }, [data]);
 
-  // generate day data
+  // generate day data — each day also carries its offset back from the
+  // reference day (daysRange.to = last data day) so the bar can be flagged
+  // as inside its variable's stationDayRange (the window the circle values
+  // are aggregated over). The chart itself stays fixed (daysRange); only the
+  // highlight follows the filters.
   const chartData = useMemo(() => {
     if (!data || !station?.properties?.codi) return [];
 
     const from = daysRange?.from ? new Date(daysRange.from) : null;
     const to = daysRange?.to ? new Date(daysRange.to) : from;
+    const refTime = to ? new Date(to).getTime() : null;
 
     const allDates = [];
     if (from && to) {
@@ -40,13 +45,27 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
       }
     }
 
-    return allDates.map(day => ({
-      day,
-      precAcc: data[day]?.[station.properties.codi]?.precAcc ?? 0,
-      humAvg: data[day]?.[station.properties.codi]?.humAvg ?? 0,
-      tempAvg: data[day]?.[station.properties.codi]?.tempAvg ?? 0
-    }));
-  }, [data, station, daysRange]);
+    // a day is inside a range when its offset (days back from the reference
+    // day) falls between the range's `to` (nearest) and `from` (farthest)
+    const inRange = (r, offset) =>
+      r != null && offset != null && offset >= r.to && offset <= r.from;
+
+    return allDates.map(day => {
+      const offset = refTime != null
+        ? Math.round((refTime - new Date(day).getTime()) / 86400000)
+        : null;
+      return {
+        day,
+        offset,
+        rainIn: inRange(stationDayRange?.rain, offset),
+        humIn: inRange(stationDayRange?.hum, offset),
+        tempIn: inRange(stationDayRange?.temp, offset),
+        precAcc: data[day]?.[station.properties.codi]?.precAcc ?? 0,
+        humAvg: data[day]?.[station.properties.codi]?.humAvg ?? 0,
+        tempAvg: data[day]?.[station.properties.codi]?.tempAvg ?? 0
+      };
+    });
+  }, [data, station, daysRange, stationDayRange]);
 
   if (!station) {
     return (
@@ -103,7 +122,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
             {chartData.map((d, i) => (
               <div
                 key={i}
-                className="bar rain"
+                className={`bar rain${d.rainIn ? ' hl' : ''}`}
                 style={{
                   height: `${
                     ((d.precAcc - globalStats.precMin) /
@@ -111,7 +130,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
                     100
                   }%`,
                 }}
-                title={`${d.day}: ${fmtNum(d.precAcc, 1)} mm`}
+                title={`${d.day}: ${fmtNum(d.precAcc, 1)} mm${d.rainIn ? ' · en el període' : ''}`}
               />
             ))}
           </div>
@@ -131,12 +150,12 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
             {chartData.map((d, i) => (
               <div
                 key={i}
-                className="bar humidity"
+                className={`bar humidity${d.humIn ? ' hl' : ''}`}
                 style={{
                   height: `${((d.humAvg - globalStats.humMin) /
                     (globalStats.humMax - globalStats.humMin || 1)) * 100}%`
                 }}
-                title={`${d.day}: ${fmtNum(d.humAvg, 0)}%`}
+                title={`${d.day}: ${fmtNum(d.humAvg, 0)}%${d.humIn ? ' · en el període' : ''}`}
               />
             ))}
           </div>
@@ -156,12 +175,12 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
             {chartData.map((d, i) => (
               <div
                 key={i}
-                className="bar temp"
+                className={`bar temp${d.tempIn ? ' hl' : ''}`}
                 style={{ height: `${
       ((d.tempAvg - globalStats.tempMin) /
         (globalStats.tempMax - globalStats.tempMin || 1)) * 100
     }%` }}
-                title={`${d.day}: ${fmtNum(d.tempAvg, 1)} °C`}
+                title={`${d.day}: ${fmtNum(d.tempAvg, 1)} °C${d.tempIn ? ' · en el període' : ''}`}
               />
             ))}
           </div>
