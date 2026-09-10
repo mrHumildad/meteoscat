@@ -1,0 +1,1147 @@
+{
+  "C6": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "C7": {
+    "mcscClass": "352",
+    "mcscName": "Sòl nu urbà",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "C8": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "C9": {
+    "mcscClass": "346",
+    "mcscName": "Zones verdes",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "CC": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "CD": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "CE": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "CG": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "CI": {
+    "mcscClass": "344",
+    "mcscName": "Edificacions aïllades en l'espai rural",
+    "forestType": null,
+    "sampleCount": 1
+  },
+  "CJ": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "CL": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 1
+  },
+  "CP": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "CQ": {
+    "mcscClass": "352",
+    "mcscName": "Sòl nu urbà",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "CR": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "CT": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "CW": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "CY": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "D1": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "D2": {
+    "mcscClass": "221",
+    "mcscName": "Boscos densos d'aciculifolis",
+    "forestType": "forest_conif",
+    "sampleCount": 2
+  },
+  "D3": {
+    "mcscClass": "343",
+    "mcscName": "Zones urbanes laxes",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "D4": {
+    "mcscClass": "352",
+    "mcscName": "Sòl nu urbà",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "D5": {
+    "mcscClass": "223",
+    "mcscName": "Boscos densos d'esclerofil·les i laurifolis",
+    "forestType": "forest_sclerophyll",
+    "sampleCount": 2
+  },
+  "D6": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "D7": {
+    "mcscClass": "352",
+    "mcscName": "Sòl nu urbà",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "D8": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "D9": {
+    "mcscClass": "352",
+    "mcscName": "Sòl nu urbà",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "DB": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "DF": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "DG": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "DI": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "DJ": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "DK": {
+    "mcscClass": "352",
+    "mcscName": "Sòl nu urbà",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "DL": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "DN": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "DO": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "DP": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "DQ": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "H1": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "J5": {
+    "mcscClass": "461",
+    "mcscName": "Embassaments",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "KE": {
+    "mcscClass": "347",
+    "mcscName": "Zones industrials, comercials i/o de serveis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "KP": {
+    "mcscClass": "347",
+    "mcscName": "Zones industrials, comercials i/o de serveis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "KX": {
+    "mcscClass": "347",
+    "mcscName": "Zones industrials, comercials i/o de serveis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "M6": {
+    "mcscClass": "463",
+    "mcscName": "Cursos d'aigua",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "MQ": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "MR": {
+    "mcscClass": "221",
+    "mcscName": "Boscos densos d'aciculifolis",
+    "forestType": "forest_conif",
+    "sampleCount": 2
+  },
+  "MS": {
+    "mcscClass": "352",
+    "mcscName": "Sòl nu urbà",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "MV": {
+    "mcscClass": "221",
+    "mcscName": "Boscos densos d'aciculifolis",
+    "forestType": "forest_conif",
+    "sampleCount": 2
+  },
+  "MW": {
+    "mcscClass": "221",
+    "mcscName": "Boscos densos d'aciculifolis",
+    "forestType": "forest_conif",
+    "sampleCount": 4
+  },
+  "U2": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "U3": {
+    "mcscClass": "113",
+    "mcscName": "Vinyes",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "U4": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "U6": {
+    "mcscClass": "114",
+    "mcscName": "Oliverars",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "U7": {
+    "mcscClass": "114",
+    "mcscName": "Oliverars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "U9": {
+    "mcscClass": "114",
+    "mcscName": "Oliverars",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "UA": {
+    "mcscClass": "114",
+    "mcscName": "Oliverars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "UB": {
+    "mcscClass": "352",
+    "mcscName": "Sòl nu urbà",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "UE": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "UF": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "UG": {
+    "mcscClass": "112",
+    "mcscName": "Horta, vivers i conreus forçats",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "UH": {
+    "mcscClass": "221",
+    "mcscName": "Boscos densos d'aciculifolis",
+    "forestType": "forest_conif",
+    "sampleCount": 3
+  },
+  "UI": {
+    "mcscClass": "221",
+    "mcscName": "Boscos densos d'aciculifolis",
+    "forestType": "forest_conif",
+    "sampleCount": 4
+  },
+  "UJ": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "UK": {
+    "mcscClass": "221",
+    "mcscName": "Boscos densos d'aciculifolis",
+    "forestType": "forest_conif",
+    "sampleCount": 2
+  },
+  "UM": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "UN": {
+    "mcscClass": "223",
+    "mcscName": "Boscos densos d'esclerofil·les i laurifolis",
+    "forestType": "forest_sclerophyll",
+    "sampleCount": 2
+  },
+  "UO": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "UP": {
+    "mcscClass": "112",
+    "mcscName": "Horta, vivers i conreus forçats",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "UQ": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "US": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "UU": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "UW": {
+    "mcscClass": "347",
+    "mcscName": "Zones industrials, comercials i/o de serveis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "UX": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "UY": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "V1": {
+    "mcscClass": "112",
+    "mcscName": "Horta, vivers i conreus forçats",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "V4": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "V5": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "V8": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "VA": {
+    "mcscClass": "114",
+    "mcscName": "Oliverars",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "VB": {
+    "mcscClass": "352",
+    "mcscName": "Sòl nu urbà",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "VC": {
+    "mcscClass": "463",
+    "mcscName": "Cursos d'aigua",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "VD": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "VH": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "VK": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "VM": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "VO": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "VP": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "VQ": {
+    "mcscClass": "114",
+    "mcscName": "Oliverars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "VS": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "VU": {
+    "mcscClass": "221",
+    "mcscName": "Boscos densos d'aciculifolis",
+    "forestType": "forest_conif",
+    "sampleCount": 3
+  },
+  "VV": {
+    "mcscClass": "347",
+    "mcscName": "Zones industrials, comercials i/o de serveis",
+    "forestType": null,
+    "sampleCount": 1
+  },
+  "VX": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "VY": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "VZ": {
+    "mcscClass": "113",
+    "mcscName": "Vinyes",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "W1": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "W4": {
+    "mcscClass": "113",
+    "mcscName": "Vinyes",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "W5": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "W8": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "W9": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "WA": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "WB": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "WC": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "WG": {
+    "mcscClass": "347",
+    "mcscName": "Zones industrials, comercials i/o de serveis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "WI": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "WJ": {
+    "mcscClass": "113",
+    "mcscName": "Vinyes",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "WK": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "WL": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "WM": {
+    "mcscClass": "346",
+    "mcscName": "Zones verdes",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "WN": {
+    "mcscClass": "232",
+    "mcscName": "Roquissars i congestes",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "WO": {
+    "mcscClass": "114",
+    "mcscName": "Oliverars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "WP": {
+    "mcscClass": "113",
+    "mcscName": "Vinyes",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "WQ": {
+    "mcscClass": "352",
+    "mcscName": "Sòl nu urbà",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "WR": {
+    "mcscClass": "113",
+    "mcscName": "Vinyes",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "WS": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "WT": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 1
+  },
+  "WU": {
+    "mcscClass": "342",
+    "mcscName": "Eixample",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "WV": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "WW": {
+    "mcscClass": "113",
+    "mcscName": "Vinyes",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "WX": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "WZ": {
+    "mcscClass": "343",
+    "mcscName": "Zones urbanes laxes",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "X1": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "X3": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "X4": {
+    "mcscClass": "347",
+    "mcscName": "Zones industrials, comercials i/o de serveis",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "X5": {
+    "mcscClass": "223",
+    "mcscName": "Boscos densos d'esclerofil·les i laurifolis",
+    "forestType": "forest_sclerophyll",
+    "sampleCount": 3
+  },
+  "X6": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "X7": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "X8": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "X9": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "XA": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "XB": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "XC": {
+    "mcscClass": "347",
+    "mcscName": "Zones industrials, comercials i/o de serveis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "XD": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "XE": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "XF": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "XG": {
+    "mcscClass": "347",
+    "mcscName": "Zones industrials, comercials i/o de serveis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "XH": {
+    "mcscClass": "346",
+    "mcscName": "Zones verdes",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "XI": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "XJ": {
+    "mcscClass": "112",
+    "mcscName": "Horta, vivers i conreus forçats",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "XK": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "XL": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "XM": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "XN": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "XO": {
+    "mcscClass": "346",
+    "mcscName": "Zones verdes",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "XP": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 1
+  },
+  "XQ": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "XR": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "XS": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "XT": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "XU": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "XV": {
+    "mcscClass": "346",
+    "mcscName": "Zones verdes",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "XX": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "XY": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "XZ": {
+    "mcscClass": "115",
+    "mcscName": "Altres conreus llenyosos",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "Y4": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "Y5": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "Y6": {
+    "mcscClass": "351",
+    "mcscName": "Xarxa viària",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "Y7": {
+    "mcscClass": "0",
+    "mcscName": "Sense dades",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "YA": {
+    "mcscClass": "346",
+    "mcscName": "Zones verdes",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "YB": {
+    "mcscClass": "343",
+    "mcscName": "Zones urbanes laxes",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "YC": {
+    "mcscClass": "229",
+    "mcscName": "Bosc de ribera",
+    "forestType": "forest_decid",
+    "sampleCount": 2
+  },
+  "YD": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "YE": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "YF": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "YG": {
+    "mcscClass": "346",
+    "mcscName": "Zones verdes",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "YH": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "YJ": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "YK": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 1
+  },
+  "YL": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "YM": {
+    "mcscClass": "346",
+    "mcscName": "Zones verdes",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "YN": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "YO": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "YP": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "YQ": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "YR": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "YS": {
+    "mcscClass": "111",
+    "mcscName": "Conreus herbacis",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "YT": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "YU": {
+    "mcscClass": "343",
+    "mcscName": "Zones urbanes laxes",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "YV": {
+    "mcscClass": "346",
+    "mcscName": "Zones verdes",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "YX": {
+    "mcscClass": "224",
+    "mcscName": "Matollar",
+    "forestType": null,
+    "sampleCount": 2
+  },
+  "Z1": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "Z2": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "Z3": {
+    "mcscClass": "225",
+    "mcscName": "Boscos clars d'aciculifolis",
+    "forestType": "forest_conif",
+    "sampleCount": 3
+  },
+  "Z5": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "Z6": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "Z7": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "Z9": {
+    "mcscClass": "221",
+    "mcscName": "Boscos densos d'aciculifolis",
+    "forestType": "forest_conif",
+    "sampleCount": 2
+  },
+  "ZB": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 4
+  },
+  "ZC": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 5
+  },
+  "ZD": {
+    "mcscClass": "230",
+    "mcscName": "Sòl nu forestal",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "ZE": {
+    "mcscClass": "228",
+    "mcscName": "Prats i herbassars",
+    "forestType": null,
+    "sampleCount": 3
+  },
+  "_meta": {
+    "source": "Mapa de Cobertes del Sòl de Catalunya (MCSC) v1.0",
+    "publisher": "Institut Cartogràfic i Geològic de Catalunya (ICGC) i CREAF",
+    "license": "CC BY 4.0 (attribution required)",
+    "layer": "cobertes_2024",
+    "wms": "https://geoserveis.icgc.cat/servei/catalunya/cobertes-sol/wms",
+    "legendSpec": "https://datacloud.ide.cat/especificacions/cobertes-sol-v1r0-esp-01ca-20160919.pdf",
+    "method": "GetFeatureInfo, 5-point majority vote (centre + ~60 m offsets)",
+    "sampledAt": "2026-09-02",
+    "stations": 189
+  }
+}

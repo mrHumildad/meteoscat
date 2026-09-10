@@ -14,7 +14,14 @@
         "codi": "C6",
         "nom": "Castellnou de Seana",
         "altitud": 264,
-        "comarca": "Pla d'Urgell"
+        "comarca": "Pla d'Urgell",
+        "tipus": "A",
+        "emplacament": "Abocador comarcal",
+        "municipi": "Castellnou de Seana",
+        "municipiCodi": "250680",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -30,7 +37,14 @@
         "codi": "C7",
         "nom": "Tàrrega",
         "altitud": 427,
-        "comarca": "Urgell"
+        "comarca": "Urgell",
+        "tipus": "A",
+        "emplacament": "Abocador comarcal",
+        "municipi": "Tàrrega",
+        "municipiCodi": "252173",
+        "mcscClass": "352",
+        "mcscName": "Sòl nu urbà",
+        "forestType": null
       }
     },
     {
@@ -46,7 +60,14 @@
         "codi": "C8",
         "nom": "Cervera",
         "altitud": 554,
-        "comarca": "Segarra"
+        "comarca": "Segarra",
+        "tipus": "A",
+        "emplacament": "Abocador comarcal",
+        "municipi": "Cervera",
+        "municipiCodi": "250729",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -62,7 +83,14 @@
         "codi": "C9",
         "nom": "Mas de Barberans",
         "altitud": 240,
-        "comarca": "Montsià"
+        "comarca": "Montsià",
+        "tipus": "A",
+        "emplacament": "Abocador comarcal",
+        "municipi": "Mas de Barberans",
+        "municipiCodi": "430770",
+        "mcscClass": "346",
+        "mcscName": "Zones verdes",
+        "forestType": null
       }
     },
     {
@@ -78,7 +106,14 @@
         "codi": "CC",
         "nom": "Orís",
         "altitud": 626,
-        "comarca": "Osona"
+        "comarca": "Osona",
+        "tipus": "A",
+        "emplacament": "Abocador comarcal",
+        "municipi": "Orís",
+        "municipiCodi": "081509",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -94,7 +129,14 @@
         "codi": "CD",
         "nom": "la Seu d'Urgell - Bellestar",
         "altitud": 849,
-        "comarca": "Alt Urgell"
+        "comarca": "Alt Urgell",
+        "tipus": "A",
+        "emplacament": "Abocador comarcal",
+        "municipi": "La Seu d'Urgell",
+        "municipiCodi": "252038",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -110,7 +152,14 @@
         "codi": "CE",
         "nom": "els Hostalets de Pierola",
         "altitud": 316,
-        "comarca": "Anoia"
+        "comarca": "Anoia",
+        "tipus": "A",
+        "emplacament": "Abocador de residus",
+        "municipi": "Els Hostalets de Pierola",
+        "municipiCodi": "081629",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -126,7 +175,14 @@
         "codi": "CG",
         "nom": "Molló - Fabert",
         "altitud": 1405,
-        "comarca": "Ripollès"
+        "comarca": "Ripollès",
+        "tipus": "A",
+        "emplacament": "Veïnat de Fabert",
+        "municipi": "Molló",
+        "municipiCodi": "171077",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -142,7 +198,14 @@
         "codi": "CI",
         "nom": "Sant Pau de Segúries",
         "altitud": 852,
-        "comarca": "Ripollès"
+        "comarca": "Ripollès",
+        "tipus": "A",
+        "emplacament": "Estació meteorològica municipal",
+        "municipi": "Sant Pau de Segúries",
+        "municipiCodi": "171772",
+        "mcscClass": "344",
+        "mcscName": "Edificacions aïllades en l'espai rural",
+        "forestType": null
       }
     },
     {
@@ -158,7 +221,14 @@
         "codi": "CJ",
         "nom": "Organyà",
         "altitud": 566.5,
-        "comarca": "Alt Urgell"
+        "comarca": "Alt Urgell",
+        "tipus": "A",
+        "emplacament": "Càmping municipal",
+        "municipi": "Organyà",
+        "municipiCodi": "251556",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -174,7 +244,14 @@
         "codi": "CL",
         "nom": "Sant Salvador de Guardiola",
         "altitud": 349,
-        "comarca": "Bages"
+        "comarca": "Bages",
+        "tipus": "A",
+        "emplacament": "Urbanització Miralda",
+        "municipi": "Sant Salvador de Guardiola",
+        "municipiCodi": "080983",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -190,7 +267,14 @@
         "codi": "CP",
         "nom": "Sant Romà d'Abella",
         "altitud": 690,
-        "comarca": "Pallars Jussà"
+        "comarca": "Pallars Jussà",
+        "tipus": "A",
+        "emplacament": "Sant Romà d'Abella - el Tossal",
+        "municipi": "Isona i Conca Dellà",
+        "municipiCodi": "251155",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -206,7 +290,14 @@
         "codi": "CQ",
         "nom": "Vilanova de Meià",
         "altitud": 594,
-        "comarca": "Noguera"
+        "comarca": "Noguera",
+        "tipus": "A",
+        "emplacament": "Camp de fútbol",
+        "municipi": "Vilanova de Meià",
+        "municipiCodi": "252509",
+        "mcscClass": "352",
+        "mcscName": "Sòl nu urbà",
+        "forestType": null
       }
     },
     {
@@ -222,7 +313,14 @@
         "codi": "CR",
         "nom": "la Quar",
         "altitud": 873,
-        "comarca": "Berguedà"
+        "comarca": "Berguedà",
+        "tipus": "A",
+        "emplacament": "Sant Maurici",
+        "municipi": "La Quar",
+        "municipiCodi": "081770",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -238,7 +336,14 @@
         "codi": "CT",
         "nom": "el Pont de Suert",
         "altitud": 823,
-        "comarca": "Alta Ribagorça"
+        "comarca": "Alta Ribagorça",
+        "tipus": "A",
+        "emplacament": "Depuradora municipal",
+        "municipi": "El Pont de Suert",
+        "municipiCodi": "251734",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -254,7 +359,14 @@
         "codi": "CW",
         "nom": "l'Espluga de Francolí",
         "altitud": 446,
-        "comarca": "Conca de Barberà"
+        "comarca": "Conca de Barberà",
+        "tipus": "A",
+        "emplacament": "Urb. Espluga Parc",
+        "municipi": "L'Espluga de Francolí",
+        "municipiCodi": "430542",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -270,7 +382,14 @@
         "codi": "CY",
         "nom": "Muntanyola",
         "altitud": 816,
-        "comarca": "Osona"
+        "comarca": "Osona",
+        "tipus": "A",
+        "emplacament": "Esglèsia de St. Quirze i Sta. Julita",
+        "municipi": "Muntanyola",
+        "municipiCodi": "081290",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -286,7 +405,14 @@
         "codi": "D1",
         "nom": "Margalef",
         "altitud": 404,
-        "comarca": "Priorat"
+        "comarca": "Priorat",
+        "tipus": "A",
+        "emplacament": "Dipòsit d'aigua",
+        "municipi": "Margalef",
+        "municipiCodi": "430751",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -302,7 +428,14 @@
         "codi": "D2",
         "nom": "Vacarisses",
         "altitud": 343,
-        "comarca": "Vallès Occidental"
+        "comarca": "Vallès Occidental",
+        "tipus": "A",
+        "emplacament": "Planta potabilitzadora",
+        "municipi": "Vacarisses",
+        "municipiCodi": "082917",
+        "mcscClass": "221",
+        "mcscName": "Boscos densos d'aciculifolis",
+        "forestType": "forest_conif"
       }
     },
     {
@@ -318,7 +451,14 @@
         "codi": "D3",
         "nom": "Vallirana",
         "altitud": 252,
-        "comarca": "Baix Llobregat"
+        "comarca": "Baix Llobregat",
+        "tipus": "A",
+        "emplacament": "C. Arquitecte Baldric",
+        "municipi": "Vallirana",
+        "municipiCodi": "082956",
+        "mcscClass": "343",
+        "mcscName": "Zones urbanes laxes",
+        "forestType": null
       }
     },
     {
@@ -334,7 +474,14 @@
         "codi": "D4",
         "nom": "Roses",
         "altitud": 23,
-        "comarca": "Alt Empordà"
+        "comarca": "Alt Empordà",
+        "tipus": "A",
+        "emplacament": "Poliesportiu Municipal",
+        "municipi": "Roses",
+        "municipiCodi": "171523",
+        "mcscClass": "352",
+        "mcscName": "Sòl nu urbà",
+        "forestType": null
       }
     },
     {
@@ -350,7 +497,14 @@
         "codi": "D5",
         "nom": "Barcelona - Observatori Fabra",
         "altitud": 411,
-        "comarca": "Barcelonès"
+        "comarca": "Barcelonès",
+        "tipus": "A",
+        "emplacament": "Observatori Fabra",
+        "municipi": "Barcelona",
+        "municipiCodi": "080193",
+        "mcscClass": "223",
+        "mcscName": "Boscos densos d'esclerofil·les i laurifolis",
+        "forestType": "forest_sclerophyll"
       }
     },
     {
@@ -366,7 +520,14 @@
         "codi": "D6",
         "nom": "Portbou - coll dels Belitres",
         "altitud": 196,
-        "comarca": "Alt Empordà"
+        "comarca": "Alt Empordà",
+        "tipus": "A",
+        "emplacament": "Punta de l'Aucell  (zona fronterera)",
+        "municipi": "Portbou",
+        "municipiCodi": "171387",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -382,7 +543,14 @@
         "codi": "D7",
         "nom": "Vinebre",
         "altitud": 53,
-        "comarca": "Ribera d'Ebre"
+        "comarca": "Ribera d'Ebre",
+        "tipus": "A",
+        "emplacament": "Partida de Mallols",
+        "municipi": "Vinebre",
+        "municipiCodi": "431779",
+        "mcscClass": "352",
+        "mcscName": "Sòl nu urbà",
+        "forestType": null
       }
     },
     {
@@ -398,7 +566,14 @@
         "codi": "D8",
         "nom": "Horta de Sant Joan",
         "altitud": 515,
-        "comarca": "Terra Alta"
+        "comarca": "Terra Alta",
+        "tipus": "A",
+        "emplacament": "Les Forques",
+        "municipi": "Horta de Sant Joan",
+        "municipiCodi": "430712",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -414,7 +589,14 @@
         "codi": "D9",
         "nom": "el Vendrell",
         "altitud": 59,
-        "comarca": "Baix Penedès"
+        "comarca": "Baix Penedès",
+        "tipus": "A",
+        "emplacament": "Instal·lacions esportives municipals",
+        "municipi": "El Vendrell",
+        "municipiCodi": "431634",
+        "mcscClass": "352",
+        "mcscName": "Sòl nu urbà",
+        "forestType": null
       }
     },
     {
@@ -430,7 +612,14 @@
         "codi": "DB",
         "nom": "el Perelló",
         "altitud": 179,
-        "comarca": "Baix Ebre"
+        "comarca": "Baix Ebre",
+        "tipus": "A",
+        "emplacament": "Dipòsit d'aigua",
+        "municipi": "El Perelló",
+        "municipiCodi": "431042",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -446,7 +635,14 @@
         "codi": "DF",
         "nom": "la Bisbal d'Empordà",
         "altitud": 28.6,
-        "comarca": "Baix Empordà"
+        "comarca": "Baix Empordà",
+        "tipus": "A",
+        "emplacament": "Estació depuradora",
+        "municipi": "La Bisbal d'Empordà",
+        "municipiCodi": "170221",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -462,7 +658,14 @@
         "codi": "DG",
         "nom": "Núria (1.971 m)",
         "altitud": 1971.4,
-        "comarca": "Ripollès"
+        "comarca": "Ripollès",
+        "tipus": "A",
+        "emplacament": "Santuari de Núria",
+        "municipi": "Queralbs",
+        "municipiCodi": "170433",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -478,7 +681,14 @@
         "codi": "DI",
         "nom": "Font-rubí",
         "altitud": 415,
-        "comarca": "Alt Penedès"
+        "comarca": "Alt Penedès",
+        "tipus": "A",
+        "emplacament": "Masia Ca l'Amàlia - Montjuic",
+        "municipi": "Font-rubí",
+        "municipiCodi": "080850",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -494,7 +704,14 @@
         "codi": "DJ",
         "nom": "Banyoles",
         "altitud": 176,
-        "comarca": "Pla de l'Estany"
+        "comarca": "Pla de l'Estany",
+        "tipus": "A",
+        "emplacament": "Abocador comarcal de Puigpalter",
+        "municipi": "Banyoles",
+        "municipiCodi": "170157",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -510,7 +727,14 @@
         "codi": "DK",
         "nom": "Torredembarra",
         "altitud": 2,
-        "comarca": "Tarragonès"
+        "comarca": "Tarragonès",
+        "tipus": "A",
+        "emplacament": "Aiguamolls els Muntanyans",
+        "municipi": "Torredembarra",
+        "municipiCodi": "431536",
+        "mcscClass": "352",
+        "mcscName": "Sòl nu urbà",
+        "forestType": null
       }
     },
     {
@@ -526,7 +750,14 @@
         "codi": "DL",
         "nom": "Illa de Buda",
         "altitud": 0.5,
-        "comarca": "Montsià"
+        "comarca": "Montsià",
+        "tipus": "A",
+        "emplacament": "Mas de Buda",
+        "municipi": "Sant Jaume d'Enveja",
+        "municipiCodi": "439023",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -542,7 +773,14 @@
         "codi": "DN",
         "nom": "Anglès",
         "altitud": 150,
-        "comarca": "Selva"
+        "comarca": "Selva",
+        "tipus": "A",
+        "emplacament": "Poliesportiu municipal",
+        "municipi": "Anglès",
+        "municipiCodi": "170084",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -558,7 +796,14 @@
         "codi": "DO",
         "nom": "Castell d'Aro",
         "altitud": 14,
-        "comarca": "Baix Empordà"
+        "comarca": "Baix Empordà",
+        "tipus": "A",
+        "emplacament": "Parc de Bombers",
+        "municipi": "Castell d'Aro, Platja d'Aro i s'Agaró",
+        "municipiCodi": "170486",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -574,7 +819,14 @@
         "codi": "DP",
         "nom": "Das - Aeròdrom",
         "altitud": 1097,
-        "comarca": "Cerdanya"
+        "comarca": "Cerdanya",
+        "tipus": "A",
+        "emplacament": "Aeròdrom de la Cerdanya",
+        "municipi": "Das",
+        "municipiCodi": "170617",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -590,7 +842,14 @@
         "codi": "DQ",
         "nom": "Vila-rodona",
         "altitud": 287,
-        "comarca": "Alt Camp"
+        "comarca": "Alt Camp",
+        "tipus": "A",
+        "emplacament": "Nova estació",
+        "municipi": "Vila-rodona",
+        "municipiCodi": "431704",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -606,7 +865,14 @@
         "codi": "H1",
         "nom": "Òdena",
         "altitud": 333,
-        "comarca": "Anoia"
+        "comarca": "Anoia",
+        "tipus": "A",
+        "emplacament": "Aeròdrom d'Òdena",
+        "municipi": "Òdena",
+        "municipiCodi": "081430",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -622,7 +888,14 @@
         "codi": "J5",
         "nom": "Pantà de Darnius - Boadella",
         "altitud": 158,
-        "comarca": "Alt Empordà"
+        "comarca": "Alt Empordà",
+        "tipus": "A",
+        "emplacament": "Presa del Pantà de Darnius - Boadella",
+        "municipi": "Darnius",
+        "municipiCodi": "170600",
+        "mcscClass": "461",
+        "mcscName": "Embassaments",
+        "forestType": null
       }
     },
     {
@@ -638,7 +911,14 @@
         "codi": "KE",
         "nom": "Pantà de Sau",
         "altitud": 426,
-        "comarca": "Osona"
+        "comarca": "Osona",
+        "tipus": "A",
+        "emplacament": "Central hidroelèctrica de Sau",
+        "municipi": "Vilanova de Sau",
+        "municipiCodi": "083036",
+        "mcscClass": "347",
+        "mcscName": "Zones industrials, comercials i/o de serveis",
+        "forestType": null
       }
     },
     {
@@ -654,7 +934,14 @@
         "codi": "KP",
         "nom": "Fogars de la Selva",
         "altitud": 36,
-        "comarca": "Selva"
+        "comarca": "Selva",
+        "tipus": "A",
+        "emplacament": "Can Simó",
+        "municipi": "Fogars de la Selva",
+        "municipiCodi": "080826",
+        "mcscClass": "347",
+        "mcscName": "Zones industrials, comercials i/o de serveis",
+        "forestType": null
       }
     },
     {
@@ -670,7 +957,14 @@
         "codi": "KX",
         "nom": "la Roca del Vallès - ETAP Cardedeu",
         "altitud": 156,
-        "comarca": "Vallès Oriental"
+        "comarca": "Vallès Oriental",
+        "tipus": "A",
+        "emplacament": "Planta tractament d'Aigües Ter - Llobregat",
+        "municipi": "La Roca del Vallès",
+        "municipiCodi": "081810",
+        "mcscClass": "347",
+        "mcscName": "Zones industrials, comercials i/o de serveis",
+        "forestType": null
       }
     },
     {
@@ -686,7 +980,14 @@
         "codi": "M6",
         "nom": "Sant Joan de les Abadesses",
         "altitud": 730,
-        "comarca": "Ripollès"
+        "comarca": "Ripollès",
+        "tipus": "A",
+        "emplacament": "Agrupació Esportiva del Ripollès",
+        "municipi": "Sant Joan de les Abadesses",
+        "municipiCodi": "171674",
+        "mcscClass": "463",
+        "mcscName": "Cursos d'aigua",
+        "forestType": null
       }
     },
     {
@@ -702,7 +1003,14 @@
         "codi": "MQ",
         "nom": "Cardona",
         "altitud": 401,
-        "comarca": "Bages"
+        "comarca": "Bages",
+        "tipus": "A",
+        "emplacament": "Boca nord del túnel de desviament del Cardener",
+        "municipi": "Cardona",
+        "municipiCodi": "080478",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -718,7 +1026,14 @@
         "codi": "MR",
         "nom": "Pantà de Siurana",
         "altitud": 500,
-        "comarca": "Priorat"
+        "comarca": "Priorat",
+        "tipus": "A",
+        "emplacament": "Pantà de Siurana - Xalet del Pantà",
+        "municipi": "Cornudella de Montsant",
+        "municipiCodi": "430496",
+        "mcscClass": "221",
+        "mcscName": "Boscos densos d'aciculifolis",
+        "forestType": "forest_conif"
       }
     },
     {
@@ -734,7 +1049,14 @@
         "codi": "MS",
         "nom": "Castellar de n'Hug - el Clot del Moro",
         "altitud": 943,
-        "comarca": "Berguedà"
+        "comarca": "Berguedà",
+        "tipus": "A",
+        "emplacament": "Aforament Castellar de n'Hug",
+        "municipi": "Castellar de n'Hug",
+        "municipiCodi": "080522",
+        "mcscClass": "352",
+        "mcscName": "Sòl nu urbà",
+        "forestType": null
       }
     },
     {
@@ -750,7 +1072,14 @@
         "codi": "MV",
         "nom": "Guixers - Valls",
         "altitud": 845,
-        "comarca": "Solsonès"
+        "comarca": "Solsonès",
+        "tipus": "A",
+        "emplacament": "Cal Teuler",
+        "municipi": "Guixers",
+        "municipiCodi": "251116",
+        "mcscClass": "221",
+        "mcscName": "Boscos densos d'aciculifolis",
+        "forestType": "forest_conif"
       }
     },
     {
@@ -766,7 +1095,14 @@
         "codi": "MW",
         "nom": "Navès",
         "altitud": 545,
-        "comarca": "Solsonès"
+        "comarca": "Solsonès",
+        "tipus": "A",
+        "emplacament": "el Garrigar",
+        "municipi": "Navès",
+        "municipiCodi": "251462",
+        "mcscClass": "221",
+        "mcscName": "Boscos densos d'aciculifolis",
+        "forestType": "forest_conif"
       }
     },
     {
@@ -782,7 +1118,14 @@
         "codi": "U2",
         "nom": "Sant Pere Pescador",
         "altitud": 4,
-        "comarca": "Alt Empordà"
+        "comarca": "Alt Empordà",
+        "tipus": "A",
+        "emplacament": "Mas Blanc, Mas Fages 17",
+        "municipi": "Sant Pere Pescador",
+        "municipiCodi": "171788",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -798,7 +1141,14 @@
         "codi": "U3",
         "nom": "Sant Martí Sarroca",
         "altitud": 257,
-        "comarca": "Alt Penedès"
+        "comarca": "Alt Penedès",
+        "tipus": "A",
+        "emplacament": "Mas Rabell de Fontenac",
+        "municipi": "Sant Martí Sarroca",
+        "municipiCodi": "082270",
+        "mcscClass": "113",
+        "mcscName": "Vinyes",
+        "forestType": null
       }
     },
     {
@@ -814,7 +1164,14 @@
         "codi": "U4",
         "nom": "Castellnou de Bages",
         "altitud": 507,
-        "comarca": "Bages"
+        "comarca": "Bages",
+        "tipus": "A",
+        "emplacament": "Masia Can Vilaseca",
+        "municipi": "Castellnou de Bages",
+        "municipiCodi": "080620",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -830,7 +1187,14 @@
         "codi": "U6",
         "nom": "Vinyols i els Arcs - Cambrils",
         "altitud": 29,
-        "comarca": "Baix Camp"
+        "comarca": "Baix Camp",
+        "tipus": "A",
+        "emplacament": "Casa Sant Josep - Escola la Salle",
+        "municipi": "Vinyols i els Arcs",
+        "municipiCodi": "431785",
+        "mcscClass": "114",
+        "mcscName": "Oliverars",
+        "forestType": null
       }
     },
     {
@@ -846,7 +1210,14 @@
         "codi": "U7",
         "nom": "Aldover",
         "altitud": 52,
-        "comarca": "Baix Ebre"
+        "comarca": "Baix Ebre",
+        "tipus": "A",
+        "emplacament": "Granges de Fabra",
+        "municipi": "Aldover",
+        "municipiCodi": "430069",
+        "mcscClass": "114",
+        "mcscName": "Oliverars",
+        "forestType": null
       }
     },
     {
@@ -862,7 +1233,14 @@
         "codi": "U9",
         "nom": "l'Aldea",
         "altitud": 62,
-        "comarca": "Baix Ebre"
+        "comarca": "Baix Ebre",
+        "tipus": "A",
+        "emplacament": "Barranc del Mas Roig",
+        "municipi": "L'Aldea",
+        "municipiCodi": "439044",
+        "mcscClass": "114",
+        "mcscName": "Oliverars",
+        "forestType": null
       }
     },
     {
@@ -878,7 +1256,14 @@
         "codi": "UA",
         "nom": "l'Ametlla de Mar",
         "altitud": 93,
-        "comarca": "Baix Ebre"
+        "comarca": "Baix Ebre",
+        "tipus": "A",
+        "emplacament": "Caseta d'en Butxaca",
+        "municipi": "L'Ametlla de Mar",
+        "municipiCodi": "430136",
+        "mcscClass": "114",
+        "mcscName": "Oliverars",
+        "forestType": null
       }
     },
     {
@@ -894,7 +1279,14 @@
         "codi": "UB",
         "nom": "la Tallada d'Empordà",
         "altitud": 15,
-        "comarca": "Baix Empordà"
+        "comarca": "Baix Empordà",
+        "tipus": "A",
+        "emplacament": "Findació Mas Badia - Canet de la Tallada",
+        "municipi": "La Tallada d'Empordà",
+        "municipiCodi": "171959",
+        "mcscClass": "352",
+        "mcscName": "Sòl nu urbà",
+        "forestType": null
       }
     },
     {
@@ -910,7 +1302,14 @@
         "codi": "UE",
         "nom": "Torroella de Montgrí",
         "altitud": 4,
-        "comarca": "Baix Empordà"
+        "comarca": "Baix Empordà",
+        "tipus": "A",
+        "emplacament": "la Feixa Gata",
+        "municipi": "Torroella de Montgrí",
+        "municipiCodi": "171997",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -926,7 +1325,14 @@
         "codi": "UF",
         "nom": "PN del Garraf - el Rascler",
         "altitud": 573,
-        "comarca": "Baix Llobregat"
+        "comarca": "Baix Llobregat",
+        "tipus": "A",
+        "emplacament": "El Rascler - Centre de Repetidors Aeroport. Parc Natural del Garraf",
+        "municipi": "Begues",
+        "municipiCodi": "080207",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -942,7 +1348,14 @@
         "codi": "UG",
         "nom": "Viladecans",
         "altitud": 3,
-        "comarca": "Baix Llobregat"
+        "comarca": "Baix Llobregat",
+        "tipus": "A",
+        "emplacament": "Planters Gusi, ctra. antiga de València, km 14",
+        "municipi": "Viladecans",
+        "municipiCodi": "083015",
+        "mcscClass": "112",
+        "mcscName": "Horta, vivers i conreus forçats",
+        "forestType": null
       }
     },
     {
@@ -958,7 +1371,14 @@
         "codi": "UH",
         "nom": "el Montmell",
         "altitud": 545,
-        "comarca": "Baix Penedès"
+        "comarca": "Baix Penedès",
+        "tipus": "A",
+        "emplacament": "Finca Vallflor - Aigua Viva",
+        "municipi": "El Montmell",
+        "municipiCodi": "430901",
+        "mcscClass": "221",
+        "mcscName": "Boscos densos d'aciculifolis",
+        "forestType": "forest_conif"
       }
     },
     {
@@ -974,7 +1394,14 @@
         "codi": "UI",
         "nom": "Gisclareny",
         "altitud": 1386,
-        "comarca": "Berguedà"
+        "comarca": "Berguedà",
+        "tipus": "A",
+        "emplacament": "Coll de la Bena - Font del Cabrer",
+        "municipi": "Gisclareny",
+        "municipiCodi": "080930",
+        "mcscClass": "221",
+        "mcscName": "Boscos densos d'aciculifolis",
+        "forestType": "forest_conif"
       }
     },
     {
@@ -990,7 +1417,14 @@
         "codi": "UJ",
         "nom": "Santa Coloma de Queralt",
         "altitud": 709,
-        "comarca": "Conca de Barberà"
+        "comarca": "Conca de Barberà",
+        "tipus": "A",
+        "emplacament": "Partida la Cabana",
+        "municipi": "Santa Coloma de Queralt",
+        "municipiCodi": "431397",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1006,7 +1440,14 @@
         "codi": "UK",
         "nom": "Sant Pere de Ribes - PN del Garraf",
         "altitud": 161,
-        "comarca": "Garraf"
+        "comarca": "Garraf",
+        "tipus": "A",
+        "emplacament": "Granja escola Can Pere",
+        "municipi": "Sant Pere de Ribes",
+        "municipiCodi": "082310",
+        "mcscClass": "221",
+        "mcscName": "Boscos densos d'aciculifolis",
+        "forestType": "forest_conif"
       }
     },
     {
@@ -1022,7 +1463,14 @@
         "codi": "UM",
         "nom": "la Granadella",
         "altitud": 505,
-        "comarca": "Garrigues"
+        "comarca": "Garrigues",
+        "tipus": "A",
+        "emplacament": "Horts de la Vall Major",
+        "municipi": "La Granadella",
+        "municipiCodi": "251018",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1038,7 +1486,14 @@
         "codi": "UN",
         "nom": "Cassà de la Selva",
         "altitud": 171,
-        "comarca": "Gironès"
+        "comarca": "Gironès",
+        "tipus": "A",
+        "emplacament": "Finca Mas Bassets",
+        "municipi": "Cassà de la Selva",
+        "municipiCodi": "170448",
+        "mcscClass": "223",
+        "mcscName": "Boscos densos d'esclerofil·les i laurifolis",
+        "forestType": "forest_sclerophyll"
       }
     },
     {
@@ -1054,7 +1509,14 @@
         "codi": "UO",
         "nom": "Fornells de la Selva",
         "altitud": 97,
-        "comarca": "Gironès"
+        "comarca": "Gironès",
+        "tipus": "A",
+        "emplacament": "La Torre de Reset",
+        "municipi": "Fornells de la Selva",
+        "municipiCodi": "170736",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1070,7 +1532,14 @@
         "codi": "UP",
         "nom": "Cabrils",
         "altitud": 81,
-        "comarca": "Maresme"
+        "comarca": "Maresme",
+        "tipus": "A",
+        "emplacament": "IRTA Cabrils, crta. de Vilassar a Cabrils, s/n",
+        "municipi": "Cabrils",
+        "municipiCodi": "080305",
+        "mcscClass": "112",
+        "mcscName": "Horta, vivers i conreus forçats",
+        "forestType": null
       }
     },
     {
@@ -1086,7 +1555,14 @@
         "codi": "UQ",
         "nom": "Dosrius - PN Montnegre Corredor",
         "altitud": 460,
-        "comarca": "Maresme"
+        "comarca": "Maresme",
+        "tipus": "A",
+        "emplacament": "Parc Natural del Corredor. Masia Can Bosc",
+        "municipi": "Dosrius",
+        "municipiCodi": "080752",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1102,7 +1578,14 @@
         "codi": "US",
         "nom": "les Cases d'Alcanar",
         "altitud": 24,
-        "comarca": "Montsià"
+        "comarca": "Montsià",
+        "tipus": "A",
+        "emplacament": "El Mas d'en Serra - Barranc de St. Jaume",
+        "municipi": "Alcanar",
+        "municipiCodi": "430043",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -1118,7 +1601,14 @@
         "codi": "UU",
         "nom": "Amposta",
         "altitud": 3,
-        "comarca": "Montsià"
+        "comarca": "Montsià",
+        "tipus": "A",
+        "emplacament": "IRTA - Estació Exp. Ebre, ctra. de Balada, s/n",
+        "municipi": "Amposta",
+        "municipiCodi": "430141",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1134,7 +1624,14 @@
         "codi": "UW",
         "nom": "els Alfacs",
         "altitud": 0,
-        "comarca": "Montsià"
+        "comarca": "Montsià",
+        "tipus": "A",
+        "emplacament": "IRTA Centre d'Aqüicultura, crta. Poble Nou del Delta, km 5,5",
+        "municipi": "La Ràpita",
+        "municipiCodi": "431362",
+        "mcscClass": "347",
+        "mcscName": "Zones industrials, comercials i/o de serveis",
+        "forestType": null
       }
     },
     {
@@ -1150,7 +1647,14 @@
         "codi": "UX",
         "nom": "Ulldecona - els Valentins",
         "altitud": 210,
-        "comarca": "Montsià"
+        "comarca": "Montsià",
+        "tipus": "A",
+        "emplacament": "Comunitat de regants del Pou Valentins",
+        "municipi": "Ulldecona",
+        "municipiCodi": "431567",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -1166,7 +1670,14 @@
         "codi": "UY",
         "nom": "Os de Balaguer - el Monestir d'Avellanes",
         "altitud": 576,
-        "comarca": "Noguera"
+        "comarca": "Noguera",
+        "tipus": "A",
+        "emplacament": "Quatre Vents - Monestir de les Avellanes",
+        "municipi": "Os de Balaguer",
+        "municipiCodi": "251569",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -1182,7 +1693,14 @@
         "codi": "V1",
         "nom": "Vallfogona de Balaguer",
         "altitud": 238,
-        "comarca": "Noguera"
+        "comarca": "Noguera",
+        "tipus": "A",
+        "emplacament": "Escola de Cap. Agrària - Finca l'Empalme",
+        "municipi": "Vallfogona de Balaguer",
+        "municipiCodi": "252402",
+        "mcscClass": "112",
+        "mcscName": "Horta, vivers i conreus forçats",
+        "forestType": null
       }
     },
     {
@@ -1198,7 +1716,14 @@
         "codi": "V4",
         "nom": "Montesquiu",
         "altitud": 684,
-        "comarca": "Osona"
+        "comarca": "Osona",
+        "tipus": "A",
+        "emplacament": "Castell de Montesquiu",
+        "municipi": "Montesquiu",
+        "municipiCodi": "081311",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -1214,7 +1739,14 @@
         "codi": "V5",
         "nom": "Perafita",
         "altitud": 774,
-        "comarca": "Lluçanès"
+        "comarca": "Lluçanès",
+        "tipus": "A",
+        "emplacament": "Finca la Tria",
+        "municipi": "Perafita",
+        "municipiCodi": "081607",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1230,7 +1762,14 @@
         "codi": "V8",
         "nom": "el Poal",
         "altitud": 223,
-        "comarca": "Pla d'Urgell"
+        "comarca": "Pla d'Urgell",
+        "tipus": "A",
+        "emplacament": "Finca el Molinet, c. Afores, s/n",
+        "municipi": "El Poal",
+        "municipiCodi": "251689",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -1246,7 +1785,14 @@
         "codi": "VA",
         "nom": "Ascó",
         "altitud": 256,
-        "comarca": "Ribera d'Ebre"
+        "comarca": "Ribera d'Ebre",
+        "tipus": "A",
+        "emplacament": "Camí de la Serra de les Moncas",
+        "municipi": "Ascó",
+        "municipiCodi": "430192",
+        "mcscClass": "114",
+        "mcscName": "Oliverars",
+        "forestType": null
       }
     },
     {
@@ -1262,7 +1808,14 @@
         "codi": "VB",
         "nom": "Benissanet",
         "altitud": 32,
-        "comarca": "Ribera d'Ebre"
+        "comarca": "Ribera d'Ebre",
+        "tipus": "A",
+        "emplacament": "Grup Fruiter Benissanet, crta. de Mora, s/n",
+        "municipi": "Benissanet",
+        "municipiCodi": "430265",
+        "mcscClass": "352",
+        "mcscName": "Sòl nu urbà",
+        "forestType": null
       }
     },
     {
@@ -1278,7 +1831,14 @@
         "codi": "VC",
         "nom": "Pantà de Riba-roja",
         "altitud": 69,
-        "comarca": "Ribera d'Ebre"
+        "comarca": "Ribera d'Ebre",
+        "tipus": "A",
+        "emplacament": "Presa de Riba-roja",
+        "municipi": "Riba-roja d'Ebre",
+        "municipiCodi": "431251",
+        "mcscClass": "463",
+        "mcscName": "Cursos d'aigua",
+        "forestType": null
       }
     },
     {
@@ -1294,7 +1854,14 @@
         "codi": "VD",
         "nom": "el Canós",
         "altitud": 429,
-        "comarca": "Segarra"
+        "comarca": "Segarra",
+        "tipus": "A",
+        "emplacament": "Camí de la Figuerosa",
+        "municipi": "Els Plans de Sió",
+        "municipiCodi": "259118",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1310,7 +1877,14 @@
         "codi": "VH",
         "nom": "Gimenells",
         "altitud": 260,
-        "comarca": "Segrià"
+        "comarca": "Segrià",
+        "tipus": "A",
+        "emplacament": "IRTA - Estació de Gimenells",
+        "municipi": "Gimenells i el Pla de la Font",
+        "municipiCodi": "259123",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -1326,7 +1900,14 @@
         "codi": "VK",
         "nom": "Raimat",
         "altitud": 286,
-        "comarca": "Segrià"
+        "comarca": "Segrià",
+        "tipus": "A",
+        "emplacament": "Finca Montserrat - Raimat",
+        "municipi": "Lleida",
+        "municipiCodi": "251207",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -1342,7 +1923,14 @@
         "codi": "VM",
         "nom": "Vilanova de Segrià",
         "altitud": 222,
-        "comarca": "Segrià"
+        "comarca": "Segrià",
+        "tipus": "A",
+        "emplacament": "Partida lo Sort",
+        "municipi": "Vilanova de Segrià",
+        "municipiCodi": "252516",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1358,7 +1946,14 @@
         "codi": "VO",
         "nom": "Lladurs",
         "altitud": 785,
-        "comarca": "Solsonès"
+        "comarca": "Solsonès",
+        "tipus": "A",
+        "emplacament": "Masia el Pla - Montpol",
+        "municipi": "Lladurs",
+        "municipiCodi": "251240",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -1374,7 +1969,14 @@
         "codi": "VP",
         "nom": "Pinós",
         "altitud": 659,
-        "comarca": "Solsonès"
+        "comarca": "Solsonès",
+        "tipus": "A",
+        "emplacament": "Masia Can Caselles",
+        "municipi": "Pinós",
+        "municipiCodi": "251673",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1390,7 +1992,14 @@
         "codi": "VQ",
         "nom": "Constantí",
         "altitud": 112,
-        "comarca": "Tarragonès"
+        "comarca": "Tarragonès",
+        "tipus": "A",
+        "emplacament": "IRTA - Centre de Mas Bové. Apt. correus 415",
+        "municipi": "Constantí",
+        "municipiCodi": "430477",
+        "mcscClass": "114",
+        "mcscName": "Oliverars",
+        "forestType": null
       }
     },
     {
@@ -1406,7 +2015,14 @@
         "codi": "VS",
         "nom": "Lac Redon (2.247 m)",
         "altitud": 2247,
-        "comarca": "Val d'Aran"
+        "comarca": "Val d'Aran",
+        "tipus": "A",
+        "emplacament": "Lac Redon - Tuc deth Pòrt de Vielha",
+        "municipi": "Vielha e Mijaran",
+        "municipiCodi": "252430",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -1422,7 +2038,14 @@
         "codi": "VU",
         "nom": "Rellinars",
         "altitud": 421,
-        "comarca": "Vallès Occidental"
+        "comarca": "Vallès Occidental",
+        "tipus": "A",
+        "emplacament": "Puig de la Ballesta",
+        "municipi": "Rellinars",
+        "municipiCodi": "081799",
+        "mcscClass": "221",
+        "mcscName": "Boscos densos d'aciculifolis",
+        "forestType": "forest_conif"
       }
     },
     {
@@ -1438,7 +2061,14 @@
         "codi": "VV",
         "nom": "Sant Llorenç Savall",
         "altitud": 528,
-        "comarca": "Vallès Occidental"
+        "comarca": "Vallès Occidental",
+        "tipus": "A",
+        "emplacament": "Masia Can Brossa",
+        "municipi": "Sant Llorenç Savall",
+        "municipiCodi": "082233",
+        "mcscClass": "347",
+        "mcscName": "Zones industrials, comercials i/o de serveis",
+        "forestType": null
       }
     },
     {
@@ -1454,7 +2084,14 @@
         "codi": "VX",
         "nom": "Tagamanent - PN del Montseny",
         "altitud": 1030,
-        "comarca": "Vallès Oriental"
+        "comarca": "Vallès Oriental",
+        "tipus": "A",
+        "emplacament": "Can Bellver - Serrat de Bellver. Parc Natural del Montseny",
+        "municipi": "Tagamanent",
+        "municipiCodi": "082763",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -1470,7 +2107,14 @@
         "codi": "VY",
         "nom": "Nulles",
         "altitud": 240,
-        "comarca": "Alt Camp"
+        "comarca": "Alt Camp",
+        "tipus": "A",
+        "emplacament": "Cooperativa agrària",
+        "municipi": "Nulles",
+        "municipiCodi": "430982",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -1486,7 +2130,14 @@
         "codi": "VZ",
         "nom": "Espolla",
         "altitud": 83,
-        "comarca": "Alt Empordà"
+        "comarca": "Alt Empordà",
+        "tipus": "A",
+        "emplacament": "Llaurants. Ref. Cadastral: Pol. 5, parc.195",
+        "municipi": "Espolla",
+        "municipiCodi": "170643",
+        "mcscClass": "113",
+        "mcscName": "Vinyes",
+        "forestType": null
       }
     },
     {
@@ -1502,7 +2153,14 @@
         "codi": "W1",
         "nom": "Castelló d'Empúries",
         "altitud": 2,
-        "comarca": "Alt Empordà"
+        "comarca": "Alt Empordà",
+        "tipus": "A",
+        "emplacament": "Can Garriga - Mas Bellesguard",
+        "municipi": "Castelló d'Empúries",
+        "municipiCodi": "170470",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1518,7 +2176,14 @@
         "codi": "W4",
         "nom": "Vilafranca del Penedès - la Granada",
         "altitud": 240,
-        "comarca": "Alt Penedès"
+        "comarca": "Alt Penedès",
+        "tipus": "A",
+        "emplacament": "Rasa de Sagols",
+        "municipi": "Vilafranca del Penedès",
+        "municipiCodi": "083054",
+        "mcscClass": "113",
+        "mcscName": "Vinyes",
+        "forestType": null
       }
     },
     {
@@ -1534,7 +2199,14 @@
         "codi": "W5",
         "nom": "Oliana",
         "altitud": 490,
-        "comarca": "Alt Urgell"
+        "comarca": "Alt Urgell",
+        "tipus": "A",
+        "emplacament": "Partida Esclotes",
+        "municipi": "Oliana",
+        "municipiCodi": "251497",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1550,7 +2222,14 @@
         "codi": "W8",
         "nom": "Blancafort",
         "altitud": 438,
-        "comarca": "Conca de Barberà"
+        "comarca": "Conca de Barberà",
+        "tipus": "A",
+        "emplacament": "Cooperativa vinícola, pl.del Sindicat",
+        "municipi": "Blancafort",
+        "municipiCodi": "430290",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1566,7 +2245,14 @@
         "codi": "W9",
         "nom": "la Vall d'en Bas",
         "altitud": 461,
-        "comarca": "Garrotxa"
+        "comarca": "Garrotxa",
+        "tipus": "A",
+        "emplacament": "Escola Verntallat",
+        "municipi": "La Vall d'en Bas",
+        "municipiCodi": "172076",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1582,7 +2268,14 @@
         "codi": "WA",
         "nom": "Oliola",
         "altitud": 443,
-        "comarca": "Noguera"
+        "comarca": "Noguera",
+        "tipus": "A",
+        "emplacament": "Partida l'Era",
+        "municipi": "Oliola",
+        "municipiCodi": "251500",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -1598,7 +2291,14 @@
         "codi": "WB",
         "nom": "Albesa",
         "altitud": 267,
-        "comarca": "Noguera"
+        "comarca": "Noguera",
+        "tipus": "A",
+        "emplacament": "Partida l'Eral, camí del Torricó",
+        "municipi": "Albesa",
+        "municipiCodi": "250083",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -1614,7 +2314,14 @@
         "codi": "WC",
         "nom": "Golmés",
         "altitud": 261,
-        "comarca": "Pla d'Urgell"
+        "comarca": "Pla d'Urgell",
+        "tipus": "A",
+        "emplacament": "Partida Fogones",
+        "municipi": "Golmés",
+        "municipiCodi": "250997",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -1630,7 +2337,14 @@
         "codi": "WG",
         "nom": "Algerri",
         "altitud": 301,
-        "comarca": "Noguera"
+        "comarca": "Noguera",
+        "tipus": "A",
+        "emplacament": "Comunitat de regants d'Algerri, ctra. d'Albesa, s/n",
+        "municipi": "Algerri",
+        "municipiCodi": "250156",
+        "mcscClass": "347",
+        "mcscName": "Zones industrials, comercials i/o de serveis",
+        "forestType": null
       }
     },
     {
@@ -1646,7 +2360,14 @@
         "codi": "WI",
         "nom": "Maials",
         "altitud": 350,
-        "comarca": "Segrià"
+        "comarca": "Segrià",
+        "tipus": "A",
+        "emplacament": "Paratge d'Argelagar",
+        "municipi": "Maials",
+        "municipiCodi": "251333",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -1662,7 +2383,14 @@
         "codi": "WJ",
         "nom": "el Masroig",
         "altitud": 141,
-        "comarca": "Priorat"
+        "comarca": "Priorat",
+        "tipus": "A",
+        "emplacament": "Finca Terranova",
+        "municipi": "El Masroig",
+        "municipiCodi": "430825",
+        "mcscClass": "113",
+        "mcscName": "Vinyes",
+        "forestType": null
       }
     },
     {
@@ -1678,7 +2406,14 @@
         "codi": "WK",
         "nom": "Alfarràs",
         "altitud": 268,
-        "comarca": "Segrià"
+        "comarca": "Segrià",
+        "tipus": "A",
+        "emplacament": "Escola de Capacitació Agrària d'Alfarràs(de 1997 a 2001, és Almenar)",
+        "municipi": "Alfarràs",
+        "municipiCodi": "250138",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -1694,7 +2429,14 @@
         "codi": "WL",
         "nom": "Sant Martí de Riucorb",
         "altitud": 413,
-        "comarca": "Urgell"
+        "comarca": "Urgell",
+        "tipus": "A",
+        "emplacament": "Camí de les Comes, pol. 2, parc. 137",
+        "municipi": "Sant Martí de Riucorb",
+        "municipiCodi": "259025",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1710,7 +2452,14 @@
         "codi": "WM",
         "nom": "Santuari de Queralt",
         "altitud": 1167,
-        "comarca": "Berguedà"
+        "comarca": "Berguedà",
+        "tipus": "A",
+        "emplacament": "Santuari de la Mare de Déu de Queralt",
+        "municipi": "Berga",
+        "municipiCodi": "080229",
+        "mcscClass": "346",
+        "mcscName": "Zones verdes",
+        "forestType": null
       }
     },
     {
@@ -1726,7 +2475,14 @@
         "codi": "WN",
         "nom": "Montserrat - Sant Dimes",
         "altitud": 916,
-        "comarca": "Bages"
+        "comarca": "Bages",
+        "tipus": "A",
+        "emplacament": "Ermita de Sant Dimes",
+        "municipi": "Monistrol de Montserrat",
+        "municipiCodi": "081271",
+        "mcscClass": "232",
+        "mcscName": "Roquissars i congestes",
+        "forestType": null
       }
     },
     {
@@ -1742,7 +2498,14 @@
         "codi": "WO",
         "nom": "la Bisbal del Penedès",
         "altitud": 185,
-        "comarca": "Baix Penedès"
+        "comarca": "Baix Penedès",
+        "tipus": "A",
+        "emplacament": "Fondo de Cal Sumoi",
+        "municipi": "La Bisbal del Penedès",
+        "municipiCodi": "430287",
+        "mcscClass": "114",
+        "mcscName": "Oliverars",
+        "forestType": null
       }
     },
     {
@@ -1758,7 +2521,14 @@
         "codi": "WP",
         "nom": "Canaletes",
         "altitud": 325,
-        "comarca": "Alt Penedès"
+        "comarca": "Alt Penedès",
+        "tipus": "A",
+        "emplacament": "Camp del Roure - Can Feixes",
+        "municipi": "Mediona",
+        "municipiCodi": "081228",
+        "mcscClass": "113",
+        "mcscName": "Vinyes",
+        "forestType": null
       }
     },
     {
@@ -1774,7 +2544,14 @@
         "codi": "WQ",
         "nom": "Montsec d'Ares (1.572 m)",
         "altitud": 1572,
-        "comarca": "Pallars Jussà"
+        "comarca": "Pallars Jussà",
+        "tipus": "A",
+        "emplacament": "Serra de la Corona - Centre d'Observació de l'Univers",
+        "municipi": "Sant Esteve de la Sarga",
+        "municipiCodi": "251961",
+        "mcscClass": "352",
+        "mcscName": "Sòl nu urbà",
+        "forestType": null
       }
     },
     {
@@ -1790,7 +2567,14 @@
         "codi": "WR",
         "nom": "Torroja del Priorat",
         "altitud": 300,
-        "comarca": "Priorat"
+        "comarca": "Priorat",
+        "tipus": "A",
+        "emplacament": "Ref.cadastral: Pol. 3, parc. 38",
+        "municipi": "Torroja del Priorat",
+        "municipiCodi": "431541",
+        "mcscClass": "113",
+        "mcscName": "Vinyes",
+        "forestType": null
       }
     },
     {
@@ -1806,7 +2590,14 @@
         "codi": "WS",
         "nom": "Viladrau",
         "altitud": 953,
-        "comarca": "Osona"
+        "comarca": "Osona",
+        "tipus": "A",
+        "emplacament": "Mas Vilarmau",
+        "municipi": "Viladrau",
+        "municipiCodi": "172207",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1822,7 +2613,14 @@
         "codi": "WT",
         "nom": "Malgrat de Mar",
         "altitud": 2,
-        "comarca": "Maresme"
+        "comarca": "Maresme",
+        "tipus": "A",
+        "emplacament": "Camí de la Pomereda",
+        "municipi": "Malgrat de Mar",
+        "municipiCodi": "081108",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -1838,7 +2636,14 @@
         "codi": "WU",
         "nom": "Badalona - Museu",
         "altitud": 42,
-        "comarca": "Barcelonès"
+        "comarca": "Barcelonès",
+        "tipus": "A",
+        "emplacament": "Museu",
+        "municipi": "Badalona",
+        "municipiCodi": "080155",
+        "mcscClass": "342",
+        "mcscName": "Eixample",
+        "forestType": null
       }
     },
     {
@@ -1854,7 +2659,14 @@
         "codi": "WV",
         "nom": "Guardiola de Berguedà",
         "altitud": 788,
-        "comarca": "Berguedà"
+        "comarca": "Berguedà",
+        "tipus": "A",
+        "emplacament": "Monestir de Sant Llorenç prop Bagà",
+        "municipi": "Guardiola de Berguedà",
+        "municipiCodi": "080996",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -1870,7 +2682,14 @@
         "codi": "WW",
         "nom": "Artés",
         "altitud": 278,
-        "comarca": "Bages"
+        "comarca": "Bages",
+        "tipus": "A",
+        "emplacament": "Artés",
+        "municipi": "Artés",
+        "municipiCodi": "080109",
+        "mcscClass": "113",
+        "mcscName": "Vinyes",
+        "forestType": null
       }
     },
     {
@@ -1886,7 +2705,14 @@
         "codi": "WX",
         "nom": "Camarasa",
         "altitud": 668,
-        "comarca": "Noguera"
+        "comarca": "Noguera",
+        "tipus": "A",
+        "emplacament": "Camarasa",
+        "municipi": "Camarasa",
+        "municipiCodi": "250621",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -1902,7 +2728,14 @@
         "codi": "WZ",
         "nom": "Cunit",
         "altitud": 17,
-        "comarca": "Baix Penedès"
+        "comarca": "Baix Penedès",
+        "tipus": "A",
+        "emplacament": "-",
+        "municipi": "Cunit",
+        "municipiCodi": "430516",
+        "mcscClass": "343",
+        "mcscName": "Zones urbanes laxes",
+        "forestType": null
       }
     },
     {
@@ -1918,7 +2751,14 @@
         "codi": "X1",
         "nom": "Falset",
         "altitud": 359,
-        "comarca": "Priorat"
+        "comarca": "Priorat",
+        "tipus": "A",
+        "emplacament": "Abocador comarcal. Crta de Porrera",
+        "municipi": "Falset",
+        "municipiCodi": "430555",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -1934,7 +2774,14 @@
         "codi": "X3",
         "nom": "Alguaire",
         "altitud": 370,
-        "comarca": "Segrià"
+        "comarca": "Segrià",
+        "tipus": "A",
+        "emplacament": "Aeròdrom",
+        "municipi": "Alguaire",
+        "municipiCodi": "250169",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1950,7 +2797,14 @@
         "codi": "X4",
         "nom": "Barcelona - el Raval",
         "altitud": 33,
-        "comarca": "Barcelonès"
+        "comarca": "Barcelonès",
+        "tipus": "A",
+        "emplacament": "Facultat de Geografia i Història. c. Montalegre nº6, 6a",
+        "municipi": "Barcelona",
+        "municipiCodi": "080193",
+        "mcscClass": "347",
+        "mcscName": "Zones industrials, comercials i/o de serveis",
+        "forestType": null
       }
     },
     {
@@ -1966,7 +2820,14 @@
         "codi": "X5",
         "nom": "PN dels Ports",
         "altitud": 1055,
-        "comarca": "Baix Ebre"
+        "comarca": "Baix Ebre",
+        "tipus": "A",
+        "emplacament": "Montpublic 21 sector Cova Avellanes",
+        "municipi": "Roquetes",
+        "municipiCodi": "431331",
+        "mcscClass": "223",
+        "mcscName": "Boscos densos d'esclerofil·les i laurifolis",
+        "forestType": "forest_sclerophyll"
       }
     },
     {
@@ -1982,7 +2843,14 @@
         "codi": "X6",
         "nom": "Baldomar",
         "altitud": 366,
-        "comarca": "Noguera"
+        "comarca": "Noguera",
+        "tipus": "A",
+        "emplacament": "Baldomar",
+        "municipi": "Artesa de Segre",
+        "municipiCodi": "250349",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -1998,7 +2866,14 @@
         "codi": "X7",
         "nom": "Torres de Segre",
         "altitud": 215,
-        "comarca": "Segrià"
+        "comarca": "Segrià",
+        "tipus": "A",
+        "emplacament": "Torres de Segre",
+        "municipi": "Torres de Segre",
+        "municipiCodi": "252326",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2014,7 +2889,14 @@
         "codi": "X8",
         "nom": "Barcelona - Zona Universitària",
         "altitud": 79,
-        "comarca": "Barcelonès"
+        "comarca": "Barcelonès",
+        "tipus": "A",
+        "emplacament": "Pistes UB",
+        "municipi": "Barcelona",
+        "municipiCodi": "080193",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2030,7 +2912,14 @@
         "codi": "X9",
         "nom": "Caldes de Montbui",
         "altitud": 176,
-        "comarca": "Vallès Oriental"
+        "comarca": "Vallès Oriental",
+        "tipus": "A",
+        "emplacament": "Torre Marimon",
+        "municipi": "Caldes de Montbui",
+        "municipiCodi": "080333",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2046,7 +2935,14 @@
         "codi": "XA",
         "nom": "la Panadella",
         "altitud": 785,
-        "comarca": "Anoia"
+        "comarca": "Anoia",
+        "tipus": "A",
+        "emplacament": "La Creu del Vent",
+        "municipi": "Montmaneu",
+        "municipiCodi": "081332",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2062,7 +2958,14 @@
         "codi": "XB",
         "nom": "la Llacuna",
         "altitud": 584,
-        "comarca": "Anoia"
+        "comarca": "Anoia",
+        "tipus": "A",
+        "emplacament": "Cal Mateu",
+        "municipi": "La Llacuna",
+        "municipiCodi": "081043",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2078,7 +2981,14 @@
         "codi": "XC",
         "nom": "Castellbisbal",
         "altitud": 147,
-        "comarca": "Vallès Occidental"
+        "comarca": "Vallès Occidental",
+        "tipus": "A",
+        "emplacament": "Turó de la Verdalaga",
+        "municipi": "Castellbisbal",
+        "municipiCodi": "080543",
+        "mcscClass": "347",
+        "mcscName": "Zones industrials, comercials i/o de serveis",
+        "forestType": null
       }
     },
     {
@@ -2094,7 +3004,14 @@
         "codi": "XD",
         "nom": "Ulldemolins",
         "altitud": 687,
-        "comarca": "Priorat"
+        "comarca": "Priorat",
+        "tipus": "A",
+        "emplacament": "Pigrossos",
+        "municipi": "Ulldemolins",
+        "municipiCodi": "431573",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2110,7 +3027,14 @@
         "codi": "XE",
         "nom": "Tarragona - Complex Educatiu",
         "altitud": 5,
-        "comarca": "Tarragonès"
+        "comarca": "Tarragonès",
+        "tipus": "A",
+        "emplacament": "Complex Educatiu",
+        "municipi": "Tarragona",
+        "municipiCodi": "431482",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2126,7 +3050,14 @@
         "codi": "XF",
         "nom": "Sabadell - Parc Agrari",
         "altitud": 258,
-        "comarca": "Vallès Occidental"
+        "comarca": "Vallès Occidental",
+        "tipus": "A",
+        "emplacament": "Parc Agrari",
+        "municipi": "Sabadell",
+        "municipiCodi": "081878",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2142,7 +3073,14 @@
         "codi": "XG",
         "nom": "Parets del Vallès",
         "altitud": 123,
-        "comarca": "Vallès Oriental"
+        "comarca": "Vallès Oriental",
+        "tipus": "A",
+        "emplacament": "CEIP Pau Vila",
+        "municipi": "Parets del Vallès",
+        "municipiCodi": "081593",
+        "mcscClass": "347",
+        "mcscName": "Zones industrials, comercials i/o de serveis",
+        "forestType": null
       }
     },
     {
@@ -2158,7 +3096,14 @@
         "codi": "XH",
         "nom": "Sort",
         "altitud": 679,
-        "comarca": "Pallars Sobirà"
+        "comarca": "Pallars Sobirà",
+        "tipus": "A",
+        "emplacament": "Escola de Piragüisme",
+        "municipi": "Sort",
+        "municipiCodi": "252094",
+        "mcscClass": "346",
+        "mcscName": "Zones verdes",
+        "forestType": null
       }
     },
     {
@@ -2174,7 +3119,14 @@
         "codi": "XI",
         "nom": "Mollerussa",
         "altitud": 247,
-        "comarca": "Pla d'Urgell"
+        "comarca": "Pla d'Urgell",
+        "tipus": "A",
+        "emplacament": "-",
+        "municipi": "Mollerussa",
+        "municipiCodi": "251370",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -2190,7 +3142,14 @@
         "codi": "XJ",
         "nom": "Girona",
         "altitud": 72,
-        "comarca": "Gironès"
+        "comarca": "Gironès",
+        "tipus": "A",
+        "emplacament": "Horts de Santa Eugènia",
+        "municipi": "Girona",
+        "municipiCodi": "170792",
+        "mcscClass": "112",
+        "mcscName": "Horta, vivers i conreus forçats",
+        "forestType": null
       }
     },
     {
@@ -2206,7 +3165,14 @@
         "codi": "XK",
         "nom": "Puig Sesolles (1.668 m)",
         "altitud": 1668,
-        "comarca": "Vallès Oriental"
+        "comarca": "Vallès Oriental",
+        "tipus": "A",
+        "emplacament": "Puig Sesolles (Massís del Montseny)",
+        "municipi": "Fogars de Montclús",
+        "municipiCodi": "080811",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2222,7 +3188,14 @@
         "codi": "XL",
         "nom": "el Prat de Llobregat",
         "altitud": 8,
-        "comarca": "Baix Llobregat"
+        "comarca": "Baix Llobregat",
+        "tipus": "A",
+        "emplacament": "Camí de la Ribera s/n",
+        "municipi": "El Prat de Llobregat",
+        "municipiCodi": "081691",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -2238,7 +3211,14 @@
         "codi": "XM",
         "nom": "els Alamús",
         "altitud": 235,
-        "comarca": "Segrià"
+        "comarca": "Segrià",
+        "tipus": "A",
+        "emplacament": "-",
+        "municipi": "Els Alamús",
+        "municipiCodi": "250045",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -2254,7 +3234,14 @@
         "codi": "XN",
         "nom": "Seròs",
         "altitud": 89,
-        "comarca": "Segrià"
+        "comarca": "Segrià",
+        "tipus": "A",
+        "emplacament": "EDAR Aitona-Seròs",
+        "municipi": "Seròs",
+        "municipiCodi": "252043",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -2270,7 +3257,14 @@
         "codi": "XO",
         "nom": "Vic",
         "altitud": 499,
-        "comarca": "Osona"
+        "comarca": "Osona",
+        "tipus": "A",
+        "emplacament": "Vic",
+        "municipi": "Vic",
+        "municipiCodi": "082981",
+        "mcscClass": "346",
+        "mcscName": "Zones verdes",
+        "forestType": null
       }
     },
     {
@@ -2286,7 +3280,14 @@
         "codi": "XP",
         "nom": "Gandesa",
         "altitud": 350,
-        "comarca": "Terra Alta"
+        "comarca": "Terra Alta",
+        "tipus": "A",
+        "emplacament": "IRTA UETA Gandesa",
+        "municipi": "Gandesa",
+        "municipiCodi": "430640",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2302,7 +3303,14 @@
         "codi": "XQ",
         "nom": "Tremp",
         "altitud": 473,
-        "comarca": "Pallars Jussà"
+        "comarca": "Pallars Jussà",
+        "tipus": "A",
+        "emplacament": "Conillera de Joncar",
+        "municipi": "Tremp",
+        "municipiCodi": "252347",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2318,7 +3326,14 @@
         "codi": "XR",
         "nom": "Prades",
         "altitud": 926,
-        "comarca": "Baix Camp"
+        "comarca": "Baix Camp",
+        "tipus": "A",
+        "emplacament": "La Comanda",
+        "municipi": "Prades",
+        "municipiCodi": "431166",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2334,7 +3349,14 @@
         "codi": "XS",
         "nom": "Santa Coloma de Farners",
         "altitud": 162,
-        "comarca": "Selva"
+        "comarca": "Selva",
+        "tipus": "A",
+        "emplacament": "Dipòsit d'aigua",
+        "municipi": "Santa Coloma de Farners",
+        "municipiCodi": "171805",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2350,7 +3372,14 @@
         "codi": "XT",
         "nom": "Solsona",
         "altitud": 691,
-        "comarca": "Solsonès"
+        "comarca": "Solsonès",
+        "tipus": "A",
+        "emplacament": "Magatzem Municipal",
+        "municipi": "Solsona",
+        "municipiCodi": "252075",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2366,7 +3395,14 @@
         "codi": "XU",
         "nom": "Canyelles",
         "altitud": 148,
-        "comarca": "Garraf"
+        "comarca": "Garraf",
+        "tipus": "A",
+        "emplacament": "Cementiri",
+        "municipi": "Canyelles",
+        "municipiCodi": "080431",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2382,7 +3418,14 @@
         "codi": "XV",
         "nom": "Sant Cugat del Vallès - CAR",
         "altitud": 158,
-        "comarca": "Vallès Occidental"
+        "comarca": "Vallès Occidental",
+        "tipus": "A",
+        "emplacament": "Centre d'Alt Rendiment",
+        "municipi": "Sant Cugat del Vallès",
+        "municipiCodi": "082055",
+        "mcscClass": "346",
+        "mcscName": "Zones verdes",
+        "forestType": null
       }
     },
     {
@@ -2398,7 +3441,14 @@
         "codi": "XX",
         "nom": "Anglesola - Tornabous",
         "altitud": 291,
-        "comarca": "Urgell"
+        "comarca": "Urgell",
+        "tipus": "A",
+        "emplacament": "Masia Mingot",
+        "municipi": "Anglesola",
+        "municipiCodi": "250273",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -2414,7 +3464,14 @@
         "codi": "XY",
         "nom": "Alcarràs",
         "altitud": 122,
-        "comarca": "Segrià"
+        "comarca": "Segrià",
+        "tipus": "A",
+        "emplacament": "Central del revés",
+        "municipi": "Alcarràs",
+        "municipiCodi": "250117",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -2430,7 +3487,14 @@
         "codi": "XZ",
         "nom": "Torroella de Fluvià",
         "altitud": 7,
-        "comarca": "Alt Empordà"
+        "comarca": "Alt Empordà",
+        "tipus": "A",
+        "emplacament": " ",
+        "municipi": "Torroella de Fluvià",
+        "municipiCodi": "171984",
+        "mcscClass": "115",
+        "mcscName": "Altres conreus llenyosos",
+        "forestType": null
       }
     },
     {
@@ -2446,7 +3510,14 @@
         "codi": "Y4",
         "nom": "Alinyà",
         "altitud": 1162,
-        "comarca": "Alt Urgell"
+        "comarca": "Alt Urgell",
+        "tipus": "A",
+        "emplacament": "Tossal de Salamó",
+        "municipi": "Fígols i Alinyà",
+        "municipiCodi": "259084",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2462,7 +3533,14 @@
         "codi": "Y5",
         "nom": "Navata",
         "altitud": 152,
-        "comarca": "Alt Empordà"
+        "comarca": "Alt Empordà",
+        "tipus": "A",
+        "emplacament": "Can Tries",
+        "municipi": "Navata",
+        "municipiCodi": "171117",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2478,7 +3556,14 @@
         "codi": "Y6",
         "nom": "Tivissa",
         "altitud": 317,
-        "comarca": "Ribera d'Ebre"
+        "comarca": "Ribera d'Ebre",
+        "tipus": "A",
+        "emplacament": "-",
+        "municipi": "Tivissa",
+        "municipiCodi": "431508",
+        "mcscClass": "351",
+        "mcscName": "Xarxa viària",
+        "forestType": null
       }
     },
     {
@@ -2494,7 +3579,14 @@
         "codi": "Y7",
         "nom": "Port de Barcelona - Bocana Sud",
         "altitud": 3,
-        "comarca": "Baix Llobregat"
+        "comarca": "Baix Llobregat",
+        "tipus": "A",
+        "emplacament": "Port de Barcelona",
+        "municipi": "El Prat de Llobregat",
+        "municipiCodi": "081691",
+        "mcscClass": "0",
+        "mcscName": "Sense dades",
+        "forestType": null
       }
     },
     {
@@ -2510,7 +3602,14 @@
         "codi": "YA",
         "nom": "Puigcerdà",
         "altitud": 1213,
-        "comarca": "Cerdanya"
+        "comarca": "Cerdanya",
+        "tipus": "A",
+        "emplacament": "Poliesportiu municipal",
+        "municipi": "Puigcerdà",
+        "municipiCodi": "171411",
+        "mcscClass": "346",
+        "mcscName": "Zones verdes",
+        "forestType": null
       }
     },
     {
@@ -2526,7 +3625,14 @@
         "codi": "YB",
         "nom": "Olot",
         "altitud": 433,
-        "comarca": "Garrotxa"
+        "comarca": "Garrotxa",
+        "tipus": "A",
+        "emplacament": "Pla de Dalt",
+        "municipi": "Olot",
+        "municipiCodi": "171143",
+        "mcscClass": "343",
+        "mcscName": "Zones urbanes laxes",
+        "forestType": null
       }
     },
     {
@@ -2542,7 +3648,14 @@
         "codi": "YC",
         "nom": "la Pobla de Segur",
         "altitud": 508,
-        "comarca": "Pallars Jussà"
+        "comarca": "Pallars Jussà",
+        "tipus": "A",
+        "emplacament": "Horta de les Feixes",
+        "municipi": "La Pobla de Segur",
+        "municipiCodi": "251713",
+        "mcscClass": "229",
+        "mcscName": "Bosc de ribera",
+        "forestType": "forest_decid"
       }
     },
     {
@@ -2558,7 +3671,14 @@
         "codi": "YD",
         "nom": "les Borges Blanques",
         "altitud": 283,
-        "comarca": "Garrigues"
+        "comarca": "Garrigues",
+        "tipus": "A",
+        "emplacament": "Escola Agrària de les Borges Blanques",
+        "municipi": "Les Borges Blanques",
+        "municipiCodi": "250582",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2574,7 +3694,14 @@
         "codi": "YE",
         "nom": "Massoteres",
         "altitud": 513,
-        "comarca": "Segarra"
+        "comarca": "Segarra",
+        "tipus": "A",
+        "emplacament": "la Creu de Massoteres",
+        "municipi": "Massoteres",
+        "municipiCodi": "251327",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2590,7 +3717,14 @@
         "codi": "YF",
         "nom": "Miami Platja",
         "altitud": 43,
-        "comarca": "Baix Camp"
+        "comarca": "Baix Camp",
+        "tipus": "A",
+        "emplacament": "Plana dels Penyals",
+        "municipi": "Mont-roig del Camp",
+        "municipiCodi": "430923",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -2606,7 +3740,14 @@
         "codi": "YG",
         "nom": "Tírvia",
         "altitud": 954,
-        "comarca": "Pallars Sobirà"
+        "comarca": "Pallars Sobirà",
+        "tipus": "A",
+        "emplacament": "Heliport de Tírvia",
+        "municipi": "Tírvia",
+        "municipiCodi": "252213",
+        "mcscClass": "346",
+        "mcscName": "Zones verdes",
+        "forestType": null
       }
     },
     {
@@ -2622,7 +3763,14 @@
         "codi": "YH",
         "nom": "Pujalt",
         "altitud": 747,
-        "comarca": "Anoia"
+        "comarca": "Anoia",
+        "tipus": "A",
+        "emplacament": "Observatori de Pujalt",
+        "municipi": "Pujalt",
+        "municipiCodi": "081764",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2638,7 +3786,14 @@
         "codi": "YJ",
         "nom": "Lleida - la Femosa",
         "altitud": 170,
-        "comarca": "Segrià"
+        "comarca": "Segrià",
+        "tipus": "A",
+        "emplacament": "la Gabarrera",
+        "municipi": "Lleida",
+        "municipiCodi": "251207",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2654,7 +3809,14 @@
         "codi": "YK",
         "nom": "Terrassa",
         "altitud": 313,
-        "comarca": "Vallès Occidental"
+        "comarca": "Vallès Occidental",
+        "tipus": "A",
+        "emplacament": "Can Poal",
+        "municipi": "Terrassa",
+        "municipiCodi": "082798",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -2670,7 +3832,14 @@
         "codi": "YL",
         "nom": "Riudecanyes",
         "altitud": 170,
-        "comarca": "Baix Camp"
+        "comarca": "Baix Camp",
+        "tipus": "A",
+        "emplacament": "els Gorgs",
+        "municipi": "Riudecanyes",
+        "municipiCodi": "431270",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2686,7 +3855,14 @@
         "codi": "YM",
         "nom": "Granollers",
         "altitud": 210,
-        "comarca": "Vallès Oriental"
+        "comarca": "Vallès Oriental",
+        "tipus": "A",
+        "emplacament": "Parc del Puig de les Tres Torres",
+        "municipi": "Granollers",
+        "municipiCodi": "080961",
+        "mcscClass": "346",
+        "mcscName": "Zones verdes",
+        "forestType": null
       }
     },
     {
@@ -2702,7 +3878,14 @@
         "codi": "YN",
         "nom": "Vielha - Elipòrt",
         "altitud": 1027,
-        "comarca": "Val d'Aran"
+        "comarca": "Val d'Aran",
+        "tipus": "A",
+        "emplacament": "Elipòrt de VIelha",
+        "municipi": "Vielha e Mijaran",
+        "municipiCodi": "252430",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2718,7 +3901,14 @@
         "codi": "YO",
         "nom": "Sant Sadurní d'Anoia",
         "altitud": 155,
-        "comarca": "Alt Penedès"
+        "comarca": "Alt Penedès",
+        "tipus": "A",
+        "emplacament": "Camp de civada entre vinyes",
+        "municipi": "Sant Sadurní d'Anoia",
+        "municipiCodi": "082401",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2734,7 +3924,14 @@
         "codi": "YP",
         "nom": "Palafrugell",
         "altitud": 35,
-        "comarca": "Baix Empordà"
+        "comarca": "Baix Empordà",
+        "tipus": "A",
+        "emplacament": "Horts urbans",
+        "municipi": "Palafrugell",
+        "municipiCodi": "171175",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2750,7 +3947,14 @@
         "codi": "YQ",
         "nom": "Port de Barcelona - ZAL Prat",
         "altitud": 6,
-        "comarca": "Baix Llobregat"
+        "comarca": "Baix Llobregat",
+        "tipus": "A",
+        "emplacament": "Port de Barcelona",
+        "municipi": "El Prat de Llobregat",
+        "municipiCodi": "081691",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2766,7 +3970,14 @@
         "codi": "YR",
         "nom": "Vilanova i la Geltrú",
         "altitud": 31,
-        "comarca": "Garraf"
+        "comarca": "Garraf",
+        "tipus": "A",
+        "emplacament": "Circuit de ciclisme",
+        "municipi": "Vilanova i la Geltrú",
+        "municipiCodi": "083073",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2782,7 +3993,14 @@
         "codi": "YS",
         "nom": "Cabanes",
         "altitud": 32,
-        "comarca": "Alt Empordà"
+        "comarca": "Alt Empordà",
+        "tipus": "A",
+        "emplacament": "Futura deixalleria",
+        "municipi": "Cabanes",
+        "municipiCodi": "170307",
+        "mcscClass": "111",
+        "mcscName": "Conreus herbacis",
+        "forestType": null
       }
     },
     {
@@ -2798,7 +4016,14 @@
         "codi": "YT",
         "nom": "Bonabé (1.693 m)",
         "altitud": 1693,
-        "comarca": "Pallars Sobirà"
+        "comarca": "Pallars Sobirà",
+        "tipus": "A",
+        "emplacament": "Pista de la Mina",
+        "municipi": "Alt Àneu",
+        "municipiCodi": "250241",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2814,7 +4039,14 @@
         "codi": "YU",
         "nom": "Cantonigròs",
         "altitud": 925,
-        "comarca": "Osona"
+        "comarca": "Osona",
+        "tipus": "A",
+        "emplacament": "Àrea d'autocaravanes",
+        "municipi": "l'Esquirol",
+        "municipiCodi": "082541",
+        "mcscClass": "343",
+        "mcscName": "Zones urbanes laxes",
+        "forestType": null
       }
     },
     {
@@ -2830,7 +4062,14 @@
         "codi": "YV",
         "nom": "Mataró",
         "altitud": 87,
-        "comarca": "Maresme"
+        "comarca": "Maresme",
+        "tipus": "A",
+        "emplacament": "Parc de Rafael Alberti, Estació MeteoMar",
+        "municipi": "Mataró",
+        "municipiCodi": "081213",
+        "mcscClass": "346",
+        "mcscName": "Zones verdes",
+        "forestType": null
       }
     },
     {
@@ -2846,7 +4085,14 @@
         "codi": "YX",
         "nom": "Batea",
         "altitud": 400,
-        "comarca": "Terra Alta"
+        "comarca": "Terra Alta",
+        "tipus": "A",
+        "emplacament": "Turó estació transferència",
+        "municipi": "Batea",
+        "municipiCodi": "430228",
+        "mcscClass": "224",
+        "mcscName": "Matollar",
+        "forestType": null
       }
     },
     {
@@ -2862,7 +4108,14 @@
         "codi": "Z1",
         "nom": "Bonaigua (2.266 m)",
         "altitud": 2266,
-        "comarca": "Pallars Sobirà"
+        "comarca": "Pallars Sobirà",
+        "tipus": "A",
+        "emplacament": "Port de la Bonaigua",
+        "municipi": "Alt Àneu",
+        "municipiCodi": "250241",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2878,7 +4131,14 @@
         "codi": "Z2",
         "nom": "Boí (2.535 m)",
         "altitud": 2535,
-        "comarca": "Alta Ribagorça"
+        "comarca": "Alta Ribagorça",
+        "tipus": "A",
+        "emplacament": "Vall de Boí",
+        "municipi": "La Vall de Boí",
+        "municipiCodi": "250432",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2894,7 +4154,14 @@
         "codi": "Z3",
         "nom": "Malniu (2.230 m)",
         "altitud": 2230,
-        "comarca": "Cerdanya"
+        "comarca": "Cerdanya",
+        "tipus": "A",
+        "emplacament": "Estany de Malniu",
+        "municipi": "Meranges",
+        "municipiCodi": "170998",
+        "mcscClass": "225",
+        "mcscName": "Boscos clars d'aciculifolis",
+        "forestType": "forest_conif"
       }
     },
     {
@@ -2910,7 +4177,14 @@
         "codi": "Z5",
         "nom": "Certascan (2.400 m)",
         "altitud": 2400,
-        "comarca": "Pallars Sobirà"
+        "comarca": "Pallars Sobirà",
+        "tipus": "A",
+        "emplacament": "Certascan",
+        "municipi": "Lladorre",
+        "municipiCodi": "251235",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2926,7 +4200,14 @@
         "codi": "Z6",
         "nom": "Sasseuva (2.228 m)",
         "altitud": 2228,
-        "comarca": "Val d'Aran"
+        "comarca": "Val d'Aran",
+        "tipus": "A",
+        "emplacament": "Sasseuva",
+        "municipi": "Arres",
+        "municipiCodi": "250313",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2942,7 +4223,14 @@
         "codi": "Z7",
         "nom": "Espot (2.519 m)",
         "altitud": 2519,
-        "comarca": "Pallars Sobirà"
+        "comarca": "Pallars Sobirà",
+        "tipus": "A",
+        "emplacament": "Espot",
+        "municipi": "Espot",
+        "municipiCodi": "250827",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2958,7 +4246,14 @@
         "codi": "Z9",
         "nom": "Cadí Nord (2.143 m) - Prat d'Aguiló",
         "altitud": 2143,
-        "comarca": "Cerdanya"
+        "comarca": "Cerdanya",
+        "tipus": "A",
+        "emplacament": "Cadí Nord - Prat d'Aguiló",
+        "municipi": "Montellà i Martinet",
+        "municipiCodi": "251399",
+        "mcscClass": "221",
+        "mcscName": "Boscos densos d'aciculifolis",
+        "forestType": "forest_conif"
       }
     },
     {
@@ -2974,7 +4269,14 @@
         "codi": "ZB",
         "nom": "Salòria (2.451 m)",
         "altitud": 2451,
-        "comarca": "Pallars Sobirà"
+        "comarca": "Pallars Sobirà",
+        "tipus": "A",
+        "emplacament": "Salòria",
+        "municipi": "Alins",
+        "municipiCodi": "250175",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -2990,7 +4292,14 @@
         "codi": "ZC",
         "nom": "Ulldeter (2.413 m)",
         "altitud": 2413,
-        "comarca": "Ripollès"
+        "comarca": "Ripollès",
+        "tipus": "A",
+        "emplacament": "Ulldeter",
+        "municipi": "Setcases",
+        "municipiCodi": "171925",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     },
     {
@@ -3006,7 +4315,14 @@
         "codi": "ZD",
         "nom": "la Tosa d'Alp (2.478 m)",
         "altitud": 2478,
-        "comarca": "Cerdanya"
+        "comarca": "Cerdanya",
+        "tipus": "A",
+        "emplacament": "Tosa d'Alp",
+        "municipi": "Alp",
+        "municipiCodi": "170062",
+        "mcscClass": "230",
+        "mcscName": "Sòl nu forestal",
+        "forestType": null
       }
     },
     {
@@ -3022,8 +4338,16 @@
         "codi": "ZE",
         "nom": "el Port del Comte (2.290 m)",
         "altitud": 2290,
-        "comarca": "Solsonès"
+        "comarca": "Solsonès",
+        "tipus": "A",
+        "emplacament": "Port del Comte - Estivella",
+        "municipi": "La Coma i la Pedra",
+        "municipiCodi": "251636",
+        "mcscClass": "228",
+        "mcscName": "Prats i herbassars",
+        "forestType": null
       }
     }
-  ]
+  ],
+  "attribution": "Mapa de Cobertes del Sòl de Catalunya (MCSC) v1.0 — ICGC & CREAF, layer cobertes_2024 — CC BY 4.0 — http://www.icgc.cat"
 }

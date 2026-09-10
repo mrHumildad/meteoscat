@@ -1,0 +1,1714 @@
+{
+  "C6": {
+    "tempAvg": 26.9,
+    "tempMin": 19.7,
+    "tempMax": 35.6,
+    "humAvg": 60.9,
+    "humMin": 28.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "C7": {
+    "tempAvg": 27.5,
+    "tempMin": 21.3,
+    "tempMax": 35.0,
+    "humAvg": 53.0,
+    "humMin": 21.0,
+    "humMax": 89.0,
+    "precAcc": 0.0
+  },
+  "C8": {
+    "tempAvg": 26.3,
+    "tempMin": 19.6,
+    "tempMax": 33.7,
+    "humAvg": 58.0,
+    "humMin": 19.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "C9": {
+    "tempAvg": 28.9,
+    "tempMin": 23.5,
+    "tempMax": 35.1,
+    "humAvg": 65.8,
+    "humMin": 35.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "CC": {
+    "tempAvg": 24.7,
+    "tempMin": 19.0,
+    "tempMax": 32.9,
+    "humAvg": 74.6,
+    "humMin": 36.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "CD": {
+    "tempAvg": 23.6,
+    "tempMin": 15.4,
+    "tempMax": 32.2,
+    "humAvg": 60.9,
+    "humMin": 35.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "CE": {
+    "tempAvg": 27.6,
+    "tempMin": 22.2,
+    "tempMax": 34.4,
+    "humAvg": 75.2,
+    "humMin": 41.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "CG": {
+    "tempAvg": 19.4,
+    "tempMin": 16.5,
+    "tempMax": 23.1,
+    "humAvg": 80.5,
+    "humMin": 63.0,
+    "humMax": 92.0,
+    "precAcc": 0.0
+  },
+  "CI": {
+    "tempAvg": 21.8,
+    "tempMin": 15.9,
+    "tempMax": 29.1,
+    "humAvg": 81.3,
+    "humMin": 56.0,
+    "humMax": 98.0,
+    "precAcc": 0.0
+  },
+  "CJ": {
+    "tempAvg": 25.0,
+    "tempMin": 17.7,
+    "tempMax": 33.8,
+    "humAvg": 60.5,
+    "humMin": 30.0,
+    "humMax": 96.0,
+    "precAcc": 0.0
+  },
+  "CL": {
+    "tempAvg": 26.7,
+    "tempMin": 19.9,
+    "tempMax": 36.7,
+    "humAvg": 73.4,
+    "humMin": 19.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "CP": {
+    "tempAvg": 28.0,
+    "tempMin": 19.5,
+    "tempMax": 37.1,
+    "humAvg": 45.4,
+    "humMin": 18.0,
+    "humMax": 76.0,
+    "precAcc": 0.0
+  },
+  "CQ": {
+    "tempAvg": 26.8,
+    "tempMin": 20.4,
+    "tempMax": 35.9,
+    "humAvg": 55.7,
+    "humMin": 22.0,
+    "humMax": 86.0,
+    "precAcc": 0.0
+  },
+  "CR": {
+    "tempAvg": 23.6,
+    "tempMin": 19.0,
+    "tempMax": 31.4,
+    "humAvg": 77.3,
+    "humMin": 36.0,
+    "humMax": 97.0,
+    "precAcc": 0.1
+  },
+  "CT": {
+    "tempAvg": 21.9,
+    "tempMin": 12.5,
+    "tempMax": 34.0,
+    "humAvg": 63.0,
+    "humMin": 21.0,
+    "humMax": 97.0,
+    "precAcc": 0.0
+  },
+  "CW": {
+    "tempAvg": 26.7,
+    "tempMin": 19.1,
+    "tempMax": 36.1,
+    "humAvg": 63.2,
+    "humMin": 17.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "CY": {
+    "tempAvg": 24.1,
+    "tempMin": 19.3,
+    "tempMax": 31.9,
+    "humAvg": 79.9,
+    "humMin": 34.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "D1": {
+    "tempAvg": 27.6,
+    "tempMin": 19.1,
+    "tempMax": 37.1,
+    "humAvg": 52.5,
+    "humMin": 22.0,
+    "humMax": 83.0,
+    "precAcc": 0.0
+  },
+  "D2": {
+    "tempAvg": 26.4,
+    "tempMin": 20.2,
+    "tempMax": 34.4,
+    "humAvg": 78.7,
+    "humMin": 40.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "D3": {
+    "tempAvg": 27.5,
+    "tempMin": 22.8,
+    "tempMax": 32.6,
+    "humAvg": 75.8,
+    "humMin": 54.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "D4": {
+    "tempAvg": 28.9,
+    "tempMin": 24.9,
+    "tempMax": 33.1,
+    "humAvg": 52.9,
+    "humMin": 37.0,
+    "humMax": 81.0,
+    "precAcc": 0.0
+  },
+  "D5": {
+    "tempAvg": 26.3,
+    "tempMin": 24.1,
+    "tempMax": 30.4,
+    "humAvg": 83.8,
+    "humMin": 60.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "D6": {
+    "tempAvg": 28.0,
+    "tempMin": 24.1,
+    "tempMax": 31.3,
+    "humAvg": 52.5,
+    "humMin": 43.0,
+    "humMax": 63.0,
+    "precAcc": 0.0
+  },
+  "D7": {
+    "tempAvg": 30.2,
+    "tempMin": 21.5,
+    "tempMax": 39.7,
+    "humAvg": 50.1,
+    "humMin": 20.0,
+    "humMax": 82.0,
+    "precAcc": 0.0
+  },
+  "D8": {
+    "tempAvg": 28.1,
+    "tempMin": 21.7,
+    "tempMax": 36.0,
+    "humAvg": 47.1,
+    "humMin": 26.0,
+    "humMax": 69.0,
+    "precAcc": 0.0
+  },
+  "D9": {
+    "tempAvg": 28.1,
+    "tempMin": 23.5,
+    "tempMax": 31.8,
+    "humAvg": 75.3,
+    "humMin": 60.0,
+    "humMax": 92.0,
+    "precAcc": 0.0
+  },
+  "DB": {
+    "tempAvg": 28.7,
+    "tempMin": 23.6,
+    "tempMax": 34.7,
+    "humAvg": 63.7,
+    "humMin": 32.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "DF": {
+    "tempAvg": 27.8,
+    "tempMin": 22.0,
+    "tempMax": 33.4,
+    "humAvg": 66.8,
+    "humMin": 44.0,
+    "humMax": 88.0,
+    "precAcc": 0.0
+  },
+  "DG": {
+    "tempAvg": 15.5,
+    "tempMin": 10.4,
+    "tempMax": 20.1,
+    "humAvg": 87.1,
+    "humMin": 76.0,
+    "humMax": 98.0,
+    "precAcc": 0.0
+  },
+  "DI": {
+    "tempAvg": 26.5,
+    "tempMin": 21.8,
+    "tempMax": 32.4,
+    "humAvg": 76.7,
+    "humMin": 40.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "DJ": {
+    "tempAvg": 27.5,
+    "tempMin": 22.3,
+    "tempMax": 34.3,
+    "humAvg": 67.6,
+    "humMin": 41.0,
+    "humMax": 96.0,
+    "precAcc": 0.0
+  },
+  "DK": {
+    "tempAvg": 29.0,
+    "tempMin": 24.5,
+    "tempMax": 32.4,
+    "humAvg": 79.9,
+    "humMin": 64.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "DL": {
+    "tempAvg": 28.5,
+    "tempMin": 25.9,
+    "tempMax": 31.9,
+    "humAvg": 77.0,
+    "humMin": 47.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "DN": {
+    "tempAvg": 27.1,
+    "tempMin": 21.2,
+    "tempMax": 34.1,
+    "humAvg": 74.9,
+    "humMin": 44.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "DO": {
+    "tempAvg": 27.9,
+    "tempMin": 23.4,
+    "tempMax": 32.0,
+    "humAvg": 67.3,
+    "humMin": 48.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "DP": {
+    "tempAvg": 20.8,
+    "tempMin": 11.6,
+    "tempMax": 30.6,
+    "humAvg": 69.1,
+    "humMin": 36.0,
+    "humMax": 98.0,
+    "precAcc": 0.0
+  },
+  "DQ": {
+    "tempAvg": 27.5,
+    "tempMin": 22.3,
+    "tempMax": 34.3,
+    "humAvg": 68.9,
+    "humMin": 30.0,
+    "humMax": 99.0,
+    "precAcc": 0.0
+  },
+  "H1": {
+    "tempAvg": 27.2,
+    "tempMin": 21.2,
+    "tempMax": 36.5,
+    "humAvg": 71.1,
+    "humMin": 18.0,
+    "humMax": 99.0,
+    "precAcc": 0.0
+  },
+  "J5": {
+    "tempAvg": 27.5,
+    "tempMin": 22.2,
+    "tempMax": 34.2,
+    "humAvg": 58.3,
+    "humMin": 35.0,
+    "humMax": 80.0,
+    "precAcc": 0.0
+  },
+  "KE": {
+    "tempAvg": null,
+    "tempMin": null,
+    "tempMax": null,
+    "humAvg": null,
+    "humMin": null,
+    "humMax": null,
+    "precAcc": 0.0
+  },
+  "KP": {
+    "tempAvg": 27.2,
+    "tempMin": 21.7,
+    "tempMax": 33.1,
+    "humAvg": 74.8,
+    "humMin": 51.0,
+    "humMax": 96.0,
+    "precAcc": 0.0
+  },
+  "KX": {
+    "tempAvg": null,
+    "tempMin": null,
+    "tempMax": null,
+    "humAvg": null,
+    "humMin": null,
+    "humMax": null,
+    "precAcc": 0.0
+  },
+  "M6": {
+    "tempAvg": null,
+    "tempMin": null,
+    "tempMax": null,
+    "humAvg": null,
+    "humMin": null,
+    "humMax": null,
+    "precAcc": 0.0
+  },
+  "MQ": {
+    "tempAvg": 26.5,
+    "tempMin": 18.3,
+    "tempMax": 35.4,
+    "humAvg": 70.6,
+    "humMin": 25.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "MR": {
+    "tempAvg": 26.8,
+    "tempMin": 19.2,
+    "tempMax": 37.3,
+    "humAvg": 61.9,
+    "humMin": 23.0,
+    "humMax": 92.0,
+    "precAcc": 0.0
+  },
+  "MS": {
+    "tempAvg": 22.2,
+    "tempMin": 15.8,
+    "tempMax": 29.2,
+    "humAvg": 78.9,
+    "humMin": 46.0,
+    "humMax": 99.0,
+    "precAcc": 0.0
+  },
+  "MV": {
+    "tempAvg": 21.9,
+    "tempMin": 14.6,
+    "tempMax": 30.7,
+    "humAvg": 75.0,
+    "humMin": 41.0,
+    "humMax": 98.0,
+    "precAcc": 0.0
+  },
+  "MW": {
+    "tempAvg": null,
+    "tempMin": null,
+    "tempMax": null,
+    "humAvg": null,
+    "humMin": null,
+    "humMax": null,
+    "precAcc": 0.0
+  },
+  "U2": {
+    "tempAvg": 27.8,
+    "tempMin": 22.0,
+    "tempMax": 32.9,
+    "humAvg": 62.0,
+    "humMin": 41.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "U3": {
+    "tempAvg": 27.2,
+    "tempMin": 22.0,
+    "tempMax": 33.2,
+    "humAvg": 74.3,
+    "humMin": 40.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "U4": {
+    "tempAvg": 26.6,
+    "tempMin": 20.6,
+    "tempMax": 35.8,
+    "humAvg": 73.1,
+    "humMin": 24.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "U6": {
+    "tempAvg": 28.7,
+    "tempMin": 24.0,
+    "tempMax": 33.1,
+    "humAvg": 65.3,
+    "humMin": 39.0,
+    "humMax": 88.0,
+    "precAcc": 0.0
+  },
+  "U7": {
+    "tempAvg": 30.3,
+    "tempMin": 22.7,
+    "tempMax": 38.3,
+    "humAvg": 55.3,
+    "humMin": 29.0,
+    "humMax": 88.0,
+    "precAcc": 0.0
+  },
+  "U9": {
+    "tempAvg": 29.5,
+    "tempMin": 24.7,
+    "tempMax": 34.7,
+    "humAvg": 65.7,
+    "humMin": 35.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "UA": {
+    "tempAvg": 29.0,
+    "tempMin": 22.7,
+    "tempMax": 34.6,
+    "humAvg": 60.3,
+    "humMin": 32.0,
+    "humMax": 88.0,
+    "precAcc": 0.0
+  },
+  "UB": {
+    "tempAvg": 28.3,
+    "tempMin": 23.5,
+    "tempMax": 33.6,
+    "humAvg": 59.2,
+    "humMin": 42.0,
+    "humMax": 91.0,
+    "precAcc": 0.0
+  },
+  "UE": {
+    "tempAvg": 27.9,
+    "tempMin": 22.8,
+    "tempMax": 32.7,
+    "humAvg": 61.7,
+    "humMin": 41.0,
+    "humMax": 97.0,
+    "precAcc": 0.0
+  },
+  "UF": {
+    "tempAvg": 24.9,
+    "tempMin": 22.4,
+    "tempMax": 28.9,
+    "humAvg": 86.6,
+    "humMin": 64.0,
+    "humMax": 98.0,
+    "precAcc": 0.1
+  },
+  "UG": {
+    "tempAvg": null,
+    "tempMin": null,
+    "tempMax": null,
+    "humAvg": null,
+    "humMin": null,
+    "humMax": null,
+    "precAcc": null
+  },
+  "UH": {
+    "tempAvg": 26.4,
+    "tempMin": 21.1,
+    "tempMax": 34.8,
+    "humAvg": 72.5,
+    "humMin": 24.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "UI": {
+    "tempAvg": 20.5,
+    "tempMin": 16.7,
+    "tempMax": 26.0,
+    "humAvg": 82.2,
+    "humMin": 63.0,
+    "humMax": 97.0,
+    "precAcc": 0.0
+  },
+  "UJ": {
+    "tempAvg": 25.0,
+    "tempMin": 18.9,
+    "tempMax": 34.2,
+    "humAvg": 67.2,
+    "humMin": 18.0,
+    "humMax": 100.0,
+    "precAcc": 0.2
+  },
+  "UK": {
+    "tempAvg": 27.4,
+    "tempMin": 23.4,
+    "tempMax": 31.6,
+    "humAvg": 79.0,
+    "humMin": 56.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "UM": {
+    "tempAvg": 27.4,
+    "tempMin": 19.8,
+    "tempMax": 35.5,
+    "humAvg": 52.9,
+    "humMin": 22.0,
+    "humMax": 83.0,
+    "precAcc": 0.0
+  },
+  "UN": {
+    "tempAvg": 27.2,
+    "tempMin": 22.3,
+    "tempMax": 32.9,
+    "humAvg": 64.9,
+    "humMin": 47.0,
+    "humMax": 92.0,
+    "precAcc": 0.0
+  },
+  "UO": {
+    "tempAvg": 27.6,
+    "tempMin": 21.5,
+    "tempMax": 34.4,
+    "humAvg": 71.7,
+    "humMin": 45.0,
+    "humMax": 97.0,
+    "precAcc": 0.0
+  },
+  "UP": {
+    "tempAvg": 27.9,
+    "tempMin": 24.5,
+    "tempMax": 31.4,
+    "humAvg": 78.6,
+    "humMin": 55.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "UQ": {
+    "tempAvg": 24.7,
+    "tempMin": 21.6,
+    "tempMax": 27.7,
+    "humAvg": 82.9,
+    "humMin": 64.0,
+    "humMax": 96.0,
+    "precAcc": 0.0
+  },
+  "US": {
+    "tempAvg": 28.9,
+    "tempMin": 24.4,
+    "tempMax": 33.0,
+    "humAvg": 74.1,
+    "humMin": 51.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "UU": {
+    "tempAvg": 28.1,
+    "tempMin": 24.1,
+    "tempMax": 32.5,
+    "humAvg": 76.6,
+    "humMin": 46.0,
+    "humMax": 93.0,
+    "precAcc": 0.0
+  },
+  "UW": {
+    "tempAvg": 29.2,
+    "tempMin": 25.4,
+    "tempMax": 32.7,
+    "humAvg": 73.9,
+    "humMin": 43.0,
+    "humMax": 93.0,
+    "precAcc": 0.0
+  },
+  "UX": {
+    "tempAvg": 28.4,
+    "tempMin": 22.2,
+    "tempMax": 34.5,
+    "humAvg": 69.7,
+    "humMin": 37.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "UY": {
+    "tempAvg": 26.4,
+    "tempMin": 19.6,
+    "tempMax": 34.8,
+    "humAvg": 62.7,
+    "humMin": 24.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "V1": {
+    "tempAvg": 28.0,
+    "tempMin": 20.6,
+    "tempMax": 36.0,
+    "humAvg": 59.1,
+    "humMin": 23.0,
+    "humMax": 96.0,
+    "precAcc": 0.0
+  },
+  "V4": {
+    "tempAvg": 24.5,
+    "tempMin": 18.4,
+    "tempMax": 33.3,
+    "humAvg": 75.0,
+    "humMin": 37.0,
+    "humMax": 96.0,
+    "precAcc": 0.8
+  },
+  "V5": {
+    "tempAvg": 24.1,
+    "tempMin": 19.5,
+    "tempMax": 32.4,
+    "humAvg": 77.8,
+    "humMin": 32.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "V8": {
+    "tempAvg": 26.7,
+    "tempMin": 19.6,
+    "tempMax": 35.7,
+    "humAvg": 62.5,
+    "humMin": 26.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "VA": {
+    "tempAvg": 29.5,
+    "tempMin": 23.6,
+    "tempMax": 37.6,
+    "humAvg": 46.5,
+    "humMin": 22.0,
+    "humMax": 81.0,
+    "precAcc": 0.0
+  },
+  "VB": {
+    "tempAvg": 29.7,
+    "tempMin": 23.3,
+    "tempMax": 37.8,
+    "humAvg": 53.9,
+    "humMin": 26.0,
+    "humMax": 85.0,
+    "precAcc": 0.0
+  },
+  "VC": {
+    "tempAvg": 30.4,
+    "tempMin": 24.7,
+    "tempMax": 38.6,
+    "humAvg": 46.7,
+    "humMin": 23.0,
+    "humMax": 65.0,
+    "precAcc": 0.0
+  },
+  "VD": {
+    "tempAvg": 27.3,
+    "tempMin": 20.6,
+    "tempMax": 34.8,
+    "humAvg": 55.0,
+    "humMin": 21.0,
+    "humMax": 92.0,
+    "precAcc": 0.0
+  },
+  "VH": {
+    "tempAvg": 27.4,
+    "tempMin": 19.2,
+    "tempMax": 37.2,
+    "humAvg": 57.6,
+    "humMin": 28.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "VK": {
+    "tempAvg": 26.6,
+    "tempMin": 18.7,
+    "tempMax": 35.9,
+    "humAvg": 62.6,
+    "humMin": 30.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "VM": {
+    "tempAvg": 27.4,
+    "tempMin": 20.4,
+    "tempMax": 36.3,
+    "humAvg": 58.5,
+    "humMin": 24.0,
+    "humMax": 96.0,
+    "precAcc": 0.0
+  },
+  "VO": {
+    "tempAvg": 24.7,
+    "tempMin": 18.9,
+    "tempMax": 31.8,
+    "humAvg": 64.0,
+    "humMin": 32.0,
+    "humMax": 88.0,
+    "precAcc": 0.0
+  },
+  "VP": {
+    "tempAvg": 25.3,
+    "tempMin": 18.4,
+    "tempMax": 33.4,
+    "humAvg": 68.7,
+    "humMin": 23.0,
+    "humMax": 99.0,
+    "precAcc": 0.0
+  },
+  "VQ": {
+    "tempAvg": 28.1,
+    "tempMin": 21.9,
+    "tempMax": 33.2,
+    "humAvg": 70.8,
+    "humMin": 46.0,
+    "humMax": 94.0,
+    "precAcc": 0.0
+  },
+  "VS": {
+    "tempAvg": 15.8,
+    "tempMin": 12.3,
+    "tempMax": 20.3,
+    "humAvg": 58.3,
+    "humMin": 37.0,
+    "humMax": 83.0,
+    "precAcc": 0.0
+  },
+  "VU": {
+    "tempAvg": 26.4,
+    "tempMin": 20.3,
+    "tempMax": 34.2,
+    "humAvg": 75.3,
+    "humMin": 34.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "VV": {
+    "tempAvg": 25.1,
+    "tempMin": 18.2,
+    "tempMax": 33.7,
+    "humAvg": 75.1,
+    "humMin": 29.0,
+    "humMax": 98.0,
+    "precAcc": 0.0
+  },
+  "VX": {
+    "tempAvg": 22.0,
+    "tempMin": 19.2,
+    "tempMax": 26.0,
+    "humAvg": 84.3,
+    "humMin": 66.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "VY": {
+    "tempAvg": 27.7,
+    "tempMin": 21.9,
+    "tempMax": 34.2,
+    "humAvg": 72.9,
+    "humMin": 38.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "VZ": {
+    "tempAvg": 28.9,
+    "tempMin": 22.4,
+    "tempMax": 35.1,
+    "humAvg": 50.4,
+    "humMin": 32.0,
+    "humMax": 78.0,
+    "precAcc": 0.0
+  },
+  "W1": {
+    "tempAvg": 28.5,
+    "tempMin": 22.3,
+    "tempMax": 34.0,
+    "humAvg": 53.9,
+    "humMin": 37.0,
+    "humMax": 87.0,
+    "precAcc": 0.0
+  },
+  "W4": {
+    "tempAvg": 27.0,
+    "tempMin": 20.8,
+    "tempMax": 32.7,
+    "humAvg": 76.8,
+    "humMin": 53.0,
+    "humMax": 97.0,
+    "precAcc": 0.0
+  },
+  "W5": {
+    "tempAvg": 26.1,
+    "tempMin": 20.3,
+    "tempMax": 33.7,
+    "humAvg": 60.2,
+    "humMin": 26.0,
+    "humMax": 92.0,
+    "precAcc": 0.0
+  },
+  "W8": {
+    "tempAvg": 27.1,
+    "tempMin": 19.5,
+    "tempMax": 36.4,
+    "humAvg": 64.2,
+    "humMin": 17.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "W9": {
+    "tempAvg": 25.1,
+    "tempMin": 18.6,
+    "tempMax": 33.5,
+    "humAvg": 77.5,
+    "humMin": 44.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "WA": {
+    "tempAvg": 26.4,
+    "tempMin": 18.6,
+    "tempMax": 34.1,
+    "humAvg": 63.7,
+    "humMin": 26.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "WB": {
+    "tempAvg": 27.3,
+    "tempMin": 20.5,
+    "tempMax": 35.4,
+    "humAvg": 60.7,
+    "humMin": 28.0,
+    "humMax": 93.0,
+    "precAcc": 0.0
+  },
+  "WC": {
+    "tempAvg": 27.0,
+    "tempMin": 20.4,
+    "tempMax": 35.6,
+    "humAvg": 59.7,
+    "humMin": 27.0,
+    "humMax": 97.0,
+    "precAcc": 0.0
+  },
+  "WG": {
+    "tempAvg": 27.3,
+    "tempMin": 20.8,
+    "tempMax": 35.3,
+    "humAvg": 55.5,
+    "humMin": 23.0,
+    "humMax": 83.0,
+    "precAcc": 0.0
+  },
+  "WI": {
+    "tempAvg": 27.4,
+    "tempMin": 15.4,
+    "tempMax": 36.9,
+    "humAvg": 55.1,
+    "humMin": 23.0,
+    "humMax": 93.0,
+    "precAcc": 0.0
+  },
+  "WJ": {
+    "tempAvg": 28.9,
+    "tempMin": 19.9,
+    "tempMax": 38.3,
+    "humAvg": 56.5,
+    "humMin": 25.0,
+    "humMax": 93.0,
+    "precAcc": 0.0
+  },
+  "WK": {
+    "tempAvg": 26.2,
+    "tempMin": 19.1,
+    "tempMax": 36.1,
+    "humAvg": 60.8,
+    "humMin": 26.0,
+    "humMax": 96.0,
+    "precAcc": 0.0
+  },
+  "WL": {
+    "tempAvg": 27.4,
+    "tempMin": 20.5,
+    "tempMax": 34.9,
+    "humAvg": 56.1,
+    "humMin": 23.0,
+    "humMax": 91.0,
+    "precAcc": 0.0
+  },
+  "WM": {
+    "tempAvg": 22.6,
+    "tempMin": 19.1,
+    "tempMax": 29.7,
+    "humAvg": 80.1,
+    "humMin": 46.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "WN": {
+    "tempAvg": 23.6,
+    "tempMin": 20.6,
+    "tempMax": 29.3,
+    "humAvg": 79.2,
+    "humMin": 46.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "WO": {
+    "tempAvg": 27.4,
+    "tempMin": 21.5,
+    "tempMax": 33.7,
+    "humAvg": 72.2,
+    "humMin": 31.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "WP": {
+    "tempAvg": 26.9,
+    "tempMin": 21.2,
+    "tempMax": 33.7,
+    "humAvg": 78.4,
+    "humMin": 41.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "WQ": {
+    "tempAvg": 21.5,
+    "tempMin": 17.2,
+    "tempMax": 25.3,
+    "humAvg": 51.7,
+    "humMin": 27.0,
+    "humMax": 81.0,
+    "precAcc": 0.0
+  },
+  "WR": {
+    "tempAvg": 29.0,
+    "tempMin": 21.6,
+    "tempMax": 38.8,
+    "humAvg": 52.9,
+    "humMin": 20.0,
+    "humMax": 97.0,
+    "precAcc": 0.0
+  },
+  "WS": {
+    "tempAvg": 22.7,
+    "tempMin": 17.8,
+    "tempMax": 30.8,
+    "humAvg": 80.7,
+    "humMin": 41.0,
+    "humMax": 99.0,
+    "precAcc": 0.2
+  },
+  "WT": {
+    "tempAvg": 28.5,
+    "tempMin": 24.4,
+    "tempMax": 32.2,
+    "humAvg": 74.3,
+    "humMin": 55.0,
+    "humMax": 94.0,
+    "precAcc": 0.0
+  },
+  "WU": {
+    "tempAvg": 28.5,
+    "tempMin": 25.9,
+    "tempMax": 30.3,
+    "humAvg": 74.1,
+    "humMin": 63.0,
+    "humMax": 82.0,
+    "precAcc": 0.0
+  },
+  "WV": {
+    "tempAvg": 23.4,
+    "tempMin": 15.9,
+    "tempMax": 31.1,
+    "humAvg": 75.7,
+    "humMin": 41.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "WW": {
+    "tempAvg": 27.2,
+    "tempMin": 20.6,
+    "tempMax": 36.6,
+    "humAvg": 71.6,
+    "humMin": 23.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "WX": {
+    "tempAvg": 26.7,
+    "tempMin": 20.1,
+    "tempMax": 34.6,
+    "humAvg": 58.3,
+    "humMin": 20.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "WZ": {
+    "tempAvg": 28.9,
+    "tempMin": 24.8,
+    "tempMax": 32.8,
+    "humAvg": 76.1,
+    "humMin": 60.0,
+    "humMax": 91.0,
+    "precAcc": 0.0
+  },
+  "X1": {
+    "tempAvg": 28.0,
+    "tempMin": 20.4,
+    "tempMax": 36.6,
+    "humAvg": 58.4,
+    "humMin": 24.0,
+    "humMax": 94.0,
+    "precAcc": 0.0
+  },
+  "X3": {
+    "tempAvg": 27.2,
+    "tempMin": 18.9,
+    "tempMax": 35.6,
+    "humAvg": 56.0,
+    "humMin": 26.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "X4": {
+    "tempAvg": 29.5,
+    "tempMin": 27.7,
+    "tempMax": 31.4,
+    "humAvg": 70.9,
+    "humMin": 60.0,
+    "humMax": 79.0,
+    "precAcc": 0.0
+  },
+  "X5": {
+    "tempAvg": 24.5,
+    "tempMin": 17.0,
+    "tempMax": 31.1,
+    "humAvg": 53.5,
+    "humMin": 28.0,
+    "humMax": 74.0,
+    "precAcc": 0.0
+  },
+  "X6": {
+    "tempAvg": 27.7,
+    "tempMin": 20.4,
+    "tempMax": 35.2,
+    "humAvg": 54.5,
+    "humMin": 20.0,
+    "humMax": 88.0,
+    "precAcc": 0.0
+  },
+  "X7": {
+    "tempAvg": 29.0,
+    "tempMin": 21.5,
+    "tempMax": 38.1,
+    "humAvg": 49.0,
+    "humMin": 22.0,
+    "humMax": 80.0,
+    "precAcc": 0.0
+  },
+  "X8": {
+    "tempAvg": 28.9,
+    "tempMin": 25.6,
+    "tempMax": 32.5,
+    "humAvg": 76.6,
+    "humMin": 57.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "X9": {
+    "tempAvg": 27.8,
+    "tempMin": 22.8,
+    "tempMax": 32.9,
+    "humAvg": 75.7,
+    "humMin": 52.0,
+    "humMax": 98.0,
+    "precAcc": 0.0
+  },
+  "XA": {
+    "tempAvg": 24.4,
+    "tempMin": 19.7,
+    "tempMax": 32.2,
+    "humAvg": 65.3,
+    "humMin": 21.0,
+    "humMax": 100.0,
+    "precAcc": 0.2
+  },
+  "XB": {
+    "tempAvg": 25.4,
+    "tempMin": 17.4,
+    "tempMax": 34.9,
+    "humAvg": 67.6,
+    "humMin": 20.0,
+    "humMax": 99.0,
+    "precAcc": 0.0
+  },
+  "XC": {
+    "tempAvg": 28.0,
+    "tempMin": 22.6,
+    "tempMax": 33.8,
+    "humAvg": 77.2,
+    "humMin": 51.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "XD": {
+    "tempAvg": 26.3,
+    "tempMin": 19.3,
+    "tempMax": 34.5,
+    "humAvg": 50.8,
+    "humMin": 22.0,
+    "humMax": 76.0,
+    "precAcc": 0.0
+  },
+  "XE": {
+    "tempAvg": 29.3,
+    "tempMin": 25.6,
+    "tempMax": 32.7,
+    "humAvg": 71.2,
+    "humMin": 54.0,
+    "humMax": 87.0,
+    "precAcc": 0.0
+  },
+  "XF": {
+    "tempAvg": 27.5,
+    "tempMin": 21.7,
+    "tempMax": 33.9,
+    "humAvg": 81.2,
+    "humMin": 45.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "XG": {
+    "tempAvg": 28.2,
+    "tempMin": 24.1,
+    "tempMax": 32.3,
+    "humAvg": 75.4,
+    "humMin": 57.0,
+    "humMax": 89.0,
+    "precAcc": 0.0
+  },
+  "XH": {
+    "tempAvg": 22.4,
+    "tempMin": 14.1,
+    "tempMax": 33.2,
+    "humAvg": 67.7,
+    "humMin": 27.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "XI": {
+    "tempAvg": 27.3,
+    "tempMin": 20.8,
+    "tempMax": 36.1,
+    "humAvg": 57.1,
+    "humMin": 25.0,
+    "humMax": 98.0,
+    "precAcc": 0.0
+  },
+  "XJ": {
+    "tempAvg": 27.8,
+    "tempMin": 22.1,
+    "tempMax": 34.7,
+    "humAvg": 72.4,
+    "humMin": 44.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "XK": {
+    "tempAvg": 17.8,
+    "tempMin": 15.2,
+    "tempMax": 21.1,
+    "humAvg": 90.7,
+    "humMin": 65.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "XL": {
+    "tempAvg": 28.3,
+    "tempMin": 24.0,
+    "tempMax": 33.0,
+    "humAvg": 77.9,
+    "humMin": 58.0,
+    "humMax": 96.0,
+    "precAcc": 0.0
+  },
+  "XM": {
+    "tempAvg": 26.9,
+    "tempMin": 19.5,
+    "tempMax": 36.1,
+    "humAvg": 60.2,
+    "humMin": 27.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "XN": {
+    "tempAvg": 28.0,
+    "tempMin": 17.5,
+    "tempMax": 38.0,
+    "humAvg": 57.6,
+    "humMin": 25.0,
+    "humMax": 93.0,
+    "precAcc": 0.0
+  },
+  "XO": {
+    "tempAvg": 25.2,
+    "tempMin": 19.5,
+    "tempMax": 33.6,
+    "humAvg": 77.2,
+    "humMin": 34.0,
+    "humMax": 99.0,
+    "precAcc": 0.0
+  },
+  "XP": {
+    "tempAvg": 28.0,
+    "tempMin": 21.6,
+    "tempMax": 37.0,
+    "humAvg": 51.2,
+    "humMin": 26.0,
+    "humMax": 81.0,
+    "precAcc": 0.0
+  },
+  "XQ": {
+    "tempAvg": 27.6,
+    "tempMin": 18.4,
+    "tempMax": 36.4,
+    "humAvg": 46.2,
+    "humMin": 18.0,
+    "humMax": 88.0,
+    "precAcc": 0.0
+  },
+  "XR": {
+    "tempAvg": 22.5,
+    "tempMin": 12.8,
+    "tempMax": 32.8,
+    "humAvg": 68.3,
+    "humMin": 24.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "XS": {
+    "tempAvg": 27.4,
+    "tempMin": 22.2,
+    "tempMax": 34.2,
+    "humAvg": 73.5,
+    "humMin": 49.0,
+    "humMax": 97.0,
+    "precAcc": 0.0
+  },
+  "XT": {
+    "tempAvg": 26.0,
+    "tempMin": 18.5,
+    "tempMax": 34.3,
+    "humAvg": 64.0,
+    "humMin": 26.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "XU": {
+    "tempAvg": 27.6,
+    "tempMin": 22.0,
+    "tempMax": 32.4,
+    "humAvg": 77.4,
+    "humMin": 55.0,
+    "humMax": 96.0,
+    "precAcc": 0.0
+  },
+  "XV": {
+    "tempAvg": 27.9,
+    "tempMin": 23.3,
+    "tempMax": 32.9,
+    "humAvg": 73.4,
+    "humMin": 52.0,
+    "humMax": 93.0,
+    "precAcc": 0.0
+  },
+  "XX": {
+    "tempAvg": 26.1,
+    "tempMin": 18.9,
+    "tempMax": 33.8,
+    "humAvg": 65.6,
+    "humMin": 32.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "XY": {
+    "tempAvg": 27.1,
+    "tempMin": 17.9,
+    "tempMax": 37.0,
+    "humAvg": 63.6,
+    "humMin": 29.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "XZ": {
+    "tempAvg": 28.0,
+    "tempMin": 21.2,
+    "tempMax": 34.5,
+    "humAvg": 59.4,
+    "humMin": 39.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "Y4": {
+    "tempAvg": 23.8,
+    "tempMin": 17.5,
+    "tempMax": 30.2,
+    "humAvg": 52.5,
+    "humMin": 31.0,
+    "humMax": 80.0,
+    "precAcc": 0.0
+  },
+  "Y5": {
+    "tempAvg": 27.2,
+    "tempMin": 22.0,
+    "tempMax": 34.4,
+    "humAvg": 61.5,
+    "humMin": 39.0,
+    "humMax": 84.0,
+    "precAcc": 0.0
+  },
+  "Y6": {
+    "tempAvg": 27.8,
+    "tempMin": 21.7,
+    "tempMax": 36.5,
+    "humAvg": 55.9,
+    "humMin": 28.0,
+    "humMax": 90.0,
+    "precAcc": 0.0
+  },
+  "Y7": {
+    "tempAvg": null,
+    "tempMin": null,
+    "tempMax": null,
+    "humAvg": null,
+    "humMin": null,
+    "humMax": null,
+    "precAcc": null
+  },
+  "YA": {
+    "tempAvg": 21.1,
+    "tempMin": 13.6,
+    "tempMax": 29.9,
+    "humAvg": 59.6,
+    "humMin": 31.0,
+    "humMax": 81.0,
+    "precAcc": 0.0
+  },
+  "YB": {
+    "tempAvg": 25.9,
+    "tempMin": 19.6,
+    "tempMax": 34.4,
+    "humAvg": 69.9,
+    "humMin": 41.0,
+    "humMax": 94.0,
+    "precAcc": 0.0
+  },
+  "YC": {
+    "tempAvg": 27.1,
+    "tempMin": 19.6,
+    "tempMax": 35.5,
+    "humAvg": 46.2,
+    "humMin": 24.0,
+    "humMax": 70.0,
+    "precAcc": 0.0
+  },
+  "YD": {
+    "tempAvg": 27.4,
+    "tempMin": 17.9,
+    "tempMax": 35.6,
+    "humAvg": 57.4,
+    "humMin": 27.0,
+    "humMax": 96.0,
+    "precAcc": 0.0
+  },
+  "YE": {
+    "tempAvg": 26.2,
+    "tempMin": 19.2,
+    "tempMax": 33.2,
+    "humAvg": 62.7,
+    "humMin": 24.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "YF": {
+    "tempAvg": 29.1,
+    "tempMin": 25.2,
+    "tempMax": 34.0,
+    "humAvg": 62.5,
+    "humMin": 37.0,
+    "humMax": 89.0,
+    "precAcc": 0.0
+  },
+  "YG": {
+    "tempAvg": 21.8,
+    "tempMin": 12.2,
+    "tempMax": 32.3,
+    "humAvg": 56.1,
+    "humMin": 23.0,
+    "humMax": 88.0,
+    "precAcc": 0.0
+  },
+  "YH": {
+    "tempAvg": 25.0,
+    "tempMin": 19.4,
+    "tempMax": 32.6,
+    "humAvg": 68.3,
+    "humMin": 19.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "YJ": {
+    "tempAvg": 28.2,
+    "tempMin": 20.4,
+    "tempMax": 37.4,
+    "humAvg": 54.3,
+    "humMin": 24.0,
+    "humMax": 93.0,
+    "precAcc": 0.0
+  },
+  "YK": {
+    "tempAvg": 27.4,
+    "tempMin": 22.4,
+    "tempMax": 34.1,
+    "humAvg": 79.3,
+    "humMin": 38.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "YL": {
+    "tempAvg": 28.7,
+    "tempMin": 24.0,
+    "tempMax": 35.5,
+    "humAvg": 58.3,
+    "humMin": 28.0,
+    "humMax": 90.0,
+    "precAcc": 0.0
+  },
+  "YM": {
+    "tempAvg": 27.2,
+    "tempMin": 23.2,
+    "tempMax": 32.0,
+    "humAvg": 73.8,
+    "humMin": 55.0,
+    "humMax": 88.0,
+    "precAcc": 0.0
+  },
+  "YN": {
+    "tempAvg": 21.3,
+    "tempMin": 15.4,
+    "tempMax": 29.3,
+    "humAvg": 61.1,
+    "humMin": 30.0,
+    "humMax": 90.0,
+    "precAcc": 0.0
+  },
+  "YO": {
+    "tempAvg": 27.5,
+    "tempMin": 21.2,
+    "tempMax": 33.5,
+    "humAvg": 74.5,
+    "humMin": 46.0,
+    "humMax": 97.0,
+    "precAcc": 0.0
+  },
+  "YP": {
+    "tempAvg": 28.1,
+    "tempMin": 23.8,
+    "tempMax": 32.0,
+    "humAvg": 60.4,
+    "humMin": 41.0,
+    "humMax": 90.0,
+    "precAcc": 0.0
+  },
+  "YQ": {
+    "tempAvg": 29.2,
+    "tempMin": 25.4,
+    "tempMax": 32.2,
+    "humAvg": 72.0,
+    "humMin": 57.0,
+    "humMax": 83.0,
+    "precAcc": 0.0
+  },
+  "YR": {
+    "tempAvg": 29.0,
+    "tempMin": 24.1,
+    "tempMax": 33.3,
+    "humAvg": 76.0,
+    "humMin": 55.0,
+    "humMax": 95.0,
+    "precAcc": 0.0
+  },
+  "YS": {
+    "tempAvg": 28.6,
+    "tempMin": 22.5,
+    "tempMax": 36.2,
+    "humAvg": 53.6,
+    "humMin": 32.0,
+    "humMax": 78.0,
+    "precAcc": 0.0
+  },
+  "YT": {
+    "tempAvg": 18.2,
+    "tempMin": 11.0,
+    "tempMax": 26.3,
+    "humAvg": 47.9,
+    "humMin": 16.0,
+    "humMax": 73.0,
+    "precAcc": 0.0
+  },
+  "YU": {
+    "tempAvg": 23.0,
+    "tempMin": 19.7,
+    "tempMax": 29.8,
+    "humAvg": 78.4,
+    "humMin": 45.0,
+    "humMax": 99.0,
+    "precAcc": 0.0
+  },
+  "YV": {
+    "tempAvg": 28.4,
+    "tempMin": 25.8,
+    "tempMax": 31.1,
+    "humAvg": 78.6,
+    "humMin": 55.0,
+    "humMax": 96.0,
+    "precAcc": 0.0
+  },
+  "YX": {
+    "tempAvg": 27.8,
+    "tempMin": 21.5,
+    "tempMax": 37.6,
+    "humAvg": 49.5,
+    "humMin": 21.0,
+    "humMax": 71.0,
+    "precAcc": 0.0
+  },
+  "Z1": {
+    "tempAvg": 16.1,
+    "tempMin": 11.4,
+    "tempMax": 20.6,
+    "humAvg": 43.7,
+    "humMin": 20.0,
+    "humMax": 68.0,
+    "precAcc": 0.0
+  },
+  "Z2": {
+    "tempAvg": 14.5,
+    "tempMin": 10.9,
+    "tempMax": 18.6,
+    "humAvg": 51.5,
+    "humMin": 31.0,
+    "humMax": 87.0,
+    "precAcc": 0.0
+  },
+  "Z3": {
+    "tempAvg": 16.7,
+    "tempMin": 12.0,
+    "tempMax": 21.7,
+    "humAvg": 62.5,
+    "humMin": 48.0,
+    "humMax": 78.0,
+    "precAcc": 0.0
+  },
+  "Z5": {
+    "tempAvg": 16.2,
+    "tempMin": 12.6,
+    "tempMax": 20.4,
+    "humAvg": 35.5,
+    "humMin": 8.0,
+    "humMax": 56.0,
+    "precAcc": 0.0
+  },
+  "Z6": {
+    "tempAvg": 16.4,
+    "tempMin": 12.3,
+    "tempMax": 19.0,
+    "humAvg": 40.1,
+    "humMin": 10.0,
+    "humMax": 63.0,
+    "precAcc": 0.0
+  },
+  "Z7": {
+    "tempAvg": 15.6,
+    "tempMin": 11.6,
+    "tempMax": 18.3,
+    "humAvg": 41.7,
+    "humMin": 11.0,
+    "humMax": 74.0,
+    "precAcc": 0.0
+  },
+  "Z9": {
+    "tempAvg": 16.9,
+    "tempMin": 12.4,
+    "tempMax": 21.4,
+    "humAvg": 60.4,
+    "humMin": 42.0,
+    "humMax": 80.0,
+    "precAcc": 0.0
+  },
+  "ZB": {
+    "tempAvg": 15.6,
+    "tempMin": 12.1,
+    "tempMax": 19.3,
+    "humAvg": 43.0,
+    "humMin": 22.0,
+    "humMax": 71.0,
+    "precAcc": 0.0
+  },
+  "ZC": {
+    "tempAvg": 14.6,
+    "tempMin": 10.8,
+    "tempMax": 17.4,
+    "humAvg": 66.8,
+    "humMin": 22.0,
+    "humMax": 100.0,
+    "precAcc": 0.0
+  },
+  "ZD": {
+    "tempAvg": 14.0,
+    "tempMin": 11.4,
+    "tempMax": 16.9,
+    "humAvg": 73.2,
+    "humMin": 40.0,
+    "humMax": 95.0,
+    "precAcc": null
+  },
+  "ZE": {
+    "tempAvg": 15.7,
+    "tempMin": 11.7,
+    "tempMax": 19.2,
+    "humAvg": 55.4,
+    "humMin": 27.0,
+    "humMax": 85.0,
+    "precAcc": 0.0
+  },
+  "dayStats": {
+    "tempAvg": 25.8,
+    "tempMin": 10.4,
+    "tempMax": 39.7,
+    "humAvg": 65.5,
+    "humMin": 8.0,
+    "humMax": 100.0,
+    "precAcc": 1.6,
+    "precMin": 0,
+    "precMax": 0.8
+  }
+}
