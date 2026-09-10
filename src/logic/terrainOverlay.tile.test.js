@@ -116,6 +116,19 @@ const landLeft = (80 * 256 + 80) * 4;    // forest land, west half of the tile
 const landRight = (200 * 256 + 128) * 4; // forest land, east half of the tile
 
 describe('buildTerrainTile', () => {
+  it("'none' mode paints a fully transparent tile: no gates → everything passes → relief only", async () => {
+    const { tile: t, context } = await makeContext();
+    const buf = await buildTerrainTile(t.z, t.x, t.y, { mode: 'none', off: [], alt: null, filters: [] }, context);
+    expect(buf).toBeInstanceOf(ArrayBuffer);
+    // One painted pass (Phase B veil), but every pixel is transparent: with
+    // nothing failing, passing land stays relief and water is never veiled.
+    expect(loadBandMock).toHaveBeenCalled();
+    expect(loadDemMock).not.toHaveBeenCalled();
+    expect(put).toHaveLength(1);
+    const img = put[0];
+    for (let i = 3; i < img.data.length; i += 4) expect(img.data[i]).toBe(0);
+  });
+
   it('paints the class colour with no filters, keeps water + no-data blocks distinct', async () => {
     const { tile: t, context } = await makeContext();
     await buildTerrainTile(t.z, t.x, t.y, { off: [], alt: null, filters: [] }, context);
@@ -216,14 +229,15 @@ describe('buildTerrainTile', () => {
     };
   };
 
-  it('terrain mode ignores the substrate dims (each palette is filtered by its own switch only)', async () => {
+  it('terrain mode is gated by the substrate dims too (one shared AND stack; the sel button only picks the palette)', async () => {
     const { t, ctx } = await makeGeoContext();
     await buildTerrainTile(t.z, t.x, t.y,
       { mode: 'terrain', off: [], alt: null, filters: [], geoOff: ['quaternary'] }, ctx.context);
-    // MCSC class colour everywhere, dimmed substrate family has NO effect
-    expect(put[0].data[landLeft + 3]).toBe(255);
-    expect(put[0].data[landLeft]).toBe(51);
+    // Dimmed substrate family → transparent even in terrain mode
+    expect(put[0].data[landLeft + 3]).toBe(0);
+    // …while the nodata-family half has no key → still painted with the class colour
     expect(put[0].data[landRight + 3]).toBe(255);
+    expect(put[0].data[landRight]).toBe(51);
     expect(put[0].data[water + 3]).toBe(255);
   });
 
@@ -244,22 +258,34 @@ describe('buildTerrainTile', () => {
     expect(loadDemMock).not.toHaveBeenCalled();
   });
 
-  it('substrate mode gates land by dimmed families and IGNORES the MCSC class dims', async () => {
+  it('substrate mode gates land by the MCSC class dims AND the family dims (one shared AND stack)', async () => {
     const { t, ctx } = await makeGeoContext();
-    // band 7 (aciculifolis) is dimmed via '221/225', but the family is on →
-    // the substrate colour still paints (own-palette rule).
+    // Dimming the MCSC class (band 7 aciculifolis via '221/225') makes
+    // substrate-mode land transparent too — the class gate is shared.
     await buildTerrainTile(t.z, t.x, t.y,
       { mode: 'substrate', off: ['221/225'], alt: null, filters: [], geoOff: [] }, ctx.context);
-    expect(put[0].data[landLeft + 3]).toBe(255);
-    expect(put[0].data[landLeft]).toBe(227);
+    expect(put[0].data[landLeft + 3]).toBe(0);
 
-    // …while dimming the family itself makes it transparent.
+    // …and dimming the family itself is transparent as before.
     put.length = 0;
     await buildTerrainTile(t.z, t.x, t.y,
       { mode: 'substrate', off: [], alt: null, filters: [], geoOff: ['quaternary'] }, ctx.context);
     expect(put[0].data[landLeft + 3]).toBe(0);
-    // water is still painted through the family dims
+    // water is still painted through both dims
     expect(put[0].data[water + 3]).toBe(255);
+  });
+
+  it('the shared stack gates identically in both modes (dimmed class + dimmed family → transparent everywhere)', async () => {
+    const { t, ctx } = await makeGeoContext();
+    const state = { off: ['221/225'], alt: null, filters: [], geoOff: ['quaternary'] };
+    await buildTerrainTile(t.z, t.x, t.y, { mode: 'terrain', ...state }, ctx.context);
+    expect(put[0].data[landLeft + 3]).toBe(0);  // dimmed class + family → transparent
+    expect(put[0].data[landRight + 3]).toBe(0); // dimmed class alone (nodata family) → transparent
+    put.length = 0;
+    await buildTerrainTile(t.z, t.x, t.y, { mode: 'substrate', ...state }, ctx.context);
+    expect(put[0].data[landLeft + 3]).toBe(0);
+    expect(put[0].data[landRight + 3]).toBe(0);
+    expect(put[0].data[water + 3]).toBe(255);   // water never gated by either dim
   });
 
   it('substrate mode still applies the altitude + meteo gates, and falls back to terrain rendering without the grid', async () => {
@@ -312,5 +338,79 @@ describe('buildTerrainTile', () => {
 
     // Water is painted through every stacked combination.
     expect(put[0].data[water + 3]).toBe(255);
+  });
+});
+
+describe('protocol resilience (painters never reject → no errored tiles in the raster source)', () => {
+  // MapLibre < 6.1 crashes its renderer when setTiles() reloads a raster
+  // source that holds errored tiles (maplibre-gl-js #7775) — and errored
+  // tiles are created exactly when a tile request rejects. These tests pin
+  // the pipeline contract: a failed paint resolves to a valid transparent
+  // tile instead of rejecting, while successful paints still resolve normally.
+  let paintTerrainTile;
+  let paintSeaTile;
+
+  beforeEach(async () => {
+    const pipeline = await import('./tilePipeline.js');
+    paintTerrainTile = pipeline.paintTerrainTile;
+    paintSeaTile = pipeline.paintSeaTile;
+  });
+
+  it('terrain: a failed MCSC fetch resolves to a transparent tile, not a rejection', async () => {
+    const { tile: t } = await makeContext();
+    loadBandMock.mockRejectedValueOnce(new Error('MCSC WMS 500'));
+    const res = await paintTerrainTile(t.z, t.x, t.y, { mode: 'terrain', off: [], alt: null, filters: [] });
+    expect(res).toHaveProperty('data');
+    expect(res.data).toBeInstanceOf(ArrayBuffer);
+    expect(loadBandMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('terrain: a failed DEM fetch (altitude band on) resolves transparent too', async () => {
+    const { tile: t } = await makeContext();
+    loadDemMock.mockRejectedValueOnce(new Error('DEM 503'));
+    const res = await paintTerrainTile(t.z, t.x, t.y, { mode: 'terrain', off: [], alt: [50, 150], filters: [] });
+    expect(res.data).toBeInstanceOf(ArrayBuffer);
+  });
+
+  it('terrain: a healthy paint still resolves normally', async () => {
+    const { tile: t } = await makeContext();
+    const res = await paintTerrainTile(t.z, t.x, t.y, { mode: 'terrain', off: [], alt: null, filters: [] });
+    expect(res.data).toBeInstanceOf(ArrayBuffer);
+    expect(put).toHaveLength(1); // real painting happened (not the transparent fallback)
+    expect(put[0].data[forest + 3]).toBe(255);
+  });
+
+  it('sea: a failed DEM fetch resolves to a transparent tile, not a rejection', async () => {
+    const { tile: t } = await makeContext();
+    loadDemMock.mockRejectedValueOnce(new Error('DEM 503'));
+    const res = await paintSeaTile(t.z, t.x, t.y, '000080');
+    expect(res.data).toBeInstanceOf(ArrayBuffer);
+    expect(loadDemMock).toHaveBeenCalled();
+  });
+
+  it('sea: a healthy paint still resolves normally', async () => {
+    const { tile: t } = await makeContext();
+    const res = await paintSeaTile(t.z, t.x, t.y, '000080');
+    expect(res.data).toBeInstanceOf(ArrayBuffer);
+  });
+
+  it('a failure fallback is marked short-lived so MapLibre re-requests it later (no permanent blank tiles)', async () => {
+    const { tile: t } = await makeContext();
+    loadBandMock.mockRejectedValueOnce(new Error('MCSC WMS 500'));
+    const res = await paintTerrainTile(t.z, t.x, t.y, { mode: 'terrain', off: [], alt: null, filters: [] });
+    expect(res.data).toBeInstanceOf(ArrayBuffer);
+    expect(res.cacheControl).toBe('max-age=10');
+  });
+
+  it('an already-aborted request (tile left the viewport mid-zoom) resolves without painting', async () => {
+    const { tile: t } = await makeContext();
+    const ac = new AbortController();
+    ac.abort();
+    loadBandMock.mockClear();
+    const res = await paintTerrainTile(t.z, t.x, t.y,
+      { mode: 'terrain', off: [], alt: null, filters: [] }, ac.signal);
+    expect(res.data).toBeInstanceOf(ArrayBuffer);
+    expect(loadBandMock).not.toHaveBeenCalled(); // stale tile never painted
+    expect(put).toHaveLength(0);
   });
 });

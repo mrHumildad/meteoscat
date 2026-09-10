@@ -60,6 +60,23 @@ const makeCanvas = (w, h) =>
     ? new OffscreenCanvas(w, h)
     : Object.assign(document.createElement('canvas'), { width: w, height: h });
 
+// One quick retry: zoom bursts hit the WMS with many parallel GetMap calls,
+// and a single flaky response must not become a permanently blank tile.
+const fetchWithRetry = async (url, label) => {
+  let lastErr;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (attempt > 0) await new Promise(r => setTimeout(r, 250));
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status} for ${label}`);
+      return res;
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr;
+};
+
 const bandCache = new Map(); // `${z}/${x}/${y}` -> Promise<ImageData>
 
 /** Fetch + decode a raw-band tile into ImageData (red channel = band value). */
@@ -68,8 +85,7 @@ export const loadMcscBandTile = async (z, x, y) => {
   if (bandCache.has(key)) return bandCache.get(key);
 
   const promise = (async () => {
-    const res = await fetch(mcscBandTileUrl(z, x, y));
-    if (!res.ok) throw new Error(`HTTP ${res.status} for ${key}`);
+    const res = await fetchWithRetry(mcscBandTileUrl(z, x, y), key);
     const blob = await res.blob();
     const bmp = await createImageBitmap(blob);
     const canvas = makeCanvas(bmp.width, bmp.height);

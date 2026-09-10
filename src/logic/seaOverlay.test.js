@@ -85,6 +85,8 @@ describe('classifySea', () => {
 describe('parseSeaTileUrl', () => {
   it('parses colour-carrying urls', () => {
     expect(parseSeaTileUrl('sea://9/260/190?c=000080')).toEqual({ z: 9, x: 260, y: 190, color: '000080' });
+    // an optional repaint token is ignored by the parser (cache buster only)
+    expect(parseSeaTileUrl('sea://9/260/190?c=000080&r=2')).toEqual({ z: 9, x: 260, y: 190, color: '000080' });
   });
 
   it('parses the off url', () => {

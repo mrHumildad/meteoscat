@@ -166,13 +166,22 @@ describe('terrain state signature & tile URL', () => {
     expect(a).not.toBe(terrainTileUrl({ mode: 'substrate', off: [], alt: null, geoOff: [], filters: [] }));
   });
 
-  it('changes when the rendering mode changes (terrain vs substrate)', () => {
+  it('changes when the rendering mode changes (terrain vs substrate vs none)', () => {
     const base = { mode: 'terrain', off: [], alt: null, filters: [], geoOff: [] };
     expect(terrainTileUrl(base)).not.toBe(terrainTileUrl({ ...base, mode: 'substrate' }));
+    expect(terrainTileUrl(base)).not.toBe(terrainTileUrl({ ...base, mode: 'none' }));
     // an absent mode canonicalises to 'terrain'
     expect(terrainStateSig(terrainStateSignature(base))).toBe(
       terrainStateSig(terrainStateSignature({ off: [], alt: null, filters: [] }))
     );
+  });
+
+  it("carries the 'none' mode through the signature and tile URL", () => {
+    const s = terrainStateSignature({ mode: 'none', off: [], alt: null, filters: [], geoOff: [] });
+    expect(s.mode).toBe('none');
+    expect(terrainStateSig(s)).toBe('{"mode":"none","off":[],"alt":null,"geoOff":[],"filters":[]}');
+    expect(terrainTileUrl({ mode: 'none', off: [], alt: null, filters: [], geoOff: [] }))
+      .toMatch(/\?s=.*%22mode%22%3A%22none%22/); // encodeURIComponent: ':' → %3A
   });
 
   it('embeds an encoded state token and parses it back', () => {
@@ -180,6 +189,8 @@ describe('terrain state signature & tile URL', () => {
     expect(url).toMatch(/^terrain:\/\/\{z\}\/\{x\}\/\{y\}\?s=/);
     expect(parseTerrainTileUrl('terrain://5/10/20?s=abc%7B%7D')).toEqual({ z: 5, x: 10, y: 20 });
     expect(parseTerrainTileUrl('terrain://5/10/20')).toEqual({ z: 5, x: 10, y: 20 });
+    // an optional repaint token is ignored by the parser (cache buster only)
+    expect(parseTerrainTileUrl('terrain://5/10/20?s=abc%7B%7D&r=4')).toEqual({ z: 5, x: 10, y: 20 });
   });
 
   it('rejects malformed and non-terrain URLs', () => {

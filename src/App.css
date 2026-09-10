@@ -599,3 +599,20 @@
 
 
 
+
+/* While a filter repaint is in flight (App gates further input while
+   repaintBusy) the filter-panel triggers are dimmed and unclickable, so a
+   burst of apply / add / remove taps cannot queue dozens of full-tile
+   repaints on top of each other. */
+.filter-panel.busy .sel-button,
+.filter-panel.busy .filter-add-btn,
+.filter-panel.busy .filter-instance {
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+/* The render-mode button gets the same treatment while a repaint runs. */
+.sel-button.busy {
+  pointer-events: none;
+  opacity: 0.5;
+}

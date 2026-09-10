@@ -32,6 +32,7 @@ const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const FilterPanel = ({
   onClose,
   reliefRange,
+  busy = false, // repaint in flight → controls disabled to avoid input floods
   onApplyRelief,
   meteoFilters,
   onAddFilter,
@@ -80,8 +81,15 @@ const FilterPanel = ({
     return `fa ${f.from} → fa ${f.to} dies`;
   };
 
+  // While editing, the day labels must follow the LIVE draft (slider
+  // onInput), not the committed instance `f` — dates and day count recompute
+  // on every drag. Day count matches the existing "darrers N dies" wording
+  // (from − to, floor 1 for a single-day window).
+  const draftDates = draft && refDay ? windowToDates(refDay, draft.from, draft.to) : { from: null, to: null };
+  const draftDayCount = draft ? Math.max(1, draft.from - draft.to) : 0;
+
   const startEdit = f => {
-    setDraft({ from: f.from, to: f.to, range: [f.range[0], f.range[1]] });
+    setDraft({ from: f.from, to: f.to, range: [f.range[0], f.range[1]], span: fullSpanOf(f) });
     setPendingId(null);
     setEditingId(f.id);
   };
@@ -92,22 +100,34 @@ const FilterPanel = ({
     if (pendingId) onRemoveFilter(pendingId);
     const inst = onAddFilter(type);
     setPendingId(inst.id);
-    setDraft({ from: inst.from, to: inst.to, range: [inst.range[0], inst.range[1]] });
+    setDraft({ from: inst.from, to: inst.to, range: [inst.range[0], inst.range[1]], span: fullSpanOf(inst) });
     setEditingId(inst.id);
   };
 
   // Day slider is drawn on a day-INDEX axis (0 = oldest … maxDays−1 = ref
-  // day, rightmost); stored offsets map back with maxDays−1−index. When the
-  // window changes, the value band clamps into the new window's full span.
+  // day, rightmost); stored offsets map back with maxDays−1−index. Dragging
+  // only moves from/to (keeps the date/day-count labels live); the window's
+  // full value span is recomputed on release — see onDayRelease.
   const onDayInput = ([lo, hi]) => {
     if (!editing) return;
     const from = maxDays - 1 - lo;
     const to = maxDays - 1 - hi;
-    const span = limitsForWindow(agg, editing.type, from, to);
-    let r0 = draft.range[0];
-    let r1 = draft.range[1];
-    if (span) { r0 = clamp(r0, span[0], span[1]); r1 = clamp(r1, span[0], span[1]); }
-    setDraft({ from, to, range: [r0, r1] });
+    setDraft(d => ({ ...d, from, to }));
+  };
+
+  // Day slider released → compute the min/max of the variable across ALL
+  // stations over the new day range (limitsForWindow iterates every station,
+  // so once per drag, not per tick) and feed it to the value slider as its
+  // bounds, clamping the current band into it.
+  const onDayRelease = () => {
+    if (!editing) return;
+    const span = limitsForWindow(agg, editing.type, draft.from, draft.to);
+    setDraft(d => {
+      let r0 = d.range[0];
+      let r1 = d.range[1];
+      if (span) { r0 = clamp(r0, span[0], span[1]); r1 = clamp(r1, span[0], span[1]); }
+      return { ...d, span, range: [r0, r1] };
+    });
   };
 
   const onValueInput = ([lo, hi]) => {
@@ -172,7 +192,7 @@ const FilterPanel = ({
   const daySliderMax = Math.max(0, maxDays - 1);
 
   return (
-    <div className="filter-panel">
+    <div className={`filter-panel${busy ? ' busy' : ''}`} aria-busy={busy || undefined}>
       <div className="filter-header">
         <span className="filter-title">Filtres</span>
         <span className="filter-anchor" title="Dia de referència (últimes dades disponibles)">
@@ -413,6 +433,7 @@ const FilterPanel = ({
               step={10}
               value={reliefDraft}
               onInput={setReliefDraft}
+              disabled={busy}
             />
           </div>
         )}
@@ -549,7 +570,9 @@ const FilterPanel = ({
           const isEditingThis = f.id === editingId && editing;
 
           if (isEditingThis) {
-            const span = fullSpanOf(f);
+            // Value-slider bounds follow the DRAFT window: set on startEdit /
+            // add, refreshed on day-slider release (onDayRelease).
+            const span = draft.span;
             return (
               <div key={f.id} className={`filter-instance ${def.className} editing`}>
                 <div className="filter-instance-header">
@@ -574,8 +597,8 @@ const FilterPanel = ({
                 <div className="filter-editor">
                   <div className="filter-editor-row">
                     <div className="filter-editor-label">
-                      <span>{shortDate(datesOf(f).from)} – {shortDate(datesOf(f).to)}</span>
-                      <span className="range-value">{dayLabel(f)}</span>
+                      <span>{shortDate(draftDates.from)} – {shortDate(draftDates.to)}</span>
+                      <span className="range-value">{draftDayCount} dies</span>
                     </div>
                     <RangeSlider
                       min={0}
@@ -583,6 +606,8 @@ const FilterPanel = ({
                       step={1}
                       value={[daySliderMax - draft.from, daySliderMax - draft.to]}
                       onInput={onDayInput}
+                      onThumbDragEnd={onDayRelease}
+                      disabled={busy}
                       ariaLabel={['Inici del període', 'Fi del període']}
                     />
                   </div>
@@ -599,7 +624,7 @@ const FilterPanel = ({
                       step={def.step}
                       value={draft.range}
                       onInput={onValueInput}
-                      disabled={!span}
+                      disabled={busy || !span}
                       ariaLabel={['Valor mínim', 'Valor màxim']}
                     />
                   </div>

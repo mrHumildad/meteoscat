@@ -52,6 +52,23 @@ export const terrariumElevation = (r, g, b) => (r * 256 + g + b / 256) - 32768;
 
 const tileCache = new Map(); // `${z}/${x}/${y}` -> Promise<ImageData>
 
+// One quick retry: zoom bursts hit the DEM host with many parallel fetches,
+// and a single flaky response must not become a permanently blank tile.
+const fetchWithRetry = async (url, label) => {
+  let lastErr;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (attempt > 0) await new Promise(r => setTimeout(r, 250));
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status} for ${label}`);
+      return res;
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr;
+};
+
 export const loadTileImageData = async (z, x, y) => {
   const key = `${z}/${x}/${y}`;
   if (tileCache.has(key)) return tileCache.get(key);
@@ -61,8 +78,7 @@ export const loadTileImageData = async (z, x, y) => {
       .replace('{z}', String(z))
       .replace('{x}', String(x))
       .replace('{y}', String(y));
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status} for ${key}`);
+    const res = await fetchWithRetry(url, key);
     const blob = await res.blob();
     const bmp = await createImageBitmap(blob);
     const canvas = typeof OffscreenCanvas !== 'undefined'
