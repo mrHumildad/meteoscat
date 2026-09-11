@@ -433,10 +433,35 @@
   border-radius: 8px;
   padding: 14px 16px;
   width: min(92vw, 320px);
+  /* Tall content (a long station list, the save form open) scrolls instead of
+     pushing the card off a small screen. */
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
   text-align: left;
+}
+
+/* ── Tab bar — icon buttons, same sel-button as the rest of the app ────── */
+.directions-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border-faint);
+}
+
+.directions-tab {
+  background-color: var(--color-layer-directions);
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+/* The active tab keeps the app's `.sel-button.on` focus ring and drops the
+   dimming, so the current panel is unmistakable. */
+.directions-tab.on {
+  opacity: 1;
 }
 
 .directions-card .sel-button {
@@ -477,12 +502,64 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Area radius — the picked point is analysed as a disc, so the modal leads
+   with its size. A native single-value range input (the two-thumb RangeSlider
+   used by the filter panel cannot render one thumb), styled with the SAME
+   interactive colours as those sliders. */
+.directions-radius {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid var(--color-border-faint);
+  padding-top: 10px;
+}
+
+.directions-radius-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: max(0.6vw, 0.6vh);
+  border-radius: 4px;
+  background-color: var(--color-interactive-track);
+  cursor: pointer;
+}
+
+.directions-radius-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: max(2vw, 2vh);
+  height: max(2vw, 2vh);
+  border-radius: 50%;
+  background: var(--color-interactive-thumb);
+  cursor: pointer;
+}
+
+.directions-radius-slider::-moz-range-thumb {
+  width: max(2vw, 2vh);
+  height: max(2vw, 2vh);
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-interactive-thumb);
+  cursor: pointer;
+}
+
+.directions-radius-slider:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 6px var(--color-interactive-focus);
+}
+
+/* The tab bar's border already separates the panels from the tabs, so the
+   station list starts flush at the top. */
 .directions-nearest {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border-top: 1px solid var(--color-border-faint);
-  padding-top: 10px;
+}
+
+.directions-tab-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .directions-nearest-title {
@@ -552,6 +629,212 @@
 
 .directions-go:hover {
   filter: brightness(1.1);
+}
+
+/* Altitude profile of the analysed disc — a line chart with ALTITUDE ON THE
+   Y AXIS (the station panel's bar charts can't do a Y axis), drawn as an SVG
+   polyline stretched over its box. */
+.directions-area {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid var(--color-border-faint);
+  padding-top: 10px;
+}
+
+.area-elevation-plot {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.area-elevation-yaxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 0.68rem;
+  color: var(--color-text-dim);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.area-elevation-canvas {
+  flex: 1;
+  min-width: 0;
+  height: 7vh;
+  border-top: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+  /* middle gridline, same idea as the axis labels */
+  background-image: linear-gradient(
+    to bottom,
+    transparent calc(50% - 0.5px),
+    var(--color-border-faint) calc(50% - 0.5px),
+    var(--color-border-faint) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}
+
+.area-elevation-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.area-elevation-svg polyline {
+  fill: none;
+  stroke: var(--color-data-altitude);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.area-elevation-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.72rem;
+  color: var(--color-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Composition blocks (substrate / land cover) — the station panel's block
+   markup (icon, value, `.bars` chart), stacked here to fit the modal card.
+   The class names are the station panel's own hooks, scoped here so its
+   layout is untouched. */
+.area-composition {
+  gap: 6px;
+}
+
+/* Stacked, not side by side: the value text sits on its own row and the bars
+   span the whole block (i.e. the full modal width). */
+.directions-area .st-block {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.directions-area .block-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.directions-area .st-block-icon {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+}
+
+.directions-area .st-block-value {
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+.area-block-title {
+  display: block;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-dim);
+}
+
+.directions-area .block-right {
+  width: 100%;
+  min-width: 0;
+}
+
+.directions-area .bars {
+  height: 4.5vh;
+}
+
+/* One bar per class, as tall as its share — coloured by the class colour from
+   the data (legend / geology grid), like the legend swatches. The row spans
+   the full width; the bars share it evenly. */
+.directions-area .block-right .bars {
+  justify-content: stretch;
+}
+.directions-area .block-right .bar {
+  max-width: none;
+}
+
+.area-comp-bar {
+  background-color: var(--bar-color, var(--color-mcsc-grey));
+}
+
+.directions-area-hint {
+  font-size: 0.72rem;
+  font-style: italic;
+  opacity: 0.65;
+}
+
+/* ── Filter tab — coverage of the analysed disc per filter ─────────────── */
+.filter-match {
+  gap: 8px;
+}
+
+.filter-match-note {
+  font-size: 0.68rem;
+  color: var(--color-text-dim);
+  line-height: 1.3;
+}
+
+.filter-match-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.filter-match-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.75rem;
+}
+
+.filter-match-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filter-match-name.active {
+  font-weight: bold;
+  color: var(--color-success);
+}
+
+.filter-match-pct {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.filter-match-track {
+  height: 5px;
+  border-radius: 3px;
+  background-color: var(--color-surface-card);
+  overflow: hidden;
+}
+
+.filter-match-fill {
+  width: var(--fill, 0%);
+  height: 100%;
+  border-radius: 3px;
+  background-color: var(--color-success);
+}
+
+/* Save-location block: same field styles as the filter panel's save preset,
+   stacked (name row, then the optional description row). */
+.directions-save {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid var(--color-border-faint);
+  padding-top: 10px;
 }
 
 /* ── Filter panel — card base unified ─────────────────────────────────── */
@@ -861,6 +1144,11 @@
 .basket-item-meta {
   font-size: 0.72rem;
   opacity: 0.7;
+}
+.basket-item-desc {
+  font-size: 0.72rem;
+  font-style: italic;
+  opacity: 0.6;
 }
 
 /* ── Save preset — name input → localStorage ─────────────────────────────── */

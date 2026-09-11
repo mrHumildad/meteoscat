@@ -11,7 +11,7 @@ setWorkerUrl(maplibreWorkerUrl);
 import logo from './assets/logo.png';
 import basketImg from './assets/basket.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faBasketShopping, faCar, faDroplet, faFilter, faLayerGroup, faList, faMountainSun, faRulerVertical, faSeedling, faTemperatureLow, faTree } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faBasketShopping, faCar, faDroplet, faFilter, faLayerGroup, faList, faLocationDot, faMountainSun, faRulerVertical, faSeedling, faTemperatureLow, faTree } from '@fortawesome/free-solid-svg-icons';
 import { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import { loadAvailableDays, loadSummaries } from './logic/refineData.js'
 import { getDaysInRange, fmtDateCat, fmtShortCat, parseDay } from './logic/utils.js';
@@ -19,6 +19,8 @@ import './App.css'
 
 import { computeGeoValues } from './logic/computeGeoValues.js';
 import { buildFilterConfig, readSavedFilters, removeSavedFilter, sameFilterConfig, saveFilterPreset } from './logic/savedFilters.js';
+import { readSavedLocations, removeSavedLocation, saveLocation } from './logic/savedLocations.js';
+import { hasFilterConditions } from './logic/areaFilterMatch.js';
 import { aggregateWindow, buildAggregateTable, DEFAULTDAYRANGE, limitsForWindow, windowToDates, TYPE_TO_VARIABLE } from './logic/filterAggregate.js';
 import { scoreStations, scoreByCode } from './logic/boletEngine.js';
 import { MCSC_LEGEND, MCSC_WATER_COLOR, MCSC_WATER_ENTRY } from './logic/mcscLegend.js';
@@ -32,9 +34,10 @@ import { distanceKm, nearestStations } from './logic/nearestStations.js';
 import { LITHO_ATTRIBUTION, lithoLegendEntries, loadLithoGrid } from './logic/lithology.js';
 import { detectWebGL2, isGPUInitializationError } from './logic/webgl2.js';
 import FilterPanel from './comps/FilterPanel.jsx';
-import DirectionsModal from './comps/DirectionsModal.jsx';
+import DirectionsModal, { ROUTE_RADIUS_DEFAULT } from './comps/DirectionsModal.jsx';
 import MapUnavailable from './comps/MapUnavailable.jsx';
 import SavedFiltersPanel from './comps/SavedFiltersPanel.jsx';
+import SavedLocationsPanel from './comps/SavedLocationsPanel.jsx';
 import StationPanel from './comps/StationPanel.jsx';
 
 // Catalonia — the app never leaves it. CATALONIA_BOUNDS constrains the
@@ -174,9 +177,12 @@ const App = ()  => {
   const [clickedElevation, setClickedElevation] = useState(null); // DEM sample, m
   const [pickRoute, setPickRoute] = useState(false); // car button armed: next map click opens the directions modal
   const [routePoint, setRoutePoint] = useState(null); // picked directions point: { lat, lng, elevation, pending } | null
+  const [routeRadius, setRouteRadius] = useState(ROUTE_RADIUS_DEFAULT); // area radius (m) analysed around the picked point — see directions modal
   const [showFilter, setShowFilter] = useState(false); // filter panel open state
   const [showBasket, setShowBasket] = useState(false); // saved-filter basket open state (only one top panel at a time)
+  const [showLocations, setShowLocations] = useState(false); // saved-locations panel open state (same one-panel rule)
   const [savedFilters, setSavedFilters] = useState(() => readSavedFilters()); // named presets from localStorage, newest first
+  const [savedLocations, setSavedLocations] = useState(() => readSavedLocations()); // saved places from localStorage, newest first
   const [reliefRange, setReliefRange] = useState(null); // applied altitude band [lo, hi]; null = off
   const [meteoFilters, setMeteoFilters] = useState([]); // [{ id, type, from, to, range }] — one per meteo filter instance
   const [nextFilterId, setNextFilterId] = useState(1);
@@ -542,6 +548,9 @@ const App = ()  => {
       // (guarded so a newer pick can't be overwritten by an older response).
       const reqId = ++routeReqRef.current;
       setRoutePoint({ lat, lng, elevation: null, pending: true });
+      // Every pick starts from the default disc — the radius is part of the
+      // point being analysed, not a sticky setting of the previous spot.
+      setRouteRadius(ROUTE_RADIUS_DEFAULT);
       sampleElevation(lng, lat).then(elev => {
         if (reqId !== routeReqRef.current) return;
         setRoutePoint(prev => (prev ? { ...prev, elevation: elev, pending: false } : prev));
@@ -1097,6 +1106,60 @@ const App = ()  => {
     setSavedFilters(removeSavedFilter(name));
   };
 
+  // Saved locations (localStorage): the directions modal owns the name +
+  // description, App owns the point and the list. Saving is pure storage, so
+  // it never touches the map.
+  const saveRouteLocation = useCallback((name, description) => {
+    if (!routePoint) return;
+    setSavedLocations(saveLocation(name, {
+      lat: routePoint.lat,
+      lng: routePoint.lng,
+      elevation: routePoint.elevation,
+      description,
+    }));
+  }, [routePoint]);
+
+  // Delete a saved location (panel row ✕) — the map never moves.
+  const deleteSavedLocation = (name) => {
+    setSavedLocations(removeSavedLocation(name));
+  };
+
+  // Panel row button: fly the map back to the saved point and close the panel
+  // so the spot is actually visible. A saved spot is a destination, so it is
+  // zoomed in closer than the region overview.
+  const goToSavedLocation = useCallback((location) => {
+    const map = mapRef.current;
+    if (map && Number.isFinite(location?.lat) && Number.isFinite(location?.lng)) {
+      map.flyTo({ center: [location.lng, location.lat], zoom: Math.max(map.getZoom(), 13) });
+    }
+    setShowLocations(false);
+  }, []);
+
+  // Everything the directions modal's area analysis needs beyond the point
+  // itself: the meteo context that rebuilds the map's own grids (aggregate
+  // table + station features + reference day), the substrate grid the geology
+  // filter already loaded, and the filters to measure the area against — the
+  // live stack (only when it actually filters) plus every saved preset.
+  const areaAnalysis = useMemo(() => ({
+    agg,
+    features: geoWithData?.features ?? [],
+    refDay,
+    lithoGrid,
+    activeConfig: hasFilterConditions(currentFilterConfig) ? currentFilterConfig : null,
+    savedPresets: savedFilters,
+  }), [agg, geoWithData, refDay, lithoGrid, currentFilterConfig, savedFilters]);
+
+  // Saved location matching the currently picked point (null when the modal is
+  // closed or the point was never saved) — derived so the panel marks it
+  // without any bookkeeping, exactly like the active filter preset.
+  const activeLocationName = useMemo(() => {
+    if (!routePoint) return null;
+    const hit = savedLocations.find(
+      l => l.lat === routePoint.lat && l.lng === routePoint.lng,
+    );
+    return hit ? hit.name : null;
+  }, [savedLocations, routePoint]);
+
   // Apply a saved preset (basket button): replace the WHOLE filter stack at
   // once behind a single repaint gate — calling the individual apply handlers
   // would be refused after the first (beginRepaint locks while a repaint is in
@@ -1245,15 +1308,28 @@ const App = ()  => {
       </div>
       {data && (
         <div className="top-buttons">
-          {/* Two buttons share one row (basket left of the filter); their
-              panels open below, one at a time — opening one closes the other. */}
+          {/* Three buttons share one row (saved places, saved filters, filter);
+              their panels open below, one at a time — opening one closes the
+              others. */}
           <div className="top-button-row">
+            <div
+              className={`sel-button filter-button${showLocations ? ' on' : ''}`}
+              title="Llocs desats"
+              onClick={() => {
+                setShowLocations(v => !v);
+                setShowBasket(false);
+                setShowFilter(false);
+              }}
+            >
+              <FontAwesomeIcon icon={faLocationDot} />
+            </div>
             <div
               className={`sel-button filter-button${showBasket ? ' on' : ''}`}
               title="Filtres desats"
               onClick={() => {
                 setShowBasket(v => !v);
                 setShowFilter(false);
+                setShowLocations(false);
               }}
             >
               <FontAwesomeIcon icon={faBasketShopping} />
@@ -1264,11 +1340,21 @@ const App = ()  => {
               onClick={() => {
                 setShowFilter(v => !v);
                 setShowBasket(false);
+                setShowLocations(false);
               }}
             >
               <FontAwesomeIcon icon={faFilter} />
             </div>
           </div>
+          {showLocations && (
+            <SavedLocationsPanel
+              locations={savedLocations}
+              activeName={activeLocationName}
+              onSelect={goToSavedLocation}
+              onDelete={deleteSavedLocation}
+              onClose={() => setShowLocations(false)}
+            />
+          )}
           {showBasket && (
             <SavedFiltersPanel
               presets={savedFilters}
@@ -1437,8 +1523,12 @@ const App = ()  => {
         point={routePoint}
         nearest={routeNearest}
         distanceKm={routeDistanceKm}
+        radius={routeRadius}
+        areaAnalysis={areaAnalysis}
+        onRadiusChange={setRouteRadius}
         onClose={() => setRoutePoint(null)}
         onNavigate={openRouteDirections}
+        onSaveLocation={saveRouteLocation}
       />
       {selectedStation && <StationPanel
         station={stationObj}
