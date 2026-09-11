@@ -19,7 +19,7 @@ import './App.css'
 import { computeGeoValues } from './logic/computeGeoValues.js';
 import { aggregateWindow, buildAggregateTable, DEFAULTDAYRANGE, limitsForWindow, windowToDates, TYPE_TO_VARIABLE } from './logic/filterAggregate.js';
 import { scoreStations, scoreByCode } from './logic/boletEngine.js';
-import { MCSC_LEGEND, MCSC_GREY, MCSC_WATER_COLOR, MCSC_WATER_ENTRY } from './logic/mcscLegend.js';
+import { MCSC_LEGEND, MCSC_WATER_COLOR, MCSC_WATER_ENTRY } from './logic/mcscLegend.js';
 import { ELEVATION_TILES, ELEVATION_ATTRIBUTION, sampleElevation } from './logic/elevation.js';
 import { MCSC_ATTRIBUTION } from './logic/mcscRaw.js';
 import { registerTerrainProtocol, terrainTileUrl } from './logic/terrainOverlay.js';
@@ -1178,18 +1178,21 @@ const App = ()  => {
           <FontAwesomeIcon icon={faCar} />
         </div>
       </div>
-      <Map
-        key={styleUrl}
-        initialViewState={{
-          longitude: center[0],
-          latitude: center[1],
-          zoom: minZoom + 1
-        }}
-        style={{ width: '100%', height: '100%' }}
-        mapStyle={styleUrl}
-        onLoad={onMapLoad}
-        
-      />
+      {/* @vis.gl/react-maplibre's Map only forwards `style` to its container
+          div, never `className` — so the .map-view sizing must live on a
+          wrapper element around the map, not on <Map> itself. */}
+      <div className="map-view">
+        <Map
+          key={styleUrl}
+          initialViewState={{
+            longitude: center[0],
+            latitude: center[1],
+            zoom: minZoom + 1
+          }}
+          mapStyle={styleUrl}
+          onLoad={onMapLoad}
+        />
+      </div>
       {dataLoading && !data && (
         <div className="app-loading">
           {loadError ? `No s'han pogut carregar les dades: ${loadError}` : 'Carregant dades…'}
@@ -1227,7 +1230,7 @@ const App = ()  => {
                     key={entry.key}
                     className={`mcsc-legend-row info${off ? ' off' : ''}`}
                   >
-                    <span className="mcsc-legend-swatch" style={{ backgroundColor: off ? MCSC_GREY : entry.color }} />
+                    <span className="mcsc-legend-swatch" style={{ '--swatch-color': entry.color }} />
                     <span className="mcsc-legend-label">{entry.label}</span>
                   </div>
                 );
@@ -1247,7 +1250,7 @@ const App = ()  => {
                     key={entry.codes}
                     className={`mcsc-legend-row info${off ? ' off' : ''}`}
                   >
-                    <span className="mcsc-legend-swatch" style={{ backgroundColor: off ? MCSC_GREY : entry.color }} />
+                    <span className="mcsc-legend-swatch" style={{ '--swatch-color': entry.color }} />
                     <span className="mcsc-legend-label">{entry.label}</span>
                   </div>
                 );

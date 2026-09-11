@@ -4,7 +4,7 @@ import { useState } from 'react';
 import RangeSlider from 'react-range-slider-input';
 import { DEFAULTDAYRANGE, dayRangeLabel, limitsForWindow, TYPE_TO_VARIABLE, windowToDates } from '../logic/filterAggregate.js';
 import { fmtNum, fmtShortCat } from '../logic/utils.js';
-import { MCSC_LEGEND, MCSC_GREY } from '../logic/mcscLegend.js';
+import { MCSC_LEGEND } from '../logic/mcscLegend.js';
 import { SPECIES, SPECIES_KEYS } from '../logic/speciesRules.js';
 import './rangesliders.css';
 
@@ -280,7 +280,7 @@ const FilterPanel = ({
                     title={off ? 'Ressaltar' : 'Atenuar'}
                     onClick={() => toggleForestClass(entry.codes)}
                   >
-                    <span className="mcsc-legend-swatch" style={{ backgroundColor: off ? MCSC_GREY : entry.color }} />
+                    <span className="mcsc-legend-swatch" style={{ '--swatch-color': entry.color }} />
                     <span className="mcsc-legend-label">{entry.label}</span>
                   </button>
                 );
@@ -300,7 +300,7 @@ const FilterPanel = ({
                   <span
                     key={entry.codes}
                     className="mcsc-legend-swatch"
-                    style={{ backgroundColor: entry.color }}
+                    style={{ '--swatch-color': entry.color }}
                     title={entry.label}
                   />
                 ))}
@@ -358,7 +358,7 @@ const FilterPanel = ({
                     title={off ? 'Ressaltar' : 'Atenuar'}
                     onClick={() => toggleGeoFamily(entry.key)}
                   >
-                    <span className="mcsc-legend-swatch" style={{ backgroundColor: off ? MCSC_GREY : entry.color }} />
+                    <span className="mcsc-legend-swatch" style={{ '--swatch-color': entry.color }} />
                     <span className="mcsc-legend-label">{entry.label}</span>
                   </button>
                 );
@@ -379,7 +379,7 @@ const FilterPanel = ({
                   <span
                     key={entry.key}
                     className="mcsc-legend-swatch"
-                    style={{ backgroundColor: entry.color }}
+                    style={{ '--swatch-color': entry.color }}
                     title={entry.label}
                   />
                 ))}

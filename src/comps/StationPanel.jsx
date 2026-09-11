@@ -124,7 +124,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
                 key={i}
                 className={`bar rain${d.rainIn ? ' hl' : ''}`}
                 style={{
-                  height: `${
+                  '--bar-h': `${
                     ((d.precAcc - globalStats.precMin) /
                       (globalStats.precMax - globalStats.precMin || 1)) *
                     100
@@ -152,8 +152,8 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
                 key={i}
                 className={`bar humidity${d.humIn ? ' hl' : ''}`}
                 style={{
-                  height: `${((d.humAvg - globalStats.humMin) /
-                    (globalStats.humMax - globalStats.humMin || 1)) * 100}%`
+                  '--bar-h': `${((d.humAvg - globalStats.humMin) /
+                    (globalStats.humMax - globalStats.humMin || 1)) * 100}%`,
                 }}
                 title={`${d.day}: ${fmtNum(d.humAvg, 0)}%${d.humIn ? ' · en el període' : ''}`}
               />
@@ -176,10 +176,13 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
               <div
                 key={i}
                 className={`bar temp${d.tempIn ? ' hl' : ''}`}
-                style={{ height: `${
-      ((d.tempAvg - globalStats.tempMin) /
-        (globalStats.tempMax - globalStats.tempMin || 1)) * 100
-    }%` }}
+                style={{
+                  '--bar-h': `${
+                    ((d.tempAvg - globalStats.tempMin) /
+                      (globalStats.tempMax - globalStats.tempMin || 1)) *
+                    100
+                  }%`,
+                }}
                 title={`${d.day}: ${fmtNum(d.tempAvg, 1)} °C${d.tempIn ? ' · en el període' : ''}`}
               />
             ))}

@@ -1,12 +1,87 @@
+/* ── Semantic palette — single source of truth for every colour used in the app ──
+   Each var has a semantic name (purpose, not hue). All other CSS files must
+   consume colours only through var(--color-*) — no raw hex / rgb / named colours. */
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* base surfaces */
+  --color-bg-page: #242424;
+  --color-bg-page-light: #ffffff;
+  /* App shell / letterbox behind the map. Must stay a neutral surface so a
+     map that is still loading (or fails to paint) doesn't flash pure red. */
+  --color-bg-app: #242424;
+  --color-text-primary: #ffffff;
+  --color-text-primary-soft: rgba(255, 255, 255, 0.87);
+  --color-text-inverse: #000000;
+  --color-text-on-dark: #ffffff;
+  --color-text-muted: #213547;
+
+  /* overlays & cards */
+  --color-overlay: rgba(0, 0, 0, 0.8);
+  --color-overlay-soft: rgba(0, 0, 0, 0.65);
+  --color-surface-subtle: rgba(255, 255, 255, 0.05);
+  --color-surface-card: rgba(255, 255, 255, 0.08);
+  --color-surface-card-hover: rgba(255, 255, 255, 0.12);
+  --color-surface-card-active: rgba(255, 255, 255, 0.14);
+
+  /* borders & dividers */
+  --color-border-strong: #ffffff;
+  --color-border-light: rgba(255, 255, 255, 0.25);
+  --color-border-subtle: rgba(255, 255, 255, 0.2);
+  --color-border-faint: rgba(255, 255, 255, 0.15);
+  --color-border-swatch: rgba(255, 255, 255, 0.4);
+  --color-border-focus: #ffffff;
+
+  /* domain — meteo variables (also used for filter / chart accents) */
+  --color-data-rain: #4aa3ff;
+  --color-data-humidity: #8aff9d;
+  --color-data-temp: #ff7575;
+  --color-data-altitude: #9575cd;
+
+  /* domain — map layers & toggles */
+  --color-layer-forest: #7d9b4e;
+  --color-layer-substrat: #8d6e63;
+  --color-layer-relief: #b08968;
+  --color-layer-terrain3d: #6e8ca0;
+  --color-layer-legend: #607d8b;
+  --color-layer-directions: #00bfa5;
+  --color-layer-calendar: #ffffff;
+
+  /* accents & feedback */
+  --color-accent-amber: #ffb703;
+  --color-accent-stale: #ffb454;
+  --color-success: #32cd32; /* limegreen */
+  --color-danger: #ff7575;  /* same hue as temp — semantic alias */
+  --color-warning: #ffb703;
+
+  /* interactive (sliders) */
+  --color-interactive-thumb: #2196f3;
+  --color-interactive-track: #51adf6;
+  --color-interactive-focus: rgba(33, 150, 243, 0.5);
+
+  /* state — disabled / dimmed */
+  --color-disabled-bg: #555555;
+  --color-disabled-text: rgba(255, 255, 255, 0.55);
+  --color-disabled-fallback: #666666;
+  --color-text-dim: #aaaaaa;
+  --color-mcsc-grey: #8a8a8a;
+
+  /* links & buttons */
+  --color-link: #646cff;
+  --color-link-hover: #535bf2;
+  --color-link-hover-light: #747bff;
+  --color-bg-button: #1a1a1a;
+  --color-bg-button-light: #f9f9f9;
+
+  /* app shell */
+  --font-sans: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-mono: "Chivo Mono", monospace;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  color: var(--color-text-primary-soft);
+  background-color: var(--color-bg-page);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  font-weight: 400;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -15,11 +90,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--color-link);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--color-link-hover);
 }
 
 body {
@@ -42,12 +117,12 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-button);
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--color-link);
 }
 button:focus,
 button:focus-visible {
@@ -56,13 +131,13 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: var(--color-text-muted);
+    background-color: var(--color-bg-page-light);
   }
   a:hover {
-    color: #747bff;
+    color: var(--color-link-hover-light);
   }
   button {
-    background-color: #f9f9f9;
+    background-color: var(--color-bg-button-light);
   }
 }

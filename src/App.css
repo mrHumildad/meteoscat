@@ -8,18 +8,25 @@
   transform: rotate(180deg);
 }
 
+/* ── App shell ─────────────────────────────────────────────────────────── */
 .app {
   position: relative;
   width: 100dvw;
   height: 100dvh;
   box-sizing: border-box;
-  background-color: red;
-  border: 3px solid white;
+  background-color: var(--color-bg-app);
+  border: 3px solid var(--color-border-strong);
   overflow: hidden;
-  font-family: "Chivo Mono", monospace;
+  font-family: var(--font-mono);
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
+}
+
+/* Map fills its container — replaces inline width/height */
+.map-view {
+  width: 100%;
+  height: 100%;
 }
 
 .app-loading {
@@ -27,13 +34,14 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: white;
-  background-color: rgba(0, 0, 0, 0.8);
+  color: var(--color-text-on-dark);
+  background-color: var(--color-overlay);
   padding: 12px 18px;
   border-radius: 8px;
   z-index: 20;
   font-size: max(2vw, 2vh);
 }
+
 .logo {
   position: absolute;
   top: 1vh;
@@ -43,15 +51,27 @@
   pointer-events: none;
   z-index: 10;
   border-radius: 50%;
-  border: 3px solid white;
+  border: 3px solid var(--color-border-strong);
 }
+
+/* ── Shared overlay surfaces (previously duplicated rgba(0,0,0,0.8)) ──────
+   Grouped to keep a single source for the dark translucent backdrop used
+   by header, selectors, station panel, filter panel and legend. */
+.app-header,
+.selectors,
+.station-panel,
+.filter-panel,
+.mcsc-legend,
+.app-loading {
+  background-color: var(--color-overlay);
+}
+
 .app-header {
   position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  color: white;
-  background-color: rgba(0, 0, 0, 0.8);
+  color: var(--color-text-on-dark);
   padding: 10px;
   z-index: 10;
   display: flex;
@@ -59,31 +79,31 @@
   align-items: center;
   font-size: max(2vw, 2vh);
 }
+
 .header-updated {
   font-size: 0.6em;
   opacity: 0.75;
   white-space: nowrap;
-  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  border-left: 1px solid var(--color-border-light);
   padding-left: 1rem;
 }
 .header-updated.stale {
-  color: #ffb454;
+  color: var(--color-accent-stale);
   opacity: 1;
 }
+
 .selectors {
   position: absolute;
   top: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.8);
   padding: 10px;
   z-index: 10;
   display: flex;
-  
   gap: 10px;
 }
 
 .sel-block {
-  display : flex;
+  display: flex;
   gap: 2vw;
 }
 
@@ -91,55 +111,72 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-
 }
+
+/* ── Sel button — single base, sizes via CSS vars (unified) ───────────── */
 .sel-button {
-  width: max(5vw, 5vh);
-  height: max(5vw, 5vh);
+  --sel-size: max(5vw, 5vh);
+  --sel-font: max(4vw, 4vh);
+  width: var(--sel-size);
+  height: var(--sel-size);
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 25%;
-  color: black;
-  font-size: max(4vw, 4vh);
+  color: var(--color-text-inverse);
+  font-size: var(--sel-font);
 }
+
+.filter-panel .sel-button {
+  --sel-size: max(3vw, 3vh);
+  --sel-font: max(2.5vw, 2.5vh);
+}
+
+.filter-line .sel-button,
+.filter-instance .sel-button {
+  --sel-size: max(2.5vw, 2.5vh);
+  --sel-font: max(2vw, 2vh);
+}
+
+.sel-button.on {
+  outline: 3px solid var(--color-border-focus);
+}
+
+/* ── Station panel ─────────────────────────────────────────────────────── */
 .station-panel {
   position: absolute;
   bottom: 0;
   width: 100%;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.8);
+  color: var(--color-text-on-dark);
   padding: 0;
   z-index: 10;
   overflow-y: auto;
-  transform: translateY(100%); /* hidden by default */
+  transform: translateY(100%);
   transition: transform 0.5s ease;
-  overflow-y: auto;
 }
+
 .station-panel.open {
   transform: translateY(0);
 }
-
-/* Closed state */
 .station-panel.closed {
   transform: translateY(100%);
 }
+
 .station-close {
   position: absolute;
   top: max(1vw, 1vh);
   right: max(1vw, 1vh);
   font-size: max(3vw, 3vh);
-  color: white;
-  background-color: black;
+  color: var(--color-text-on-dark);
+  background-color: var(--color-text-inverse);
   cursor: pointer;
 }
+
 .st-header {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
 }
-
-
 
 .st-main {
   display: flex;
@@ -154,16 +191,13 @@
   gap: 0.3rem;
 }
 
-
-
-
 .st-main-left {
   display: flex;
-  flex-direction: column; /* ✅ stack charts vertically */
+  flex-direction: column;
   gap: 1rem;
   width: 100%;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-surface-subtle);
 }
 
 .chart-block {
@@ -172,22 +206,22 @@
   align-items: center;
   width: 100%;
 }
-
 .chart-block h4 {
   margin: 0;
   font-size: 0.9rem;
-  color: #fff;
+  color: var(--color-text-on-dark);
 }
 
+/* ── Bars / charts ─────────────────────────────────────────────────────── */
 .bars {
   display: flex;
-  align-items: flex-end; /* ✅ bars align bottom */
+  align-items: flex-end;
   justify-content: center;
   height: 8vh;
   width: 100%;
   gap: 3px;
   padding: 5px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .bar {
@@ -196,48 +230,39 @@
   max-width: 10vw;
   border-radius: 2px;
   transition: height 0.3s ease;
-  background-color: limegreen;
+  background-color: var(--color-success);
+  height: var(--bar-h, 0%);
 }
 
-.rain {
-  background-color: #4aa3ff;
+/* Domain bar colours — semantic vars */
+.rain { background-color: var(--color-data-rain); }
+.humidity { background-color: var(--color-data-humidity); }
+.temp { background-color: var(--color-data-temp); }
+
+/* Layer / toggle modifiers sharing the same domain palette */
+.calendar { background-color: var(--color-layer-calendar); }
+.forest { background-color: var(--color-layer-forest); }
+.substrat { background-color: var(--color-layer-substrat); }
+.relief { background-color: var(--color-layer-relief); }
+.altitude,
+.mountain { background-color: var(--color-data-altitude); }
+.terrain3d { background-color: var(--color-layer-terrain3d); }
+.stationinfo,
+.filter-button { background-color: var(--color-accent-amber); }
+.directions { background-color: var(--color-layer-directions); }
+.legend-layer { background-color: var(--color-layer-legend); }
+
+/* Success / danger actions — unified */
+.filter-apply,
+.filter-line-ok {
+  background-color: var(--color-success);
+}
+.filter-close,
+.filter-line-cancel {
+  background-color: var(--color-danger);
 }
 
-.humidity {
-  background-color: #8aff9d;
-}
-
-.temp {
-  background-color: #ff7575;
-}
-.calendar {
-  background-color: white;
-}
-.forest {
-  background-color: #7d9b4e;
-}
-.substrat {
-  background-color: #8d6e63;
-}
-.relief {
-  background-color: #b08968;
-}
-.altitude {
-  background-color: #9575cd;
-}
-.terrain3d {
-  background-color: #6e8ca0;
-}
-.stationinfo {
-  background-color: #ffb703;
-}
-.directions {
-  background-color: #00bfa5;
-}
-.sel-button.on {
-  outline: 3px solid #ffffff;
-}
-
+/* ── App chrome ────────────────────────────────────────────────────────── */
 .top-buttons {
   position: absolute;
   top: 10px;
@@ -248,15 +273,50 @@
   align-items: flex-end;
   gap: 10px;
 }
-.filter-button {
-  background-color: #ffb703;
+
+.bottom-buttons {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
+
+.stationinfo-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stationinfo-range {
+  color: var(--color-text-on-dark);
+  background-color: var(--color-overlay-soft);
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+/* Chart highlight */
+.bars.horizontal .bar.rain.hl,
+.bars.horizontal .bar.humidity.hl,
+.bars.horizontal .bar.temp.hl {
+  outline: 1px solid var(--color-border-strong);
+}
+.bars.horizontal .bar.rain:not(.hl),
+.bars.horizontal .bar.humidity:not(.hl),
+.bars.horizontal .bar.temp:not(.hl) {
+  opacity: 0.25;
+}
+
+/* ── Filter panel — card base unified ─────────────────────────────────── */
 .filter-panel {
-  background-color: rgba(0, 0, 0, 0.8);
+  color: var(--color-text-on-dark);
   border-radius: 5px;
-  color: white;
   padding: 10px;
   min-width: 200px;
+  max-width: min(92vw, 440px);
 }
 .filter-header {
   display: flex;
@@ -272,17 +332,6 @@
   display: flex;
   gap: 10px;
 }
-.filter-panel .sel-button {
-  width: max(3vw, 3vh);
-  height: max(3vw, 3vh);
-  font-size: max(2.5vw, 2.5vh);
-}
-.filter-apply {
-  background-color: limegreen;
-}
-.filter-close {
-  background-color: #ff7575;
-}
 .filter-body {
   display: flex;
   flex-direction: column;
@@ -294,12 +343,15 @@
   flex-wrap: wrap;
   gap: 10px;
 }
-.mountain {
-  background-color: #9575cd;
-}
-.filter-line {
-  background-color: rgba(255, 255, 255, 0.08);
+
+/* Shared card surface for lines + instance rows (previously duplicated) */
+.filter-line,
+.filter-instance {
+  background-color: var(--color-surface-card);
   border-radius: 5px;
+}
+
+.filter-line {
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -311,86 +363,32 @@
   align-items: center;
   gap: 10px;
 }
-.filter-line-label {
-  font-weight: bold;
-}
+.filter-line-label { font-weight: bold; }
 .filter-line-actions {
   display: flex;
   gap: 6px;
 }
-.filter-line .sel-button {
-  width: max(2.5vw, 2.5vh);
-  height: max(2.5vw, 2.5vh);
-  font-size: max(2vw, 2vh);
-}
-.filter-line-ok {
-  background-color: limegreen;
-}
-.filter-line-cancel {
-  background-color: #ff7575;
-}
 .filter-line.applied {
-  outline: 1px solid limegreen;
+  outline: 1px solid var(--color-success);
 }
 .filter-legend {
   max-height: 30vh;
   overflow-y: auto;
 }
-.filter-legend .mcsc-legend-row {
-  font-size: 0.75rem;
-}
+.filter-legend .mcsc-legend-row { font-size: 0.75rem; }
 .filter-swatches {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
 }
-.legend-layer {
-  background-color: #607d8b;
-}
-.bottom-buttons {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-/* Station-info button + the span saying which day range its values cover
-   (default last DEFAULTDAYRANGE days, or the active filter's range). */
-.stationinfo-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.stationinfo-range {
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.65);
-  font-size: 0.7rem;
-  padding: 4px 8px;
-  border-radius: 10px;
-  white-space: nowrap;
-}
-/* StationPanel chart highlight: bars inside the variable's current day range
-   keep full colour (with a light outline), bars outside are dimmed — the
-   chart itself stays fixed on the 60-day window. */
-.bars.horizontal .bar.rain.hl,
-.bars.horizontal .bar.humidity.hl,
-.bars.horizontal .bar.temp.hl {
-  outline: 1px solid rgba(255, 255, 255, 0.9);
-}
-.bars.horizontal .bar.rain:not(.hl),
-.bars.horizontal .bar.humidity:not(.hl),
-.bars.horizontal .bar.temp:not(.hl) {
-  opacity: 0.25;
-}
+
+/* ── Legend ─────────────────────────────────────────────────────────────── */
 .mcsc-legend {
   position: absolute;
-  bottom: calc(72px + 5 * max(5vw, 5vh)); /* 5 stacked buttons + gaps */
+  bottom: calc(72px + 5 * max(5vw, 5vh));
   left: 10px;
   z-index: 10;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
+  color: var(--color-text-on-dark);
   font-size: 0.62rem;
   padding: 6px 8px;
   border-radius: 6px;
@@ -410,86 +408,63 @@
   background: none;
   border: none;
   border-radius: 4px;
-  color: white;
+  color: var(--color-text-on-dark);
   font-family: inherit;
   font-size: inherit;
   text-align: left;
   cursor: pointer;
 }
 .mcsc-legend-row:hover {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: var(--color-surface-card-hover);
 }
-/* Info-only rows (map legend): not clickable, so no pointer/hover feedback.
-   The interactive rows (filter panel's Bosc editor) keep the affordances. */
-.mcsc-legend-row.info {
-  cursor: default;
-}
-.mcsc-legend-row.info:hover {
-  background-color: transparent;
-}
-.mcsc-legend-row.off .mcsc-legend-label {
-  opacity: 0.55;
-}
+.mcsc-legend-row.info { cursor: default; }
+.mcsc-legend-row.info:hover { background-color: transparent; }
+.mcsc-legend-row.off .mcsc-legend-label { opacity: 0.55; }
 .mcsc-legend-swatch {
   width: 11px;
   height: 11px;
   border-radius: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--color-border-swatch);
   flex-shrink: 0;
+  background-color: var(--swatch-color, var(--color-mcsc-grey));
 }
-.mcsc-legend-label {
-  line-height: 1.2;
+.mcsc-legend-row.off .mcsc-legend-swatch {
+  background-color: var(--color-mcsc-grey) !important;
 }
+.mcsc-legend-label { line-height: 1.2; }
 .mcsc-legend-footer {
   margin-top: 4px;
   font-size: 0.58rem;
   opacity: 0.7;
 }
+
 #st-days {
   margin-top: 1vh;
   height: 2vh;
   background-color: transparent;
 }
 .day {
-  background-color: black;
-  color: white;
+  background-color: var(--color-text-inverse);
+  color: var(--color-text-on-dark);
   font-size: 0.7rem;
 }
 
-
-/* ═══════════════════════════════════════════════════════════════════════
-   FilterPanel v2 sketch — per-filter time ranges (FILTER_REFACTOR_PLAN.md §6)
-   New zones: header (title + reference-day anchor + single ✕), single
-   filters (unchanged .filter-line), and the "Mètriques" instance area:
-   add-buttons row + stacked instance rows (applied / inert / editing).
-   ═══════════════════════════════════════════════════════════════════════ */
-
-/* v2 editors carry two full-width sliders, so the panel must stop growing
-   with the lib's default max(20vw, 20vh) slider width */
-.filter-panel {
-  max-width: min(92vw, 440px);
-}
-
-/* Reference-day anchor in the header ("fins a les dades del 02 set") */
+/* ── FilterPanel v2 — per-filter time ranges ───────────────────────────── */
 .filter-anchor {
   margin-left: auto;
   font-size: 0.68rem;
   opacity: 0.65;
   white-space: nowrap;
 }
-
-/* Section divider for the instance area */
 .filter-section-label {
   margin-top: 4px;
   padding-bottom: 4px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid var(--color-border-faint);
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   opacity: 0.65;
 }
-
-/* ── Add-instance buttons ────────────────────────────────────────────── */
 .filter-add-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -499,47 +474,40 @@
   padding: 6px 10px;
   border: none;
   border-radius: 4px;
-  background-color: var(--type-color, #666);
-  color: black;
+  background-color: var(--type-color, var(--color-disabled-fallback));
+  color: var(--color-text-inverse);
   font-family: inherit;
   font-size: 0.8rem;
   cursor: pointer;
 }
 .filter-add-btn:hover:not(:disabled) {
-  outline: 2px solid #ffffff;
+  outline: 2px solid var(--color-border-focus);
 }
-/* Each add button wears its variable's colour (order matters: the disabled
-   rule below must win at equal specificity) */
-.filter-add-btn.rain     { --type-color: #4aa3ff; }
-.filter-add-btn.humidity { --type-color: #8aff9d; }
-.filter-add-btn.temp     { --type-color: #ff7575; }
-/* Cap reached (5 per type): greyed out, no pointer */
+.filter-add-btn.rain     { --type-color: var(--color-data-rain); }
+.filter-add-btn.humidity { --type-color: var(--color-data-humidity); }
+.filter-add-btn.temp     { --type-color: var(--color-data-temp); }
 .filter-add-btn:disabled,
 .filter-add-btn.at-cap {
-  --type-color: #555;
-  color: rgba(255, 255, 255, 0.55);
+  --type-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
   cursor: not-allowed;
   opacity: 0.5;
 }
 
-/* ── Instance rows (applied / inert / editing) ──────────────────────── */
 .filter-instance {
   display: flex;
   flex-direction: column;
   gap: 6px;
   padding: 8px 10px;
-  border-radius: 5px;
-  background-color: rgba(255, 255, 255, 0.08);
-  border-left: 3px solid var(--type-color, rgba(255, 255, 255, 0.3));
+  border-left: 3px solid var(--type-color, var(--color-border-faint));
   outline: 1px solid transparent;
   transition: background-color 0.15s ease, outline-color 0.15s ease;
 }
-.filter-instance.rain     { --type-color: #4aa3ff; }
-.filter-instance.humidity { --type-color: #8aff9d; }
-.filter-instance.temp     { --type-color: #ff7575; }
-/* The whole row is the edit affordance */
+.filter-instance.rain     { --type-color: var(--color-data-rain); }
+.filter-instance.humidity { --type-color: var(--color-data-humidity); }
+.filter-instance.temp     { --type-color: var(--color-data-temp); }
 .filter-instance:not(.editing):hover {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: var(--color-surface-card-hover);
   cursor: pointer;
 }
 .filter-instance-header {
@@ -556,44 +524,32 @@
   display: flex;
   gap: 6px;
 }
-.filter-instance .sel-button {
-  width: max(2.5vw, 2.5vh);
-  height: max(2.5vw, 2.5vh);
-  font-size: max(2vw, 2vh);
-}
 .filter-instance-meta {
   font-size: 0.75rem;
   opacity: 0.75;
 }
-.filter-instance-value {
-  font-size: 0.8rem;
-}
-
-/* Inert instance: value at full span — dashed outline, muted, "inactiu" */
+.filter-instance-value { font-size: 0.8rem; }
 .filter-instance.inert {
-  outline: 1px dashed rgba(255, 255, 255, 0.25);
+  outline: 1px dashed var(--color-border-light);
   opacity: 0.7;
 }
 .filter-instance.inert .filter-instance-value {
-  color: #aaa;
+  color: var(--color-text-dim);
   font-style: italic;
 }
-
-/* Editing: expanded in place, brighter than the collapsed rows around it */
 .filter-instance.editing {
-  background-color: rgba(255, 255, 255, 0.14);
-  outline: 1px solid #ffffff;
+  background-color: var(--color-surface-card-active);
+  outline: 1px solid var(--color-border-focus);
   cursor: default;
 }
 
-/* ── Two-slider editor (inside .filter-instance.editing) ────────────── */
 .filter-editor {
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin-top: 4px;
   padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 1px solid var(--color-border-faint);
   animation: filter-editor-in 0.15s ease-out;
 }
 @keyframes filter-editor-in {
@@ -611,35 +567,21 @@
   gap: 8px;
   font-size: 0.78rem;
 }
-.filter-editor-label .range-value {
-  font-size: 0.75rem;
-}
-/* Full-width sliders inside the editor (override the lib's max(20vw, 20vh)) */
-.filter-editor .range-slider {
-  width: 100%;
-}
+.filter-editor-label .range-value { font-size: 0.75rem; }
+.filter-editor .range-slider { width: 100%; }
 .filter-editor-hint {
   font-size: 0.68rem;
   font-style: italic;
   opacity: 0.6;
 }
 
-
-
-
-
-/* While a filter repaint is in flight (App gates further input while
-   repaintBusy) the filter-panel triggers are dimmed and unclickable, so a
-   burst of apply / add / remove taps cannot queue dozens of full-tile
-   repaints on top of each other. */
+/* ── Busy state ─────────────────────────────────────────────────────────── */
 .filter-panel.busy .sel-button,
 .filter-panel.busy .filter-add-btn,
 .filter-panel.busy .filter-instance {
   pointer-events: none;
   opacity: 0.45;
 }
-
-/* The render-mode button gets the same treatment while a repaint runs. */
 .sel-button.busy {
   pointer-events: none;
   opacity: 0.5;
