@@ -14,7 +14,7 @@
 | Filters dimmed **stations** (grey + small + hidden value). Map was a helper. | Filters paint **pixels** (areas). Stack = AND. A pixel is coloured iff **every** active condition passes, else transparent → relief shows through. |
 | `terrainMode` was a "paint mode" but still coupled to station filtering. | `terrainMode` (forest-sel button: 🌳 terrain / 🟫 substrate / 🚫 none) chooses **how** passing pixels are coloured, not *whether* they pass. |
 | Stations showed values only when "in range". | Stations are **never filtered**. They always render at full style. The bottom-left cycle button only toggles **which value the circle label shows** (for now: rain summed over last 15 days; later the window becomes configurable). This lets the user read raw values *outside* the coloured areas. |
-| `none` (relief) painted nothing. | When `mode === 'none'` the map still evaluates the full stack, but instead of filling passing areas with a palette colour it paints the **failing areas with a semitransparent veil** (`rgba(220,20,60,0.35)` over `!pass`) while passing pixels stay fully transparent → relief shows through, veil tints what *didn't* pass. Same AND, inverted output, **one pass** (cheaper than a border — see §6.2). |
+| `none` (relief) painted nothing. | `none` keeps painting nothing: the tile is **fully transparent, with zero fetches** — relief + basemap only. An interim veil over the failing pixels (`rgba(220,20,60,0.35)`) was implemented and then **removed** (2026-09-11): it read as red patches unrelated to any filter, because with no filter active the only pixels that fail are the MCSC bands with no legend entry (230–234). See §6.2. |
 
 Example from the brief: `terrainMode = substrate`, filters = { `Bosc` class X selected, `Calcaric terrain` family selected, `rain 100+ mm day 4–8`, `temp 20–26 °C day 12–21` } → tiles are sampled in substrate colours, but only where BOTH the meteo IDW values AND alt band AND class/family gates pass. One failing condition → that pixel is relief.
 
@@ -103,7 +103,7 @@ filteredStationsCodes: string[]        // derived (see §2.3)
 2. Ensure `stations` source + `stations-circle` / `stations-label` / `stations-value` layers (value layer `text-field = valueField(labelMode)`).
 3. `registerTerrainProtocol(map, () => terrainStateRef.current)` + `registerSeaProtocol()` — no tiles yet.
 4. Click/hover handlers (station panel + directions `window.open(google maps)`), resize listener (`setMinZoom(fittedMinZoom(w,h))` debounced 200ms).
-5. Lazy `addAreaOverlays` on first `idle` or 3 s timeout → adds `terrain` raster (`terrain://`, bounds `TERRAIN_OVERLAY_BOUNDS [-1.25,39.75,4.25,44.25]`, z7–14, opacity 0.85, below stations), `elevation-dem` raster-dem (terrarium, z15, shared), `hillshade` (exaggeration 0.4, below stations, not clipped), `sea` raster (`sea://`, z7–15, between hillshade and terrain), then `setMapReady(true)`.
+5. Lazy `addAreaOverlays` on first `idle` or 3 s timeout → adds `terrain` raster (`terrain://`, bounds `TERRAIN_OVERLAY_BOUNDS [-1.25,39.75,4.25,44.25]`, z7–14, opacity 0.85, below stations), `hillshade-dem` raster-dem (terrarium, z15) plus a second `terrain-dem` raster-dem over the same tiles for `setTerrain` only (kept split so the 3D toggle can't drag the hillshade onto the terrain tile grid), `hillshade` (exaggeration 0.4, below stations, not clipped), `sea` raster (`sea://`, z7–15, between hillshade and terrain), then `setMapReady(true)`.
 
 Effects after `mapReady`: terrain repaint (throttled 150 ms, `&r` token), sea repaint, 3D toggle, `pushTerrainContext({agg, features, lithoGrid})` to worker, station source sync (`setData` + `setPaintProperty` for dimming / bolet ramp).
 
@@ -207,8 +207,8 @@ All changes are **instant** (state-driven). No "Aplicar" — the old ✓ was jus
 ### 5.2 Remaining hot spots / risks
 
 1. **Per-pixel meteo sampling is the tile cost.** For each passing land pixel, `sampleMeteoGrid` (bilinear) runs `N = #active instances` times. With 3 temps + alt + 2 litho families the loop is ~5 samples × 65k pixels ≈ 325k bilinear ops per tile. Add `lithoFamilyAt` (array index) — cheap. IDW grid *build* is the real wall: ~200k cells × 190 stations = **~38 M distance calcs per grid**, ~0.1–0.3 s on desktop, >1 s on old Android. This happens once per (window,variable) and is cached, but adding a 4th instance with a new window still pays it. **Cap 5 per type already bounds worst case (15 grids = ~570 M ops if all distinct windows) — keep the cap, and consider building grids off the main thread (inside `tileWorker`) if jank appears.**
-2. **`none` veil (failing → `rgba(220,20,60,0.35)`) costs the same as `terrain`.** Unlike a red border (edge-detection: 2 passes + `Uint8Array pass[65536]` + 4–8 neighbour reads ≈ 1.5–1.6× pixel cost and ~260k extra reads/tile), veiling the failing set is per-pixel independent: `pass ? transparent : veil`. One pass, no extra alloc, no neighbour checks — identical to `terrain`/`substrate` with inverted output, `1.0×` pixel cost. (Border rejected for this reason — see §6.2.)
-3. **Canvas churn.** `buildTerrainTile` allocates a fresh 256² `ImageData` + `Float64Array` lngs/lats + `values` per tile. At 6 tiles in flight that's ~ (65k×4 ≈ 256 KB) ×6 ≈ 1.5 MB plus grid memory — fine. Veil adds no `ImageData` or `Uint8Array pass` (border would have added 64 KB/tile). Avoid per-pixel `new Set` / string allocs.
+2. **`none` is the cheapest mode, not a same-cost recolour.** It returns the shared transparent tile *before* `needElev`, the MCSC fetch, the IDW grids and the 65k-pixel loop — zero fetch, zero per-pixel work per tile. (The interim veil made it cost the same as `terrain`; a red border would have cost ~1.5–1.6× + a 64 KB `pass` buffer — both rejected, see §6.2.)
+3. **Canvas churn.** `buildTerrainTile` allocates a fresh 256² `ImageData` + `Float64Array` lngs/lats + `values` per tile. At 6 tiles in flight that's ~ (65k×4 ≈ 256 KB) ×6 ≈ 1.5 MB plus grid memory — fine. `none` allocates no canvas at all (it returns the cached transparent PNG). Avoid per-pixel `new Set` / string allocs.
 4. **Tile cache key size.** `terrain|z/x/y|JSON(state)` embeds the full filter JSON (dates + bands) per tile. With 3 instances the JSON is ~300 chars, ×300 cached tiles ≈ 90 KB of keys — negligible. The `&r` serial is not part of the worker key (it lives only in the MapLibre URL cache bust), so worker cache hits survive mode cycles — correct.
 5. **React memo churn.** `terrainState` rebuilds on every filter change (expected). `geoWithData` recomputes on every `displayWindow` change (60-day chart). Both are `useMemo`-guarded; `stationsFeatures` is stabilised via `geoWithData?.features ?? []` fallback — correct. Avoid adding `filteredStationsCodes` back into `terrainState` deps if stations become unfiltered.
 6. **Shard growth.** 60 × ~35 KB = 2.1 MB today, `loadSummaries` fetches all via `Promise.all` (60 parallel fetches). At 365 days that's ~13 MB / 365 parallel requests — will need a bundled `all_days.json` or chunked fetch. Not blocking now, but track.
@@ -240,13 +240,17 @@ All changes are **instant** (state-driven). No "Aplicar" — the old ✓ was jus
 
 **Why it matters:** users need to read a station's numbers *outside* the coloured area to reason ("this station got 20 mm but the surrounding pixel is uncoloured because the calcaric gate failed"). Dimming hides that.
 
-### 6.2 Render mode `none` → semitransparent veil on failing pixels (chosen over border)
+### 6.2 Render mode `none` → green filter highlight (veil removed, then replaced 2026-09-11)
 
-**Today:** `buildTerrainTile` early-returns a fully transparent PNG for `mode==='none'` (zero fetches).
+**Update (2026-09-11, later the same day):** the relief-only `none` mode was changed again — it now **tints the PASSING land bright green** (`TERRAIN_HIGHLIGHT = [0,255,0,165]`) instead of painting nothing, so the user can still see where the active filters apply without a class/family palette. The tint only renders while at least one filter condition is active (`hasActiveTerrainFilter`); with no filter it stays the cheap relief-only transparent tile. While a filter is active it runs the full pipeline (MCSC + DEM + meteo sampling), water is left transparent, and failing land stays transparent. This is the inverse of the crimson veil below: the veil marked what was EXCLUDED, the highlight marks what is INCLUDED. See `TILE_RENDERING.md` §4.1. The paragraphs below are kept for the decision history.
 
-**Desired (updated per review):** `none` still evaluates the full stack (off/alt/filters/geoOff) per pixel, but the output is **inverted** vs `terrain`/`substrate`: passing → fully transparent, **failing → semitransparent veil** (e.g. `VEIL = [220,20,60,90]` ≈ `rgba(220,20,60,0.35)`, tunably `rgba(0,0,0,0.35)` — relief shows through at `alpha 80–110/255`). The user sees the *mass* of what didn't pass tinted, relief underneath still visible. Same AND as the other modes, **one pass** (strictly cheaper than a border).
+**Previous behaviour:** `buildTerrainTile` early-returned a fully transparent PNG for `mode==='none'` — zero fetches, zero per-pixel work, no canvas. Relief + basemap only.
 
-Implementation sketch (kept out of code until approved):
+**Decision history.** An interim review chose the opposite — a semitransparent veil over the failing pixels (`VEIL=[220,20,60,90]`) — and Phase B implemented it. It is now **reverted**: nothing is tinted in `none` mode.
+
+**Why it was removed:** the veil read as red patches on a map that is otherwise relief + dark basemap. With no filter active the only pixels that fail are the MCSC bands with **no legend entry** (values 16–20 → codes 230–234: sòl nu forestal, zones cremades, roquissars, platges, zones humides), which `mcscLegend.js` already treats as no-terrain-info — so the mode showed stray crimson blobs that had nothing to do with any filter. `none` is the neutral, relief-only view; it is not a "what did the filters exclude" view.
+
+**Superseded implementation (kept for the record — none of this is in the code):**
 
 ```
 const VEIL = [220, 20, 60, 90]; // crimson ~35% — legible over relief + dark basemap; alpha 70–110 tunable
@@ -301,7 +305,7 @@ Interpretation: the stack is always the same set of conditions, but the **palett
    ```
    Compute the label value via `aggregateWindow(agg, codi, 'rain', 15, 0)` per station (or `computeGeoValues` over `[refDay-14, refDay]`), not the displayWindow. Keep `valueField` + hide on `none` only. Add a follow-up ticket: make the station window configurable in `FilterPanel` (small "Station info" row).
 
-### Phase B — Semitransparent veil for `none` (1–2 days, low risk, perf-neutral)
+### Phase B — Semitransparent veil for `none` (IMPLEMENTED, THEN REVERTED — see §6.2)
 
 4. **Extend `tilePaint.buildTerrainTile` for `mode==='none'`:** stop early-returning transparent; instead run the single-pass veil of §6.2 (`passing ? transparent : VEIL`). Extract the AND into a shared `passesAllGates(colour,isWater,elev,altBand,values,…,familyKey,offGeo)` helper so `terrain`/`substrate` (write `c` if passes) and `none` (write `VEIL` if !passes) share the same gate logic — no divergence.
 5. **Veil appearance:** one signal colour `VEIL=[220,20,60,90]` (crimson ~35% — legible over both hillshade and dark basemap; alpha 70–110 tunable). Passing → transparent (relief), failing (dimmed/230–234/nodata-gated/alt/meteo) → veil, MCSC `band==0` stays transparent, water never veiled. No palette-coloured veil, no halo needed.
@@ -330,19 +334,19 @@ Interpretation: the stack is always the same set of conditions, but the **palett
 
 ## 8. Decisions needed before coding
 
-1. **Veil colour/alpha:** semitransparent signal on failing pixels. Proposal `VEIL=[220,20,60,90]` (≈35% crimson, visible over dark basemap + hillshade) vs dark veil `rgba(0,0,0,0.35)` — crimson wins for "filtered out" affordance. Alpha 90/255 is the default; tune 70–110 after manual check. Always same AND as the other modes, inverted output.
+1. **Veil colour/alpha:** semitransparent signal on failing pixels. Proposal `VEIL=[220,20,60,90]` (≈35% crimson, visible over dark basemap + hillshade) vs dark veil `rgba(0,0,0,0.35)` — crimson wins for "filtered out" affordance. Alpha 90/255 is the default; tune 70–110 after manual check. Always same AND as the other modes, inverted output. **Resolved 2026-09-11:** neither — the veil was removed outright and `none` paints nothing (§6.2).
 2. **Family/class gate scope:** does a dimmed Bosc class exclude a pixel even when painting in substrate colours, and vice-versa? Brief implies yes (one stack gates every pixel). Current code gates only substrate in substrate mode. Pick one and lock it.
 3. **Station value window:** fix to rain last 15 days (spec: "for now rain value of last 15 days") — confirm that the label should show `Σ precAcc` over `[refDay-14, refDay]` rounded to 1 dec, and that the bottom button cycles `none → rain15 → none` for v1 (not the old 5-way cycle). Later: configurable window per variable.
 4. **Stations visibility:** confirm "no filtering" means *never dimmed, never hidden* — even when bolet filter is on? Or does bolet stay as an exception (its own dimming/ramp)? Proposal: bolet stays as a separate station-only signal (ramp), not a terrain gate, and its dimming becomes opt-in.
-5. **Water veil:** should inland water (`isWater`) ever be veiled in `none` mode? Proposal: no — water stays as today (navy via sea + MCSC water class, never gated, never veiled — same as from gating). Veiling water would tint the navy.
+5. **Water veil:** should inland water (`isWater`) ever be veiled in `none` mode? Proposal: no — water stays as today (navy via sea + MCSC water class, never gated, never veiled — same as from gating). Veiling water would tint the navy. **Moot:** there is no veil anymore (§6.2).
 
 ---
 
 ## 9. Risks & invariants
 
 - **Detached ArrayBuffer** regression: any new code that caches a tile `ArrayBuffer` and transfers it must `slice(0)` — keep the fix in `tilePaint.getTransparentPngBuffer` + `tileWorker.run`.
-- **MapLibre raster cache:** the `&r=` token in `terrainTileUrl` must survive — veil mode tiles also need it, otherwise toggling `none`→`terrain` can serve a stale transparent cache.
-- **Abort handling:** veil tiles are just as abortable as filled tiles — respect `signal.aborted` in `paintTerrainTile` worker path.
+- **MapLibre raster cache:** the `&r=` token in `terrainTileUrl` must survive — `none` tiles are transparent and cached like any other, so toggling `none`→`terrain` must never serve a stale transparent tile (`mode` is part of the state signature that bakes into the URL).
+- **Abort handling:** `none` / transparent tiles are just as abortable as filled ones — respect `signal.aborted` in the `paintTerrainTile` worker path.
 - **Bounds clip:** don't clip `sea`/`hillshade`; `terrain` stays clipped to `TERRAIN_OVERLAY_BOUNDS`.
 - **Don't push `maplibre-gl` into the worker bundle** — keep `tilePaint.js` maplibre-free.
 
@@ -352,7 +356,7 @@ Interpretation: the stack is always the same set of conditions, but the **palett
 
 | File | Change (planned) | Risk |
 |---|---|---|
-| `src/logic/tilePaint.js` | add `passesAllGates` helper, rewrite `buildTerrainTile` `none` early-return → single-pass veil (`!pass ? VEIL : transparent`); still `needElev` even in `none`; reuse `values` buffer, no extra `pass` alloc | Low — same path as `terrain`, inverted |
+| `src/logic/tilePaint.js` | `passesAllGates` helper added (shared gates); the `none` veil was implemented and **reverted** — `buildTerrainTile` again early-returns transparent for `mode==='none'` (zero fetches), `TERRAIN_VEIL` / `veilForFailingPixel` deleted | Low — `none` skips the pipeline entirely |
 | `src/logic/terrainOverlay.js` | no change except docs; `mode==='none'` stays valid in signature | Low |
 | `src/App.jsx` | remove station dimming effect, redefine `labelMode` / `valueField` wiring, make `terrainState` doc explicit about palettes; keep `repaintBusy` gate | Low–Medium |
 | `src/comps/FilterPanel.jsx` | no change for border feature; later: station-info window control | Low |
@@ -364,9 +368,9 @@ Interpretation: the stack is always the same set of conditions, but the **palett
 
 ## 11. How to verify (manual + automated)
 
-- **Unit:** `terrainOverlay.tile.test.js` stubs `loadMcscBandTile`/`loadTileImageData`/`FakeCanvas`, feeds a 4×4 band image with a 2×2 passing block, asserts in `terrain` mode the block is filled with class colours, in `none` mode the block is transparent and surrounding failing pixels are `VEIL` (70–110 alpha crimson), and water/abroad stay transparent (never veiled).
+- **Unit:** `terrainOverlay.tile.test.js` stubs `loadMcscBandTile`/`loadTileImageData`/`FakeCanvas` and feeds a 256×256 band image (water block / nodata block / forest elsewhere): in `terrain`/`substrate` mode only land passing every gate is painted, water keeps its class colour and failing land stays transparent; in `none` mode the tile is transparent with **no MCSC / DEM fetch and no pixel loop at all**.
 - **Integration:** `npm test` (all 14 files), `npm run build`, `npm run lint`.
-- **Manual:** dev server, add `rain 100 mm day 4–8` + `temp 20–26 day 12–21` + `geoOff=calcaric` + `mcscOff=one class`, cycle `terrain→substrate→none` 10×, check: terrain/substrate show filled areas only where all pass; `none` tints the failing mass with a semitransparent crimson veil (passing stays relief, abroad/water not veiled); pan/zoom burst doesn't wedge; stations stay full opacity and their label toggles rain15 values even under the veil.
+- **Manual:** dev server, add `rain 100 mm day 4–8` + `temp 20–26 day 12–21` + `geoOff=calcaric` + `mcscOff=one class`, cycle `terrain→substrate→none` 10×, check: terrain/substrate show filled areas only where all pass; `none` shows relief + basemap with **no tint anywhere** (no red patches, in particular none over the 230–234 no-data bands, even with no filter active); pan/zoom burst doesn't wedge; stations stay full opacity and their labels keep their rain15 values.
 
 ---
 

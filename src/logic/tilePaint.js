@@ -14,11 +14,13 @@
  * callers and tests are unchanged.
  *
  * Rendering modes (terrainOverlay.js): 'terrain' paints MCSC class colours,
- * 'substrate' paints geology-family colours, 'none' tints FAILING land pixels
- * with a semitransparent veil (same AND as the other modes, inverted output —
- * see buildTerrainTile, Phase B) so passing areas stay relief while the
- * filtered-out mass is legible at low zoom. MCSC nodata (band 0) and water
- * are never veiled.
+ * 'substrate' paints geology-family colours, 'none' paints the palette-less
+ * bright-green HIGHLIGHT (TERRAIN_HIGHLIGHT) on the land pixels that pass
+ * every active filter — a "what do my filters cover" view over the relief,
+ * so the user can still SEE the filter without a palette. It only paints
+ * while at least one filter condition is active (hasActiveTerrainFilter);
+ * with no filter it is the same cheap relief-only transparent tile as before.
+ * Failing pixels are transparent in every mode (the relief shows through).
  */
 
 import { loadTileImageData, terrariumElevation, tileXYToLngLat } from './elevation.js';
@@ -29,13 +31,22 @@ import { lithoFamilyAt } from './lithology.js';
 
 const TILE_SIZE = 256;
 
-// Failing pixels are fully transparent in terrain/substrate — the relief
-// shows through, exactly like abroad / areas without terrain info. In 'none'
-// mode failing land is the semitransparent veil TERRAIN_VEIL (Phase B).
+// Failing pixels are fully transparent in EVERY mode — the relief shows
+// through, exactly like abroad / areas without terrain info. There is no
+// "deselected" or "filtered out" tint anywhere on the map.
 export const TERRAIN_TRANSPARENT = [0, 0, 0, 0];
-// Crimson veil ~35% — legible over both hillshade and the dark basemap;
-// alpha 70–110 is tunable. Shared by veilForFailingPixel and the tile test.
-export const TERRAIN_VEIL = [220, 20, 60, 90];
+
+// Mode 'none' palette: instead of painting a class/substrate colour, every
+// LAND pixel that passes the full filter stack (selected class + altitude
+// band + all meteo instances + undimmed substrate family) is tinted this
+// bright green, so the filter's coverage stays visible over the relief. The
+// alpha (~65%) lets the hillshade read through; the raster layer's own
+// opacity (0.85) dims it a little further. Water is deliberately NOT
+// highlighted — the land filters don't describe it, so the sea layer keeps
+// its navy. Only painted while at least one filter is active
+// (hasActiveTerrainFilter): with no filter it would tint the whole region.
+// Tunable; the exact green/alpha is cosmetic.
+export const TERRAIN_HIGHLIGHT = [0, 255, 0, 165];
 
 export const SEA_TRANSPARENT = [0, 0, 0, 0];
 
@@ -47,6 +58,25 @@ export const TERRAIN_STATE_EMPTY = { mode: 'terrain', off: [], alt: null, filter
 export const lithoFamilyColour = (grid, id) => {
   const e = grid?.entries?.find(x => x.id === id);
   return e && e.color ? parseHexColor(e.color.slice(1)) : null;
+};
+
+/**
+ * True when the state carries at least one ACTIVE filter condition — a
+ * dimmed MCSC class (`off`), a dimmed substrate family (`geoOff`), an
+ * altitude band (`alt`) or an active meteo instance (`filters`). Mode 'none'
+ * is the green filter highlight, which only makes sense once something is
+ * filtered: with no condition active it must stay relief-only. `alt` is only
+ * ever set when narrowed and `filters` only holds active instances (see
+ * terrainStateSignature / terrainState in App.jsx). Pure, unit-testable.
+ */
+export const hasActiveTerrainFilter = state => {
+  const s = state ?? TERRAIN_STATE_EMPTY;
+  return !!(
+    (s.off && s.off.length) ||
+    (s.geoOff && s.geoOff.length) ||
+    s.alt ||
+    (s.filters && s.filters.length)
+  );
 };
 
 // Parse a 6-digit hex colour ("000080") into [r, g, b, 255]; null if invalid.
@@ -102,18 +132,6 @@ export const classifyTerrainPixel = (colour, isWater, elev, altBand, values, los
   if (!colour) return TERRAIN_TRANSPARENT;
   if (isWater) return colour;
   return passesAllGates(elev, altBand, values, los, his, familyKey, offKeys) ? colour : TERRAIN_TRANSPARENT;
-};
-
-/**
- * Veil inversion for `mode==='none'` (Phase B): same gates as classify*,
- * inverted output, one pass — passing → transparent (relief), failing land
- * → VEIL. Nodata (band 0) and water never veiled; a dimmed class / 230–234
- * without a family colour also veils (it is failing land). Pure, tested.
- */
-export const veilForFailingPixel = (colour, isWater, elev, altBand, values, los, his, familyKey = null, offKeys = null) => {
-  if (isWater) return TERRAIN_TRANSPARENT; // water is navy via sea/MCSC — never veil the navy
-  if (!colour) return TERRAIN_VEIL; // no MCSC/substrate colour = failing land (dimmed / 230–234 / nodata family)
-  return passesAllGates(elev, altBand, values, los, his, familyKey, offKeys) ? TERRAIN_TRANSPARENT : TERRAIN_VEIL;
 };
 
 // Pure classification (unit-testable): sea (elev <= 0) → the sea colour,
@@ -231,18 +249,30 @@ export async function buildSeaTile(z, x, y, colorHex) {
  * (relief); the sel button only picks which palette supplies the colour.
  * `state` = `{ mode, off, alt, filters, geoOff }` (see
  * terrainStateSignature in terrainOverlay.js) with only ACTIVE meteo
- * instances; `getContext()` returns `{ agg, features, lithoGrid }`. Mode
- * 'none' (Phase B) evaluates the SAME stack but inverts output: passing →
- * transparent, failing land → semitransparent TERRAIN_VEIL (still one pass,
- * same cost as terrain, no neighbour scan). Band 0 (MCSC nodata/abroad)
- * stays transparent, water never veiled. Exported so the browser-only
+ * instances; `getContext()` returns `{ agg, features, lithoGrid }`.
+ *
+ * Mode 'none' runs the SAME pipeline but paints the palette-less
+ * TERRAIN_HIGHLIGHT on the passing land pixels instead of a class/family
+ * colour, so the filter's coverage is visible over the relief — water stays
+ * transparent (see TERRAIN_HIGHLIGHT). Knowing which pixels pass needs the
+ * same MCSC / DEM / meteo sampling as the painted modes. With NO filter
+ * active the highlight would just tint the whole region, so the mode falls
+ * back to the old zero-fetch transparent tile. Exported so the browser-only
  * pipeline can be exercised under test.
  */
 export async function buildTerrainTile(z, x, y, state, getContext) {
+  const st = state ?? TERRAIN_STATE_EMPTY;
+  // 'none' with no active filter → relief only: nothing to highlight, and
+  // the whole region would turn green if we did. Keep it the cheap
+  // transparent tile (no MCSC, no DEM, no grids, no pixel loop).
+  if (st.mode === 'none' && !hasActiveTerrainFilter(st)) return transparentTilePng();
+  // 'none' with a filter: no palette, so replace the class/substrate colour
+  // with the bright-green highlight. The gate stack below is otherwise
+  // identical.
+  const highlight = st.mode === 'none';
+
   const canvas = makeCanvas(TILE_SIZE, TILE_SIZE);
   const ctx = canvas.getContext('2d');
-  const st = state ?? TERRAIN_STATE_EMPTY;
-  const isVeil = st.mode === 'none';
   const off = new Set(st.off || []);
   const offGeo = new Set(st.geoOff || []);
 
@@ -320,7 +350,12 @@ export async function buildTerrainTile(z, x, y, state, getContext) {
       fid = lithoFamilyAt(lithoGrid, lngs[px], lats[py]);
       if (fid > 0) familyKey = lithoGrid.keyById[fid] ?? null;
     }
-    if (isWater) {
+    if (highlight) {
+      // 'none': highlight the passing LAND in green. A dimmed / unlisted
+      // class is null → transparent; water is never highlighted (the land
+      // filters don't describe it) and keeps the sea layer's navy.
+      colour = isWater ? null : (bandColours[band] ? TERRAIN_HIGHLIGHT : null);
+    } else if (isWater) {
       colour = bandColours[band];
     } else if (bandColours[band]) {
       colour = substrate ? (fid > 0 ? (substrateColours[fid] ?? null) : null) : bandColours[band];
@@ -339,9 +374,7 @@ export async function buildTerrainTile(z, x, y, state, getContext) {
         values[k] = value;
       }
     }
-    const c = isVeil
-      ? veilForFailingPixel(colour, isWater, elev, st.alt, values, los, his, familyKey, offGeo)
-      : classifyTerrainPixel(colour, isWater, elev, st.alt, values, los, his, familyKey, offGeo);
+    const c = classifyTerrainPixel(colour, isWater, elev, st.alt, values, los, his, familyKey, offGeo);
     if (c !== TERRAIN_TRANSPARENT) {
       d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = c[3];
     }

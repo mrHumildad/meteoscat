@@ -68,6 +68,7 @@ class FakeCanvas {
 }
 
 let buildTerrainTile;
+let HIGHLIGHT;
 let loadBandMock;
 let loadDemMock;
 beforeEach(() => {
@@ -75,6 +76,7 @@ beforeEach(() => {
   vi.stubGlobal('OffscreenCanvas', FakeCanvas);
   return import('./terrainOverlay.js').then(async m => {
     buildTerrainTile = m.buildTerrainTile;
+    HIGHLIGHT = m.TERRAIN_HIGHLIGHT;
     loadBandMock = (await import('./mcscRaw.js')).loadMcscBandTile;
     loadDemMock = (await import('./elevation.js')).loadTileImageData;
     loadBandMock.mockClear();
@@ -116,17 +118,83 @@ const landLeft = (80 * 256 + 80) * 4;    // forest land, west half of the tile
 const landRight = (200 * 256 + 128) * 4; // forest land, east half of the tile
 
 describe('buildTerrainTile', () => {
-  it("'none' mode paints a fully transparent tile: no gates → everything passes → relief only", async () => {
+  it("'none' mode with NO filter paints nothing: transparent tile, zero fetches (no green wash over the whole region)", async () => {
     const { tile: t, context } = await makeContext();
-    const buf = await buildTerrainTile(t.z, t.x, t.y, { mode: 'none', off: [], alt: null, filters: [] }, context);
+    const buf = await buildTerrainTile(t.z, t.x, t.y, {
+      mode: 'none',
+      off: [],
+      alt: null,
+      filters: [],
+      geoOff: [],
+    }, context);
     expect(buf).toBeInstanceOf(ArrayBuffer);
-    // One painted pass (Phase B veil), but every pixel is transparent: with
-    // nothing failing, passing land stays relief and water is never veiled.
+    expect(loadBandMock).not.toHaveBeenCalled(); // no MCSC band tile
+    expect(loadDemMock).not.toHaveBeenCalled();  // no DEM
+    expect(put).toHaveLength(0);                 // no pixel loop at all
+  });
+
+  it("'none' mode tints the land that passes every filter bright green (water + no-data stay transparent)", async () => {
+    const { tile: t, window: [from, to], context } = await makeContext();
+    // Full stack that would paint in terrain mode: an altitude band around the
+    // fake 100 m DEM plus a temperature band around the lapse-corrected value
+    // (sea-level 22 → 21.35 at 100 m). In 'none' mode the passing land carries
+    // the palette-less green highlight instead of a class colour.
+    await buildTerrainTile(t.z, t.x, t.y, {
+      mode: 'none',
+      off: [],
+      alt: [50, 150],
+      filters: [{ variable: 'tempAvg', from, to, band: [21.3, 21.4] }],
+      geoOff: [],
+    }, context);
+
+    // The highlight still SAMPLE the tile / DEM (unlike the old relief-only
+    // mode) — that is what tells it which pixels pass.
     expect(loadBandMock).toHaveBeenCalled();
-    expect(loadDemMock).not.toHaveBeenCalled();
-    expect(put).toHaveLength(1);
-    const img = put[0];
-    for (let i = 3; i < img.data.length; i += 4) expect(img.data[i]).toBe(0);
+    expect(loadDemMock).toHaveBeenCalled();
+    for (const px of [forest, landLeft, landRight]) {
+      expect(put[0].data[px]).toBe(HIGHLIGHT[0]);
+      expect(put[0].data[px + 1]).toBe(HIGHLIGHT[1]);
+      expect(put[0].data[px + 2]).toBe(HIGHLIGHT[2]);
+      expect(put[0].data[px + 3]).toBe(HIGHLIGHT[3]);
+    }
+    // Water is never highlighted (the land filters don't describe it) and
+    // no-data (abroad) stays transparent.
+    expect(put[0].data[water + 3]).toBe(0);
+    expect(put[0].data[abroad + 3]).toBe(0);
+  });
+
+  it("'none' mode leaves the land transparent when a filter gate fails", async () => {
+    const { tile: t, context } = await makeContext();
+    // The fake DEM is 100 m → the band [500, 800] excludes the whole land tile.
+    await buildTerrainTile(t.z, t.x, t.y, {
+      mode: 'none',
+      off: [],
+      alt: [500, 800],
+      filters: [],
+      geoOff: [],
+    }, context);
+    expect(loadDemMock).toHaveBeenCalled();
+    expect(put[0].data[forest + 3]).toBe(0);
+    expect(put[0].data[landLeft + 3]).toBe(0);
+  });
+
+  it("'none' mode is gated by the class and substrate dims too (one shared AND stack)", async () => {
+    const { t, ctx } = await makeGeoContext();
+    // Dimmed MCSC class → nothing is highlighted in 'none' mode either.
+    await buildTerrainTile(t.z, t.x, t.y,
+      { mode: 'none', off: ['221/225'], alt: null, filters: [], geoOff: [] }, ctx.context);
+    expect(put[0].data[landLeft + 3]).toBe(0);
+    expect(put[0].data[landRight + 3]).toBe(0);
+
+    // Class fine but the substrate family dimmed → the west half is excluded,
+    // while the nodata-family half (no family key → not gated) stays green.
+    put.length = 0;
+    await buildTerrainTile(t.z, t.x, t.y,
+      { mode: 'none', off: [], alt: null, filters: [], geoOff: ['quaternary'] }, ctx.context);
+    expect(put[0].data[landLeft + 3]).toBe(0);
+    expect(put[0].data[landRight]).toBe(HIGHLIGHT[0]);
+    expect(put[0].data[landRight + 1]).toBe(HIGHLIGHT[1]);
+    expect(put[0].data[landRight + 3]).toBe(HIGHLIGHT[3]);
   });
 
   it('paints the class colour with no filters, keeps water + no-data blocks distinct', async () => {

@@ -29,6 +29,17 @@
   height: 100%;
 }
 
+/* "My location" marker (basket.png), always visible once the browser location
+   is known. It is decorative — never a click target — so it must not eat map
+   gestures. */
+.user-location-marker {
+  width: max(3vw, 3vh);
+  height: max(3vw, 3vh);
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 0 3px var(--color-border-strong));
+}
+
 .app-loading {
   position: absolute;
   top: 50%;
@@ -40,6 +51,87 @@
   border-radius: 8px;
   z-index: 20;
   font-size: max(2vw, 2vh);
+}
+
+/* ── Map cannot render (no WebGL2) ───────────────────────────────────────
+   MapLibre v6 is WebGL2-only, so a browser with no usable GPU (hardware
+   acceleration off, blocklisted driver, no software fallback) can never draw
+   the map. The notice replaces the blank canvas, and the map-only controls are
+   hidden so nothing on screen looks interactive while doing nothing. */
+.no-webgl .bottom-buttons {
+  display: none;
+}
+
+.map-unavailable {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.map-unavailable-card {
+  color: var(--color-text-on-dark);
+  background-color: var(--color-overlay);
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 16px 20px;
+  max-width: min(92vw, 560px);
+  max-height: 100%;
+  overflow: auto;
+  text-align: left;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.map-unavailable-title {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  color: var(--color-text-on-dark);
+}
+
+.map-unavailable-text {
+  margin: 0 0 10px;
+}
+
+.map-unavailable-subtitle {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.map-unavailable-steps {
+  margin: 0 0 10px;
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.map-unavailable-steps code,
+.map-unavailable-details code {
+  color: var(--color-text-on-dark);
+  background-color: var(--color-surface-card);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  word-break: break-all;
+}
+
+.map-unavailable-note {
+  margin: 0;
+  color: var(--color-text-dim);
+}
+
+.map-unavailable-details {
+  margin-top: 10px;
+  color: var(--color-text-dim);
+}
+
+.map-unavailable-details summary {
+  cursor: pointer;
 }
 
 .logo {
@@ -133,7 +225,9 @@
 }
 
 .filter-line .sel-button,
-.filter-instance .sel-button {
+.filter-instance .sel-button,
+.filter-save-row .sel-button,
+.basket-item .sel-button {
   --sel-size: max(2.5vw, 2.5vh);
   --sel-font: max(2vw, 2vh);
 }
@@ -274,6 +368,12 @@
   gap: 10px;
 }
 
+/* Basket + filter buttons share one horizontal row; their panels open below */
+.top-button-row {
+  display: flex;
+  gap: 10px;
+}
+
 .bottom-buttons {
   position: absolute;
   left: 10px;
@@ -308,6 +408,150 @@
 .bars.horizontal .bar.humidity:not(.hl),
 .bars.horizontal .bar.temp:not(.hl) {
   opacity: 0.25;
+}
+
+/* ── Directions modal (car button map pick) ──────────────────────────────
+   The car button arms the map; the next click picks a point and opens this
+   modal with the point's info. "Com hi arribo" opens the Google Maps route
+   in a new tab, while "Tanca" (or Esc) dismisses it. */
+.directions-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  background-color: var(--color-overlay-soft);
+}
+
+.directions-card {
+  color: var(--color-text-on-dark);
+  background-color: var(--color-overlay);
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 14px 16px;
+  width: min(92vw, 320px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.directions-card .sel-button {
+  --sel-size: max(3vw, 3vh);
+  --sel-font: max(2.5vw, 2.5vh);
+}
+
+.directions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.directions-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.directions-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.directions-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.directions-row-label {
+  color: var(--color-text-dim);
+}
+
+.directions-row-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.directions-nearest {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid var(--color-border-faint);
+  padding-top: 10px;
+}
+
+.directions-nearest-title {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.directions-station {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background-color: var(--color-surface-card);
+  border-radius: 5px;
+  padding: 6px 8px;
+}
+
+.directions-station-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.directions-station-name {
+  font-weight: 500;
+}
+
+.directions-station-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-dim);
+  font-size: 0.85em;
+}
+
+.directions-station-dir {
+  font-weight: bold;
+  color: var(--color-layer-directions);
+}
+
+.directions-station-place {
+  font-size: 0.78em;
+  color: var(--color-text-dim);
+}
+
+.directions-go {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--color-layer-directions);
+  color: var(--color-text-inverse);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.directions-go:hover {
+  filter: brightness(1.1);
 }
 
 /* ── Filter panel — card base unified ─────────────────────────────────── */
@@ -574,6 +818,95 @@
   font-style: italic;
   opacity: 0.6;
 }
+
+/* ── Saved-filter basket ─────────────────────────────────────────────────── */
+.basket-empty {
+  font-size: 0.75rem;
+  font-style: italic;
+  opacity: 0.65;
+  line-height: 1.4;
+}
+.basket-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 6px 6px 10px;
+  border-radius: 5px;
+  background-color: var(--color-surface-card);
+}
+.basket-item:hover { background-color: var(--color-surface-card-hover); }
+.basket-item.active { outline: 1px solid var(--color-success); }
+.basket-item-active {
+  flex-shrink: 0;
+  color: var(--color-success);
+  font-size: 0.8rem;
+}
+.basket-item-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px 0;
+  border: none;
+  background: none;
+  color: var(--color-text-on-dark);
+  font-family: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+}
+.basket-item-main:hover .basket-item-name { text-decoration: underline; }
+.basket-item-name { font-weight: bold; }
+.basket-item-meta {
+  font-size: 0.72rem;
+  opacity: 0.7;
+}
+
+/* ── Save preset — name input → localStorage ─────────────────────────────── */
+.filter-save {
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border-faint);
+}
+.filter-save-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--color-surface-card);
+  color: var(--color-text-on-dark);
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.filter-save-btn:hover { background-color: var(--color-surface-card-hover); }
+.filter-save-btn.saved { color: var(--color-success); }
+.filter-save-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.filter-save-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  background-color: var(--color-surface-card);
+  color: var(--color-text-on-dark);
+  font-family: inherit;
+  font-size: 0.8rem;
+}
+.filter-save-input:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+}
+.filter-save-input::placeholder { color: var(--color-text-dim); }
 
 /* ── Busy state ─────────────────────────────────────────────────────────── */
 .filter-panel.busy .sel-button,

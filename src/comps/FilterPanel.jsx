@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCarrot, faCheck, faDroplet, faLayerGroup, faMountain, faSeedling, faTemperatureLow, faTree, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCarrot, faCheck, faDroplet, faFloppyDisk, faLayerGroup, faMountain, faSeedling, faTemperatureLow, faTree, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import RangeSlider from 'react-range-slider-input';
 import { DEFAULTDAYRANGE, dayRangeLabel, limitsForWindow, TYPE_TO_VARIABLE, windowToDates } from '../logic/filterAggregate.js';
@@ -50,6 +50,7 @@ const FilterPanel = ({
   onApplyGeo,
   boletFilter,
   onApplyBolet,
+  onSaveFilter,
 }) => {
   const [editingId, setEditingId] = useState(null);   // instance currently expanded
   const [pendingId, setPendingId] = useState(null);   // just-added instance: cancel removes it
@@ -65,6 +66,12 @@ const FilterPanel = ({
     species: boletFilter?.species ?? 'rovellons',
     threshold: boletFilter?.threshold ?? 0.5,
   }));
+  // Save preset (localStorage): none → name input → "Desat: name". The name
+  // input reopens pre-filled with the last saved name so re-saving overwrites
+  // that same preset (saveFilterPreset) instead of duplicating it.
+  const [saveOpen, setSaveOpen] = useState(false);
+  const [saveName, setSaveName] = useState('');
+  const [savedName, setSavedName] = useState(null);
 
   const editing = editingId ? meteoFilters.find(f => f.id === editingId) ?? null : null;
 
@@ -187,6 +194,23 @@ const FilterPanel = ({
   };
 
   const daySliderMax = Math.max(0, maxDays - 1);
+
+  // ── Save preset ─────────────────────────────────────────────────────────
+  const openSave = () => {
+    setSaveName(savedName ?? '');
+    setSaveOpen(true);
+  };
+  const closeSave = () => {
+    setSaveOpen(false);
+    setSaveName('');
+  };
+  const confirmSave = () => {
+    const name = saveName.trim();
+    if (!name) return;
+    onSaveFilter?.(name);
+    setSavedName(name);
+    closeSave();
+  };
 
   return (
     <div className={`filter-panel${busy ? ' busy' : ''}`} aria-busy={busy || undefined}>
@@ -661,6 +685,52 @@ const FilterPanel = ({
             </div>
           );
         })}
+
+        {/* ── Save preset: whole filter stack under a name (localStorage) ── */}
+        <div className="filter-save">
+          {saveOpen ? (
+            <div className="filter-save-row">
+              <input
+                type="text"
+                className="filter-save-input"
+                value={saveName}
+                autoFocus
+                maxLength={40}
+                placeholder="Nom del filtre"
+                aria-label="Nom del filtre"
+                onChange={e => setSaveName(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') confirmSave();
+                  if (e.key === 'Escape') closeSave();
+                }}
+              />
+              <div
+                className="sel-button filter-line-ok"
+                title="Desa"
+                onClick={confirmSave}
+              >
+                <FontAwesomeIcon icon={faCheck} />
+              </div>
+              <div
+                className="sel-button filter-line-cancel"
+                title="Cancel·la"
+                onClick={closeSave}
+              >
+                <FontAwesomeIcon icon={faXmark} />
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className={`filter-save-btn${savedName ? ' saved' : ''}`}
+              title="Desa la configuració de filtres"
+              onClick={openSave}
+            >
+              <FontAwesomeIcon icon={faFloppyDisk} />{' '}
+              {savedName ? `Desat: ${savedName}` : 'Desa els filtres'}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -5,18 +5,20 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 // must be told where it lives. Vite's `?worker&url` emits a self-contained
 // worker chunk (plain `?url` would miss the sibling shared module and the
 // worker would fail on its first import). One-time call, before any Map.
-import { setWorkerUrl } from 'maplibre-gl';
+import { Marker, setWorkerUrl } from 'maplibre-gl';
 import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 setWorkerUrl(maplibreWorkerUrl);
 import logo from './assets/logo.png';
+import basketImg from './assets/basket.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faCar, faDroplet, faFilter, faLayerGroup, faList, faMountainSun, faRulerVertical, faSeedling, faTemperatureLow, faTree } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faBasketShopping, faCar, faDroplet, faFilter, faLayerGroup, faList, faMountainSun, faRulerVertical, faSeedling, faTemperatureLow, faTree } from '@fortawesome/free-solid-svg-icons';
 import { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import { loadAvailableDays, loadSummaries } from './logic/refineData.js'
 import { getDaysInRange, fmtDateCat, fmtShortCat, parseDay } from './logic/utils.js';
 import './App.css'
 
 import { computeGeoValues } from './logic/computeGeoValues.js';
+import { buildFilterConfig, readSavedFilters, removeSavedFilter, sameFilterConfig, saveFilterPreset } from './logic/savedFilters.js';
 import { aggregateWindow, buildAggregateTable, DEFAULTDAYRANGE, limitsForWindow, windowToDates, TYPE_TO_VARIABLE } from './logic/filterAggregate.js';
 import { scoreStations, scoreByCode } from './logic/boletEngine.js';
 import { MCSC_LEGEND, MCSC_WATER_COLOR, MCSC_WATER_ENTRY } from './logic/mcscLegend.js';
@@ -26,8 +28,13 @@ import { registerTerrainProtocol, terrainTileUrl } from './logic/terrainOverlay.
 import { registerSeaProtocol } from './logic/seaOverlay.js';
 import { CATALONIA_BOUNDS, TERRAIN_OVERLAY_BOUNDS, fitZoomForViewport } from './logic/mapFit.js';
 import { pushTerrainContext } from './logic/tilePipeline.js';
+import { distanceKm, nearestStations } from './logic/nearestStations.js';
 import { LITHO_ATTRIBUTION, lithoLegendEntries, loadLithoGrid } from './logic/lithology.js';
+import { detectWebGL2, isGPUInitializationError } from './logic/webgl2.js';
 import FilterPanel from './comps/FilterPanel.jsx';
+import DirectionsModal from './comps/DirectionsModal.jsx';
+import MapUnavailable from './comps/MapUnavailable.jsx';
+import SavedFiltersPanel from './comps/SavedFiltersPanel.jsx';
 import StationPanel from './comps/StationPanel.jsx';
 
 // Catalonia — the app never leaves it. CATALONIA_BOUNDS constrains the
@@ -102,9 +109,12 @@ const defaultRange = () => ({ from: DEFAULTDAYRANGE, to: 0 });
 // Cycle order of the bottom-left render-mode button, and the icon / button
 // colour of each state: 'terrain' paints MCSC land-cover colours (green
 // forest button), 'substrate' paints the geology families (brown substrat),
-// 'none' paints NOTHING — only the relief (hillshade) and the basemap show
-// (grey relief button). 'none' is skipped from the cycle only while the
-// geology grid is still loading (substrate unavailable anyway).
+// 'none' paints no palette — it tints the land pixels that pass every filter
+// bright green over the relief (grey relief button) so the filter's coverage
+// stays visible. The tint only renders while at least one filter condition is
+// active (see hasActiveTerrainFilter); with no filter it is the plain
+// relief-only view. 'none' is skipped from the cycle only while the geology
+// grid is still loading (substrate unavailable anyway).
 const PAINT_MODES = ['terrain', 'substrate', 'none'];
 const PAINT_ICONS = {
   terrain: faTree,
@@ -146,7 +156,7 @@ const App = ()  => {
   const [stationsGeo, setStationsGeo] = useState(null);
   const [geoWithData, setGeoWithData] = useState(null);
   const [showLegend, setShowLegend] = useState(false);           // legend panel of the ACTIVE rendering mode
-  const [terrainMode, setTerrainMode] = useState('terrain');    // painted areas: 'terrain' (MCSC) | 'substrate' (geology) | 'none' (relief only)
+  const [terrainMode, setTerrainMode] = useState('terrain');    // painted areas: 'terrain' (MCSC) | 'substrate' (geology) | 'none' (green filter highlight over the relief)
   const [showTerrain3D, setShowTerrain3D] = useState(true);     // 3D terrain (tilts the camera)
   const [mapReady, setMapReady] = useState(false); // true once the heavy area overlays exist (added on first idle — see onMapLoad)
   const [mapLoaded, setMapLoaded] = useState(false); // true once the map + stations source/layers exist (onMapLoad) — re-syncs the station source data
@@ -155,9 +165,18 @@ const App = ()  => {
   const [lithoGrid, setLithoGrid] = useState(null); // decoded substrate grid (lithology.js)
   const [dataLoading, setDataLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
+  // The map is WebGL2-only (MapLibre v6), so a browser without a usable GPU can
+  // never render it. Detected up front so the blank canvas is replaced by the
+  // explanatory MapUnavailable notice; `null` (no DOM — SSR / the render smoke
+  // test) means "unknown" and is deliberately NOT treated as unsupported.
+  const [mapUnavailable, setMapUnavailable] = useState(() => detectWebGL2() === false);
+  const [mapErrorDetail, setMapErrorDetail] = useState(null); // raw GPU failure, shown collapsed
   const [clickedElevation, setClickedElevation] = useState(null); // DEM sample, m
-  const [pickRoute, setPickRoute] = useState(false); // car button armed: next map click opens Google Maps directions
+  const [pickRoute, setPickRoute] = useState(false); // car button armed: next map click opens the directions modal
+  const [routePoint, setRoutePoint] = useState(null); // picked directions point: { lat, lng, elevation, pending } | null
   const [showFilter, setShowFilter] = useState(false); // filter panel open state
+  const [showBasket, setShowBasket] = useState(false); // saved-filter basket open state (only one top panel at a time)
+  const [savedFilters, setSavedFilters] = useState(() => readSavedFilters()); // named presets from localStorage, newest first
   const [reliefRange, setReliefRange] = useState(null); // applied altitude band [lo, hi]; null = off
   const [meteoFilters, setMeteoFilters] = useState([]); // [{ id, type, from, to, range }] — one per meteo filter instance
   const [nextFilterId, setNextFilterId] = useState(1);
@@ -167,6 +186,9 @@ const App = ()  => {
   const dataReqRef = useRef(0);
   const selectedStationRef = useRef(null); // stale-guard for async takeElevation
   const pickRouteRef = useRef(false); // latest armed state read by the (once-registered) map handlers
+  const routeReqRef = useRef(0); // stale-guard for the async route-point DEM sample
+  const geoRequestedRef = useRef(false); // geolocation is asked at most once per session
+  const [userLoc, setUserLoc] = useState(null); // { lat, lng } of "my location" | null when unknown
   const terrainStateRef = useRef(null); // stacked-overlay state read by the terrain:// tile protocol
   const geoWithDataRef = useRef(null); // latest features read by the terrain:// tile protocol
   const aggRef = useRef(null); // aggregate table read by the terrain:// tile protocol
@@ -509,14 +531,22 @@ const App = ()  => {
     });
 
     // Car (directions) mode: while armed, clicking anywhere on the map opens
-    // a Google Maps "how to get there" route to that point in a new tab.
+    // the directions MODAL for that point (coordinates + DEM altitude). The
+    // modal's "Com hi arribo" button is what opens the Google Maps route in a
+    // new tab, so the user can review the picked point first.
     map.on('click', (e) => {
       if (!pickRouteRef.current) return;
       const { lat, lng } = e.lngLat ?? {};
       if (lat == null || lng == null) return;
-      const dest = `${lat.toFixed(5)},${lng.toFixed(5)}`;
-      window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}`, '_blank');
-      // One pick per arming: disarm right after the tab opens (Esc also works).
+      // Show the modal immediately; the DEM sample fills the altitude in later
+      // (guarded so a newer pick can't be overwritten by an older response).
+      const reqId = ++routeReqRef.current;
+      setRoutePoint({ lat, lng, elevation: null, pending: true });
+      sampleElevation(lng, lat).then(elev => {
+        if (reqId !== routeReqRef.current) return;
+        setRoutePoint(prev => (prev ? { ...prev, elevation: elev, pending: false } : prev));
+      });
+      // One pick per arming: disarm right after the modal opens (Esc also works).
       setPickRoute(false);
     });
 
@@ -572,12 +602,25 @@ const App = ()  => {
         paint: { 'raster-opacity': 0.85 } // same look as the old MCSC layer
       }, 'stations-circle');
 
-      // Continuous elevation: raster-dem source (terrarium) shared by the
-      // hillshade overlay and 3D terrain, drawn below the stations. No
-      // bounds: it shades whatever the camera can actually see (the fit-zoom
-      // floor already limits how far out that can be), and clipping it would
-      // leave an ugly relief edge at the bounds when panning/tilting.
-      map.addSource('elevation-dem', {
+      // Continuous elevation: TWO raster-dem sources over the same terrarium
+      // tiles, because one source cannot serve both consumers well. Attaching
+      // 3D terrain sets `usedForTerrain` on that source's tile manager, which
+      // re-tiles it onto the TERRAIN grid (tileSize ×2 = 512, roundZoom off)
+      // and calls `tileManager.reload()`; a hillshade layer sharing the source
+      // is then shaded from those coarser tiles, and every 3D toggle re-tiles
+      // the DEM under it. Splitting keeps the hillshade on its own 256 /
+      // exact-zoom grid and makes the 3D toggle touch only `terrain-dem`.
+      // The cost is that both sources decode and hold their DEM tiles (two
+      // grids, so not quite a duplicate pyramid) while 3D is on; the browser
+      // HTTP cache absorbs most of the second download. Lowering
+      // `terrain-dem`'s maxzoom would cut that further at the price of a
+      // smoother mesh when zoomed in.
+      //
+      // Hillshade source, drawn below the stations. No bounds: it shades
+      // whatever the camera can actually see (the fit-zoom floor already
+      // limits how far out that can be), and clipping it would leave an ugly
+      // relief edge at the bounds when panning/tilting.
+      map.addSource('hillshade-dem', {
         type: 'raster-dem',
         tiles: [ELEVATION_TILES],
         tileSize: 256,
@@ -588,13 +631,28 @@ const App = ()  => {
       map.addLayer({
         id: 'hillshade',
         type: 'hillshade',
-        source: 'elevation-dem',
+        source: 'hillshade-dem',
         layout: { visibility: 'visible' },
         paint: {
           'hillshade-exaggeration': 0.4,
           'hillshade-illumination-direction': 315
         }
       }, 'stations-circle');
+
+      // Same terrarium tiles under a second id, referenced ONLY by setTerrain
+      // (2.9 below). No layer draws from it, and an unused raster-dem source
+      // that is not the terrain source requests no tiles (SourceCache.update:
+      // `!used && !usedForTerrain` → empty ideal tile list), so it costs
+      // nothing until the 3D toggle turns it on. The duplicated attribution
+      // collapses: AttributionControl pushes each distinct string once.
+      map.addSource('terrain-dem', {
+        type: 'raster-dem',
+        tiles: [ELEVATION_TILES],
+        tileSize: 256,
+        encoding: 'terrarium',
+        maxzoom: 15,
+        attribution: ELEVATION_ATTRIBUTION
+      });
 
       // Sea overlay: paints the ocean (elevation <= 0, from the same DEM the
       // relief uses) with the water colour. It sits ABOVE the hillshade —
@@ -630,6 +688,20 @@ const App = ()  => {
     map.once('idle', addAreaOverlays);
     const overlayTimer = setTimeout(addAreaOverlays, 3000);
     map.on('remove', () => clearTimeout(overlayTimer));
+  };
+
+  // The WebGL2 probe above keeps the map from being mounted when we already
+  // know the context cannot be created; this catches what it cannot predict —
+  // a context creation that is still refused, or one lost after a GPU-process
+  // crash — and swaps the dead canvas for the explaining notice instead.
+  // react-maplibre routes BOTH the constructor failure (its own .catch, so the
+  // app never crashes) and later map 'error' events here, which is why the
+  // error must be classified: a failed tile fetch is not a dead GPU.
+  const onMapError = (e) => {
+    const err = e?.error ?? e;
+    if (!isGPUInitializationError(err)) return;
+    setMapErrorDetail(err?.statusMessage || err?.message || null);
+    setMapUnavailable(true);
   };
 
   // 1️⃣ Compute geoWithData over the DISPLAY window (StationPanel chart +
@@ -773,15 +845,78 @@ const App = ()  => {
 
   // While the directions (car) button is armed the pointer becomes a
   // crosshair over the map so the next click is understood as "pick here";
-  // Escape cancels the arming without opening anything.
+  // Escape cancels the arming — or closes the directions modal once open.
   useEffect(() => {
     const map = mapRef.current;
     if (map) map.getCanvas().style.cursor = pickRoute ? 'crosshair' : '';
-    if (!pickRoute) return;
-    const onKey = (e) => { if (e.key === 'Escape') setPickRoute(false); };
+    if (!pickRoute && !routePoint) return;
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      if (routePoint) setRoutePoint(null);
+      else setPickRoute(false);
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [pickRoute]);
+  }, [pickRoute, routePoint]);
+
+  // "My location": asked once per session on mount, so the always-visible map
+  // marker appears as soon as it is known and the directions button can show
+  // the distance / seed the Google Maps `origin`. A refusal or an unavailable
+  // browser simply leaves it null (no marker, destination-only route).
+  useEffect(() => {
+    if (geoRequestedRef.current) return;
+    geoRequestedRef.current = true;
+    if (typeof navigator === 'undefined' || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      pos => setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => {}, // denied / timeout → keep null, no error UI
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+    );
+  }, []);
+
+  // "My location" marker on the map (basket.png), always visible once the
+  // browser location is known. A plain MapLibre Marker avoids adding a GeoJSON
+  // source/layer for a single point; unmounting removes it with the map.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoaded || !userLoc) return;
+    const el = document.createElement('img');
+    el.src = basketImg;
+    el.alt = 'La meva ubicaci\u00f3';
+    el.className = 'user-location-marker';
+    const marker = new Marker({ element: el, anchor: 'center' })
+      .setLngLat([userLoc.lng, userLoc.lat])
+      .addTo(map);
+    return () => marker.remove();
+  }, [userLoc, mapLoaded]);
+
+  // Straight-line distance from "my location" to the picked point (km), or
+  // null while the location is unknown.
+  const routeDistanceKm = useMemo(() => {
+    if (!routePoint || !userLoc) return null;
+    return distanceKm(userLoc.lng, userLoc.lat, routePoint.lng, routePoint.lat);
+  }, [routePoint, userLoc]);
+
+  // The modal's Google Maps action: same "how to get there" route the car
+  // button used to open directly, now reached from the reviewed point. When
+  // "my location" is known it seeds `origin`, so the route starts there.
+  const openRouteDirections = useCallback(() => {
+    if (!routePoint) return;
+    const dest = `${routePoint.lat.toFixed(5)},${routePoint.lng.toFixed(5)}`;
+    const origin = userLoc
+      ? `&origin=${userLoc.lat.toFixed(5)},${userLoc.lng.toFixed(5)}`
+      : '';
+    window.open(`https://www.google.com/maps/dir/?api=1${origin}&destination=${dest}`, '_blank');
+  }, [routePoint, userLoc]);
+
+  // Closest stations (with distance + compass direction + poble/comarca) to the
+  // picked directions point — read from the station features already loaded for
+  // the map, so no extra fetch. Recomputed only when the point or features change.
+  const routeNearest = useMemo(() => {
+    if (!routePoint) return [];
+    const features = (geoWithData ?? stationsGeo)?.features;
+    return nearestStations(features, routePoint.lng, routePoint.lat, 3);
+  }, [routePoint, geoWithData, stationsGeo]);
 
   // keep the display features + aggregate table + substrate grid in refs so
   // the terrain:// tile protocol can (re)build grids for the right data, AND
@@ -795,12 +930,15 @@ const App = ()  => {
     pushTerrainContext({ agg, features: geoWithData?.features ?? [], lithoGrid });
   }, [geoWithData, agg, lithoGrid]);
 
-  // 2.9️⃣ Toggle 3D terrain (raster-dem source + tilted camera)
+  // 2.9️⃣ Toggle 3D terrain (its own raster-dem source + tilted camera).
+  // `terrain-dem` exists only for this: the terrain cannot share the
+  // hillshade's DEM source without dragging the hillshade onto the terrain
+  // tile grid (see addAreaOverlays).
   useEffect(() => {
     const map = mapRef.current;
     if (!mapReady || !map) return;
-    if (showTerrain3D && map.getSource('elevation-dem')) {
-      map.setTerrain({ source: 'elevation-dem', exaggeration: 1.3 });
+    if (showTerrain3D && map.getSource('terrain-dem')) {
+      map.setTerrain({ source: 'terrain-dem', exaggeration: 1.3 });
       map.easeTo({ pitch: 55, bearing: -20, duration: 800 });
     } else {
       map.setTerrain(null);
@@ -926,6 +1064,69 @@ const App = ()  => {
     setMeteoFilters(prev => prev.filter(f => f.id !== id));
   };
 
+  // The live filter stack in the same shape presets are stored in, so it can be
+  // compared against them. Recomputed only when a filter actually changes.
+  const currentFilterConfig = useMemo(() => buildFilterConfig({
+    reliefRange,
+    meteoFilters,
+    forestOff: mcscOff,
+    geoOff,
+    boletFilter,
+  }), [reliefRange, meteoFilters, mcscOff, geoOff, boletFilter]);
+
+  // Named filter presets (localStorage): App owns every filter state, so the
+  // snapshot is built here and only the NAME comes from the panel. Saving is
+  // pure storage — it never repaints the map, so it isn't gated by busy.
+  const saveCurrentFilter = useCallback((name) => {
+    const next = saveFilterPreset(name, currentFilterConfig);
+    setSavedFilters(next); // keep the basket list in sync without re-reading storage
+    return next;
+  }, [currentFilterConfig]);
+
+  // Which saved preset the live filters match (null as soon as anything is
+  // tweaked): derived, not remembered, so manual edits clear the basket mark
+  // with no bookkeeping in the individual filter handlers.
+  const activePresetName = useMemo(() => {
+    const hit = savedFilters.find(p => sameFilterConfig(p.config, currentFilterConfig));
+    return hit ? hit.name : null;
+  }, [savedFilters, currentFilterConfig]);
+
+  // Delete a saved preset (basket row ✕). Removing a preset never touches the
+  // live filters — it only shrinks the basket.
+  const deleteFilterPreset = (name) => {
+    setSavedFilters(removeSavedFilter(name));
+  };
+
+  // Apply a saved preset (basket button): replace the WHOLE filter stack at
+  // once behind a single repaint gate — calling the individual apply handlers
+  // would be refused after the first (beginRepaint locks while a repaint is in
+  // flight). Instance ids are re-minted from the live counter so a loaded
+  // preset can never collide with an existing instance; the basket closes so
+  // the repainted map is visible.
+  const applyFilterPreset = (preset) => {
+    const config = preset?.config;
+    if (!config) return;
+    if (!beginRepaint()) return;
+    // A preset may have been saved from a longer dataset: an offset can't
+    // reach back past the oldest available day (same clamp as effectiveRange).
+    const oldest = Math.max(0, maxDays - 1);
+    const clampOffset = v => Math.min(Math.max(0, v), oldest);
+    const filters = (config.meteoFilters ?? []).map((f, i) => ({
+      id: `f${nextFilterId + i}`,
+      type: f.type,
+      from: clampOffset(f.from),
+      to: clampOffset(f.to),
+      range: [f.range[0], f.range[1]],
+    }));
+    setNextFilterId(n => n + filters.length);
+    setMeteoFilters(filters);
+    setReliefRange(config.reliefRange ? [config.reliefRange[0], config.reliefRange[1]] : null);
+    setMcscOff(new Set(config.forestOff ?? []));
+    setGeoOff(new Set(config.geoOff ?? []));
+    setBoletFilter(config.boletFilter ? { ...config.boletFilter } : null);
+    setShowBasket(false);
+  };
+
   // Gated versions of every filter trigger that repaints the painted areas.
   // While beginRepaint() is locked the FilterPanel buttons are disabled
   // (busy prop) — see the block above.
@@ -1029,7 +1230,7 @@ const App = ()  => {
   ? geoWithData?.features?.find(f => f.properties.codi === selectedStation)
   : null;
   return (
-    <div className='app'>
+    <div className={`app${mapUnavailable ? ' no-webgl' : ''}`}>
       <img  className='logo' src={logo} alt="MetoSeps" />
       <div className="app-header">
         <span className='header-title'>MeteoSeps</span>
@@ -1044,13 +1245,39 @@ const App = ()  => {
       </div>
       {data && (
         <div className="top-buttons">
-          <div
-            className={`sel-button filter-button${showFilter ? ' on' : ''}`}
-            title="Filtres"
-            onClick={() => setShowFilter(!showFilter)}
-          >
-            <FontAwesomeIcon icon={faFilter} />
+          {/* Two buttons share one row (basket left of the filter); their
+              panels open below, one at a time — opening one closes the other. */}
+          <div className="top-button-row">
+            <div
+              className={`sel-button filter-button${showBasket ? ' on' : ''}`}
+              title="Filtres desats"
+              onClick={() => {
+                setShowBasket(v => !v);
+                setShowFilter(false);
+              }}
+            >
+              <FontAwesomeIcon icon={faBasketShopping} />
+            </div>
+            <div
+              className={`sel-button filter-button${showFilter ? ' on' : ''}`}
+              title="Filtres"
+              onClick={() => {
+                setShowFilter(v => !v);
+                setShowBasket(false);
+              }}
+            >
+              <FontAwesomeIcon icon={faFilter} />
+            </div>
           </div>
+          {showBasket && (
+            <SavedFiltersPanel
+              presets={savedFilters}
+              activeName={activePresetName}
+              onApply={applyFilterPreset}
+              onDelete={deleteFilterPreset}
+              onClose={() => setShowBasket(false)}
+            />
+          )}
           {showFilter && (
             <FilterPanel
               onClose={() => setShowFilter(false)}
@@ -1076,6 +1303,7 @@ const App = ()  => {
               onApplyGeo={applyGeoFamilies}
               boletFilter={boletFilter}
               onApplyBolet={setBoletFilter}
+              onSaveFilter={saveCurrentFilter}
             />
           )}
         </div>
@@ -1093,10 +1321,11 @@ const App = ()  => {
           <FontAwesomeIcon icon={faList} />
         </div>
         {/* Render-mode cycle: painted areas show terrain types (MCSC class
-            colours) → substrate (geology family colours) → NONE (nothing
-            painted — only the relief shows). The icon + colour reflect the
-            ACTIVE mode; substrate is skipped while the geology grid is still
-            loading. While a repaint is in flight the button is locked
+            colours) → substrate (geology family colours) → NONE (no palette;
+            the land that passes every filter is tinted bright green over the
+            relief — only while a filter is active). The icon + colour reflect
+            the ACTIVE mode; substrate is skipped while the geology grid is
+            still loading. While a repaint is in flight the button is locked
             (beginRepaint) so bursts of mode clicks can't overlap repaints. */}
         <div
           className={`sel-button ${PAINT_CLASSES[terrainMode] ?? 'forest'}${terrainMode !== 'terrain' ? ' on' : ''}${repaintBusy ? ' busy' : ''}`}
@@ -1105,9 +1334,9 @@ const App = ()  => {
             : terrainMode === 'terrain'
               ? lithoGrid
                 ? 'Veure el substrat (geologia)'
-                : 'Veure només el relleu (sense cobertes pintades)'
+                : 'Veure el filtre en verd (relleu, sense cobertes pintades)'
               : terrainMode === 'substrate'
-                ? 'Veure només el relleu (sense cobertes pintades)'
+                ? 'Veure el filtre en verd (relleu, sense cobertes pintades)'
                 : 'Veure el tipus de terreny (cobertes del sòl)'}
           onClick={() => {
             if (repaintBusy) return; // a repaint is already in flight
@@ -1169,10 +1398,11 @@ const App = ()  => {
             </span>
           )}
         </div>
-        {/* Directions: arm the map so the next click opens Google Maps routes */}
+        {/* Directions: arm the map so the next click picks a point and opens
+            the directions modal (Esc cancels the arming). */}
         <div
           className={`sel-button directions${pickRoute ? ' on' : ''}`}
-          title="Com hi arribo — tria un punt al mapa (obre Google Maps)"
+          title="Com hi arribo — tria un punt al mapa"
           onClick={() => setPickRoute(!pickRoute)}
         >
           <FontAwesomeIcon icon={faCar} />
@@ -1182,22 +1412,34 @@ const App = ()  => {
           div, never `className` — so the .map-view sizing must live on a
           wrapper element around the map, not on <Map> itself. */}
       <div className="map-view">
-        <Map
-          key={styleUrl}
-          initialViewState={{
-            longitude: center[0],
-            latitude: center[1],
-            zoom: minZoom + 1
-          }}
-          mapStyle={styleUrl}
-          onLoad={onMapLoad}
-        />
+        {mapUnavailable ? (
+          <MapUnavailable detail={mapErrorDetail} />
+        ) : (
+          <Map
+            key={styleUrl}
+            initialViewState={{
+              longitude: center[0],
+              latitude: center[1],
+              zoom: minZoom + 1
+            }}
+            mapStyle={styleUrl}
+            onLoad={onMapLoad}
+            onError={onMapError}
+          />
+        )}
       </div>
       {dataLoading && !data && (
         <div className="app-loading">
           {loadError ? `No s'han pogut carregar les dades: ${loadError}` : 'Carregant dades…'}
         </div>
       )}
+      <DirectionsModal
+        point={routePoint}
+        nearest={routeNearest}
+        distanceKm={routeDistanceKm}
+        onClose={() => setRoutePoint(null)}
+        onNavigate={openRouteDirections}
+      />
       {selectedStation && <StationPanel
         station={stationObj}
         daysRange={displayWindow}
@@ -1214,8 +1456,11 @@ const App = ()  => {
         <div className="mcsc-legend">
           {terrainMode === 'none' ? (
             <>
-              <div className="mcsc-legend-title">Sense cap coberta pintada</div>
-              <div className="mcsc-legend-label">Només es mostra el relleu (ombrejat del terreny).</div>
+              <div className="mcsc-legend-title">Filtre sobre el relleu</div>
+              <div className="mcsc-legend-label">
+                Sense cobertes pintades: el terreny que compleix tots els filtres
+                es marca en verd.
+              </div>
             </>
           ) : terrainMode === 'substrate' && lithoGrid ? (
             <>

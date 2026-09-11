@@ -17,16 +17,22 @@
  *               grid has data there (id > 0); the MCSC class/forest dims
  *               do NOT affect this mode — each palette is filtered only by
  *               its own legend switch.
- *   'none'      veil mode (relief): passing → transparent (relief), failing
- *               land → semitransparent `TERRAIN_VEIL` (~35% crimson). Same AND
- *               as the other modes, inverted, one pass — no extra alloc.
- *               Nodata band 0 and water are never veiled (transparent).
+ *   'none'      palette-less: paints the bright-green highlight on the land
+ *               pixels that pass EVERY filter (the same AND stack as the two
+ *               painted modes) so the filter's coverage stays visible over
+ *               the relief. Only while at least one filter condition is
+ *               active (hasActiveTerrainFilter) — with no filter it stays the
+ *               cheap relief-only transparent tile, otherwise the whole
+ *               region would light up green. Water is NOT highlighted (the
+ *               land filters don't describe it) and keeps the sea layer's
+ *               navy. While a filter IS active it fetches the MCSC / DEM /
+ *               meteo grids, because knowing which pixels pass needs them.
  *
- * All painted modes AND, per pixel: water (inland MCSC water classes) is painted
- * with its class colour whenever Aigües is on — never gated by altitude /
- * meteo / substrate (it is not "mushroom terrain") — and the altitude band
- * AND every active meteo instance gate the land. Everything that fails — a
- * dimmed class (terrain mode), a dimmed family (substrate mode), the
+ * All modes AND, per pixel: in the painted modes water (inland MCSC water
+ * classes) is painted with its class colour whenever Aigües is on — never
+ * gated by altitude / meteo / substrate (it is not "mushroom terrain") — and
+ * the altitude band AND every active meteo instance gate the land. Everything
+ * that fails — a dimmed class, a dimmed substrate family, the
  * permanently-unlisted 230–234 band values, no-data pixels — is left
  * TRANSPARENT, so the relief (the hillshade layer, which sits above this
  * one) shows through. There is no grey "deselected" colour anymore.
@@ -52,13 +58,13 @@ import * as tilePipeline from './tilePipeline.js';
 // worker); re-exported here so existing callers and tests are unchanged.
 export {
   TERRAIN_TRANSPARENT,
-  TERRAIN_VEIL,
+  TERRAIN_HIGHLIGHT,
   TERRAIN_STATE_EMPTY,
   lithoFamilyColour,
   colourForBand,
+  hasActiveTerrainFilter,
   classifyTerrainPixel,
   passesAllGates,
-  veilForFailingPixel,
   parseTerrainTileUrl,
   buildTerrainTile,
 } from './tilePaint.js';
@@ -76,8 +82,9 @@ export const terrainStateSig = state => JSON.stringify(state ?? TERRAIN_STATE_EM
 export const terrainStateSignature = state => {
   const s = state ?? TERRAIN_STATE_EMPTY;
   return {
-    // 'none' (paint nothing — relief only) survives; anything unknown falls
-    // back to the default 'terrain' so old URLs/states stay valid.
+    // 'none' (bright-green filter highlight over the relief) survives;
+    // anything unknown falls back to the default 'terrain' so old URLs/states
+    // stay valid.
     mode: s.mode === 'none' ? 'none' : s.mode === 'substrate' ? 'substrate' : 'terrain',
     off: [...(s.off || [])].sort(),
     alt: s.alt ? [s.alt[0], s.alt[1]] : null,

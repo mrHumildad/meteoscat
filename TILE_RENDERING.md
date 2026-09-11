@@ -33,14 +33,16 @@ No server WMS colour, no grey mask. Failing pixels are **transparent** → relie
 | Layer | Source id | Type | Where created | Notes |
 |-------|-----------|------|---------------|-------|
 | Basemap | Stadia `alidade_smooth_dark` | vector | `App.jsx: styleUrl` | Dark, no key. |
-| `hillshade` | `elevation-dem` | `hillshade` | `App.jsx:onMapLoad:addAreaOverlays` | terrarium DEM, `exaggeration 0.4`. **Not bounds-clipped** (would leave edge). Shared with 3D terrain. |
+| `hillshade` | `hillshade-dem` | `hillshade` | `App.jsx:onMapLoad:addAreaOverlays` | terrarium DEM, `exaggeration 0.4`. **Not bounds-clipped** (would leave edge). Own source — the DEM is **not** shared with 3D terrain (see below). |
 | `sea` | `sea` | `raster` (`sea://`) | same | DEM `elev ≤ 0` → navy `#000080` else transparent. Sits **above** hillshade, **below** terrain so land-water class draws on top. Also not clipped. |
 | `terrain` | `terrain` | `raster` (`terrain://`) | same | The stacked overlay. `TERRAIN_OVERLAY_BOUNDS = [-1.25,39.75,4.25,44.25]` – MapLibre never requests tiles fully outside. `minzoom 7 maxzoom 14 opacity 0.85`. Always visible. |
 | `stations-circle/label/value` | `stations` | `circle/symbol` | `onMapLoad` | GeoJSON, dimmed when filtered (`inRange=false`). |
 
-3D terrain (`map.setTerrain({source:'elevation-dem', exaggeration:1.3})`) reuses the same `elevation-dem` source and tilts camera. See `App.jsx:2.9`.
+3D terrain (`map.setTerrain({source:'terrain-dem', exaggeration:1.3})`) uses a **second** raster-dem source over the same terrarium tiles and tilts camera. See `App.jsx:2.9`.
 
-All heavy raster sources (`terrain`, `sea`, `elevation-dem`) are added **lazily** on first `idle` (or 3 s timeout) so first paint is fast. `mapReady` gates the effects that call `setTiles`.
+Two DEM sources because MapLibre renders hillshade and the terrain mesh very differently. Attaching terrain sets `usedForTerrain` on its source's tile manager, which re-tiles that source onto the terrain grid (`tileSize` ×2 → 512, `roundZoom` off) and calls `tileManager.reload()`: a hillshade sharing it would be shaded from the coarser terrain tiles, and every 3D toggle would re-tile the DEM underneath it. Splitting keeps `hillshade-dem` on its own 256 / exact-zoom grid and confines the toggle to `terrain-dem`. Cost: both sources decode and hold DEM tiles (two grids, not quite a duplicate pyramid) while 3D is on; the browser HTTP cache covers most of the second download.
+
+All heavy raster sources (`terrain`, `sea`, `hillshade-dem`, `terrain-dem`) are added **lazily** on first `idle` (or 3 s timeout) so first paint is fast. `mapReady` gates the effects that call `setTiles`. `terrain-dem` has no layer and is referenced only by `setTerrain`, so it requests nothing until 3D is switched on.
 
 ---
 
@@ -94,7 +96,8 @@ All heavy raster sources (`terrain`, `sea`, `elevation-dem`) are added **lazily*
 
 * `terrain` (default, 🌳) – land pixel colour = `colourForBand(band, off)` (null → transparent: unlisted 230–234 or dimmed class).
 * `substrate` (🟫, needs `lithoGrid`) – land colour = `lithoFamilyColour(grid, lithoFamilyAt(...))` else transparent (nodata). Falls back to terrain rendering if grid missing.
-* `none` (🚫) – `buildTerrainTile` early-returns transparent PNG, no fetches.
+* `none` (🚫) – palette-less highlight: paints `TERRAIN_HIGHLIGHT` (`[0,255,0,165]`, bright green) on the **land** pixels that pass every active filter, `[0,0,0,0]` otherwise. Water is never highlighted (the land filters don't describe it), so the sea keeps its navy. Lets the user see the filter's coverage over the relief without a class/family palette; failing pixels stay transparent (relief shows through).
+  * **Only while a filter is active** (`hasActiveTerrainFilter`: non-empty `off`/`geoOff`/`filters` or an `alt` band). With no filter condition the highlight would tint the whole region, so the mode falls back to the original zero-fetch transparent PNG (no MCSC, no DEM, no grids, no pixel loop).
 
 Water pixels keep **class colour** in both modes (shared `Aigües` switch), never gated.
 
@@ -113,7 +116,7 @@ else → paint
 
 ### 4.3 Build steps (`buildTerrainTile(z,x,y,state,getContext)`)
 
-1. `st.mode==='none'` → transparent PNG.
+1. `st.mode==='none' && !hasActiveTerrainFilter(st)` → transparent PNG (relief only, zero fetch). Otherwise `highlight = st.mode==='none'` (the palette colour below is replaced by `TERRAIN_HIGHLIGHT` on passing land; water is transparent in highlight mode).
 2. `off=new Set(st.off)`, `offGeo=new Set(st.geoOff)`.
 3. Precompute `bandColours[0..41]` + `bandIsWater`.
 4. `getContext() → {agg, features, lithoGrid}` → build `grids/los/his` for each `st.filters` (only **active** instances: band narrower than span). `featuresForWindow` + `getMeteoGrid` (temp uses `LAPSE_RATE`).
@@ -230,7 +233,7 @@ Throttled `TERRAIN_REPAINT_MS=150`. Same for sea (`sea://{z}/{x}/{y}?c=…&r=N`,
 ### 7.3 Lifecycle
 
 * `onMapLoad` → `registerTerrainProtocol(map, ()=>terrainStateRef.current)` + `registerSeaProtocol()` (once). Stores `mapRef`.
-* `addAreaOverlays` on `idle` or 3 s timeout → `addSource('terrain'| 'sea' | 'elevation-dem')` + `addLayer`. Sets `lastTerrainUrlRef` / `lastSeaUrlRef` to initial tile, `setMapReady(true)` lets effects run.
+* `addAreaOverlays` on `idle` or 3 s timeout → `addSource('terrain'| 'sea' | 'hillshade-dem' | 'terrain-dem')` + `addLayer` (`terrain-dem` gets no layer — `setTerrain` only). Sets `lastTerrainUrlRef` / `lastSeaUrlRef` to initial tile, `setMapReady(true)` lets effects run.
 * Push context: `useEffect([geoWithData,agg,lithoGrid]) → pushTerrainContext({agg, features: geoWithData.features, lithoGrid})` + refs.
 * Repaint gate: `beginRepaint()/endRepaint()` + `repaintBusy`. While `repaintBusy` the filter panel is `.busy` and forest button shows `Pintant…` and is disabled. `map.once('idle', endRepaint)` + 5 s safety timeout. `samePair/sameSet/inertInstance` skip no-ops (full-span meteo bands).
 * Viewport fit: `fittedMinZoom(w,h)` → `fitZoomForViewport({width,height,minZoom:FIT_ZOOM_FLOOR,maxZoom})` (see `mapFit.js`), `CATALONIA_BOUNDS`, `TERRAIN_OVERLAY_BOUNDS`. `minZoom` updated on `resize`.

@@ -7,6 +7,7 @@ import { describe, it, expect } from 'vitest';
 import {
   TERRAIN_TRANSPARENT,
   colourForBand,
+  hasActiveTerrainFilter,
   classifyTerrainPixel,
   terrainStateSig,
   terrainStateSignature,
@@ -198,5 +199,23 @@ describe('terrain state signature & tile URL', () => {
     expect(parseTerrainTileUrl('terrain://8/3')).toBeNull();
     expect(parseTerrainTileUrl('')).toBeNull();
     expect(parseTerrainTileUrl('terrain://8/3/9?s=a&x=1')).toBeNull();
+  });
+});
+
+describe('hasActiveTerrainFilter', () => {
+  it('is false for an empty / absent state (mode none would tint everything)', () => {
+    expect(hasActiveTerrainFilter()).toBe(false);
+    expect(hasActiveTerrainFilter(null)).toBe(false);
+    expect(hasActiveTerrainFilter({ mode: 'none', off: [], alt: null, filters: [], geoOff: [] })).toBe(false);
+  });
+
+  it('is true for any active condition (dimmed class, dimmed family, altitude band, meteo instance)', () => {
+    expect(hasActiveTerrainFilter({ off: ['221/225'], alt: null, filters: [], geoOff: [] })).toBe(true);
+    expect(hasActiveTerrainFilter({ off: [], alt: null, filters: [], geoOff: ['quaternary'] })).toBe(true);
+    expect(hasActiveTerrainFilter({ off: [], alt: [100, 500], filters: [], geoOff: [] })).toBe(true);
+    expect(hasActiveTerrainFilter({
+      off: [], alt: null, geoOff: [],
+      filters: [{ variable: 'precAcc', from: '2026-08-01', to: '2026-09-01', band: [10, 20] }],
+    })).toBe(true);
   });
 });
