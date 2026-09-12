@@ -1,11 +1,16 @@
 # Builds the app and deploys it to GitHub Pages on every push to main.
 #
-# The daily meteo data is NOT built here: it lives in the separate
-# meteoscat-server repo, which commits and publishes it on its own schedule.
-# A data refresh therefore never triggers a client rebuild — only a change to
-# this repo's code does. The app reads the data at runtime from
-# VITE_DATA_BASE_URL (committed in .env, overridable via the repo variable
-# below).
+# The daily meteo data is NOT built here: it lives in the separate cepdata
+# repo, which commits and publishes it on its own schedule. A data refresh
+# therefore never triggers a client rebuild — only a change to this repo's
+# code does. The app reads the data at runtime from VITE_DATA_BASE_URL, which
+# comes from the committed .env.
+#
+# Do NOT pass VITE_DATA_BASE_URL through `env:` here. An undefined repo
+# variable expands to an empty string, and an empty value overrides .env — the
+# build then silently falls back to same-origin /logic/daily/, which no longer
+# exists in this repo and 404s in production. To retarget the data site, edit
+# .env (it is committed) and let this workflow pick it up.
 #
 # Requires GitHub Pages enabled in the repo with the source set to
 # "GitHub Actions" (Settings → Pages).
@@ -43,10 +48,8 @@ jobs:
         run: npm ci
 
       - name: Build
-        # vars.VITE_DATA_BASE_URL lets you retarget the data site without a
-        # code change; .env's value is used when the variable is unset.
-        env:
-          VITE_DATA_BASE_URL: ${{ vars.VITE_DATA_BASE_URL }}
+        # Reads VITE_DATA_BASE_URL from the committed .env — see the header
+        # comment before wiring this to a repo variable.
         run: npm run build
 
       - name: Configure Pages
