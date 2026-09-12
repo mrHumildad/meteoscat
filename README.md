@@ -41,6 +41,22 @@ cp -r ../cepdata/data/daily public/logic/daily
 `public/logic/daily/` is gitignored — that copy is a local cache, never a
 commit.
 
+## Basemap
+
+The map style comes from `VITE_MAP_STYLE_URL` (`.env`, default
+`https://tiles.openfreemap.org/styles/dark`). OpenFreeMap requires no API key
+and serves its style, tiles and glyphs with `Access-Control-Allow-Origin: *`.
+
+Two gotchas, both learned the hard way:
+
+1. **Do not switch back to Stadia's `alidade_smooth_dark`.** Its tiles return
+   `401` without an API key, so the map renders blank on GitHub Pages while
+   still working on localhost (Stadia exempts it).
+2. **Symbol layers must name a font the style's glyphs endpoint serves.**
+   OpenFreeMap hosts `Noto Sans` only, while MapLibre's default stack is
+   `Open Sans Regular, Arial Unicode MS Regular`; leaving `text-font` unset
+   makes those labels 404 and vanish silently.
+
 ## Development
 
 ```bash

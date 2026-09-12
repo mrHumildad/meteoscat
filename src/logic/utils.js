@@ -134,6 +134,6 @@ export const fmtNum = (v, maxDec = 1) => {
 const STYLES = [
   { name: 'Default (MapLibre demo)', url: 'https://demotiles.maplibre.org/style.json' },
   { name: 'CARTO Dark Matter', url: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json' },
-  { name: 'Stadia Dark', url: 'https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json' },
+  { name: 'OpenFreeMap Dark', url: 'https://tiles.openfreemap.org/styles/dark' },
   { name: 'CARTO Positron (light)', url: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json' }
 ];

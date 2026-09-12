@@ -149,9 +149,16 @@ const seaColorHex = (offCodes) => {
 // AND every meteo instance — and is transparent otherwise, so the relief
 // shows through like abroad (see the terrainState memo below).
 const App = ()  => {
-  // Map style — Stadia free tier (no API key). PROD alternative kept:
-  // 'https://demotiles.maplibre.org/style.json'   // public, no key
-  const styleUrl = 'https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json';
+  // Basemap style. OpenFreeMap is keyless and serves both its style JSON and
+  // its tiles with `Access-Control-Allow-Origin: *`, so it works from GitHub
+  // Pages. Do not go back to Stadia's alidade_smooth_dark: its tiles now
+  // 401 without an API key, which leaves the map blank in production while
+  // still working on localhost (Stadia exempts it) — see the style list in
+  // logic/utils.js. Override with VITE_MAP_STYLE_URL (in .env) to switch
+  // providers without a code change.
+  const styleUrl =
+    import.meta.env.VITE_MAP_STYLE_URL ||
+    'https://tiles.openfreemap.org/styles/dark';
   const [selectedStation, setSelectedStation] = useState(null);
   const [days, setDays] = useState([]);           // available 'YYYY-MM-DD' days, oldest first
   const [data, setData] = useState(null);         // all daily shards (every available day)
@@ -464,7 +471,12 @@ const App = ()  => {
           'text-field': ['coalesce', ['get', 'nom'], ['get', 'codi']],
           'text-size': 12,
           'text-offset': [0, 1.2],
-          'text-anchor': 'top'
+          'text-anchor': 'top',
+          // Must name a font the style's glyphs endpoint actually serves.
+          // OpenFreeMap hosts Noto Sans only; left unset, MapLibre falls back
+          // to its default 'Open Sans Regular, Arial Unicode MS Regular',
+          // which 404s there and silently drops the labels.
+          'text-font': ['Noto Sans Regular']
         },
         paint: { 'text-color': '#222' }
       });
@@ -483,7 +495,7 @@ const App = ()  => {
         layout: {
           'text-field': valueField(prop),
           'text-size': 24,
-          'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+          'text-font': ['Noto Sans Bold'], // see stations-label above
           'text-allow-overlap': true,
           'text-ignore-placement': true,
           'text-anchor': 'center'
