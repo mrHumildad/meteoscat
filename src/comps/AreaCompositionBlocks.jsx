@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLayerGroup, faTree } from '@fortawesome/free-solid-svg-icons';
+import { AnticlineIcon, ForestIcon } from '../logic/nounIcons.jsx';
 import { countLandCover, countSubstrates, buildComposition } from '../logic/areaComposition.js';
 import { fmtNum } from '../logic/utils.js';
 
@@ -21,7 +20,7 @@ const CompositionBlock = ({ icon, title, composition, hint }) => {
     <div className="st-block">
       <div className="block-left">
         <span className="st-block-icon" title={title}>
-          <FontAwesomeIcon icon={icon} />
+          {icon}
         </span>
         <span className="st-block-value">
           <span className="area-block-title">{title}</span>
@@ -78,13 +77,13 @@ const AreaCompositionBlocks = ({ lat, lng, radius, lithoGrid = null }) => {
   return (
     <div className="directions-area area-composition">
       <CompositionBlock
-        icon={faLayerGroup}
+        icon={<AnticlineIcon className="noun-icon" />}
         title="Substrat"
         composition={substrate}
         hint={lithoGrid ? 'Sense dades' : 'Mapa geològic no disponible'}
       />
       <CompositionBlock
-        icon={faTree}
+        icon={<ForestIcon className="noun-icon" />}
         title="Cobertes del sòl"
         composition={landCover}
         hint={landCoverHint}

@@ -17,7 +17,7 @@
  *               grid has data there (id > 0); the MCSC class/forest dims
  *               do NOT affect this mode — each palette is filtered only by
  *               its own legend switch.
- *   'none'      palette-less: paints the bright-green highlight on the land
+ *   'relief'    palette-less: paints the bright-green highlight on the land
  *               pixels that pass EVERY filter (the same AND stack as the two
  *               painted modes) so the filter's coverage stays visible over
  *               the relief. Only while at least one filter condition is
@@ -27,6 +27,11 @@
  *               land filters don't describe it) and keeps the sea layer's
  *               navy. While a filter IS active it fetches the MCSC / DEM /
  *               meteo grids, because knowing which pixels pass needs them.
+ *               The GROUND SHAPE in this mode comes from a separate isohypse
+ *               raster (isohypsesOverlay.js) drawn on top of the hillshade:
+ *               the DEM's elevation contours, independent of this filter
+ *               state, so this overlay itself stays transparent with no
+ *               filter.
  *
  * All modes AND, per pixel: in the painted modes water (inland MCSC water
  * classes) is painted with its class colour whenever Aigües is on — never
@@ -82,12 +87,16 @@ export const terrainStateSig = state => JSON.stringify(state ?? TERRAIN_STATE_EM
 export const terrainStateSignature = state => {
   const s = state ?? TERRAIN_STATE_EMPTY;
   return {
-    // 'none' (bright-green filter highlight over the relief) survives;
-    // anything unknown falls back to the default 'terrain' so old URLs/states
-    // stay valid.
-    mode: s.mode === 'none' ? 'none' : s.mode === 'substrate' ? 'substrate' : 'terrain',
+    // 'relief' (isohypses + bright-green filter highlight over the relief)
+    // survives; the legacy 'none' spelling maps to it too, and anything
+    // unknown falls back to the default 'terrain' so old URLs/states stay
+    // valid.
+    mode: s.mode === 'relief' || s.mode === 'none' ? 'relief' : s.mode === 'substrate' ? 'substrate' : 'terrain',
     off: [...(s.off || [])].sort(),
     alt: s.alt ? [s.alt[0], s.alt[1]] : null,
+    // Orientation (slope aspect): selected sector keys, sorted; null when no
+    // sector is selected (the app also normalises "all 8" to null — off).
+    aspect: s.aspect && s.aspect.length ? [...s.aspect].sort() : null,
     geoOff: [...(s.geoOff || [])].sort(),
     filters: [...(s.filters || [])].sort(
       (a, b) =>

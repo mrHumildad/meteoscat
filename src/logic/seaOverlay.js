@@ -9,7 +9,7 @@
  * transparent, using the exact same DEM the relief uses, so the sea/coast
  * boundary is pixel-perfect with the terrain.
  *
- * The colour is baked into the tile URL (`sea://{z}/{x}/{y}?c=000080` or
+ * The colour is baked into the tile URL (`sea://{z}/{x}/{y}?c=2a2ab7` or
  * `c=off`), so the app just calls `source.setTiles([...])` with a new URL to
  * recolor the sea — e.g. to hide it (fully transparent → relief shows)
  * together with the Aigües class when that legend entry is dimmed. Tiles are

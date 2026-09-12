@@ -1,7 +1,10 @@
 // Legend for the MCSC forest / land-cover overlay (ICGC WMS "cobertes_2024").
-// Colours are the official ones served by the WMS (GetLegendGraphic), in the
-// official class order; the mapping was cross-checked by sampling map pixels
-// at XEMA stations whose MCSC class is known from forest_types.json.
+// The class codes, band values and their order come from the WMS
+// (GetLegendGraphic); the COLOURS are this app's own hand-tuned palette, not
+// the raw WMS swatches — editing them is expected, and the tests pin the
+// current values so a change is deliberate rather than silent. The band→class
+// mapping (not the colours) was cross-checked by sampling map pixels at XEMA
+// stations whose MCSC class is known from forest_types.json.
 //
 // The legend doubles as a switch panel: every entry starts highlighted and the
 // user can press one to dim it to grey (MCSC_GREY — the same colour for every
@@ -21,16 +24,16 @@
 // Colour shared by all water classes (mar, llacs, embassaments). Also used to
 // paint the open sea: the MCSC raster leaves the ocean outside its tiles, so
 // the app fills it with this colour to match the water terrain.
-export const MCSC_WATER_COLOR = '#000080';
+export const MCSC_WATER_COLOR = '#2a2ab7';
 
 export const MCSC_LEGEND = [
-  { color: '#33cc33', label: "Bosc d'aciculifolis (pins, avets)", codes: '221/225', values: [7, 11] },
-  { color: '#66ff33', label: 'Bosc de caducifolis (roures, fagedes)', codes: '222/226', values: [8, 12] },
-  { color: '#689018', label: "Bosc d'esclerofil·les (alzina, surera)", codes: '223/227', values: [9, 13] },
+  { color: '#65b965', label: "Bosc d'aciculifolis (pins, avets)", codes: '221/225', values: [7, 11] },
+  { color: '#52f01d', label: 'Bosc de caducifolis (roures, fagedes)', codes: '222/226', values: [8, 12] },
+  { color: '#4d6d0d', label: "Bosc d'esclerofil·les (alzina, surera)", codes: '223/227', values: [9, 13] },
   { color: '#00ff9b', label: 'Bosc de ribera', codes: '229', values: [15] },
-  { color: '#967d5f', label: 'Matollar', codes: '224', values: [10] },
-  { color: '#c3c3a0', label: 'Prats i herbassars', codes: '228', values: [14] },
-  { color: '#ffff00', label: 'Conreus', codes: '111–116', values: [1, 2, 3, 4, 5, 6] },
+  { color: '#b37223', label: 'Matollar', codes: '224', values: [10] },
+  { color: '#c3c357', label: 'Prats i herbassars', codes: '228', values: [14] },
+  { color: '#e56fe7', label: 'Conreus', codes: '111–116', values: [1, 2, 3, 4, 5, 6] },
   { color: '#ff007d', label: 'Zones urbanes', codes: '341–355', values: [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35] },
   { color: MCSC_WATER_COLOR, label: 'Aigües (mar, llacs, embassaments)', codes: '461–466', values: [36, 37, 38, 39, 40, 41] },
 ];

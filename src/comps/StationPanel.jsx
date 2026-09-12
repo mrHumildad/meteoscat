@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { fmt, fmtNum } from '../logic/utils.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCarrot, faDroplet, faSeedling, faTemperatureLow, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { RainIcon, HumidityIcon, TemperatureIcon, MushroomIcon } from '../logic/nounIcons.jsx';
 import { fmtDayCat } from '../logic/utils.js';
 import { SPECIES } from '../logic/speciesRules.js';
 
@@ -111,7 +112,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
       <div className="st-block">
         <div className="block-left">
           <span className="st-block-icon">
-            <FontAwesomeIcon icon={faDroplet} />
+            <RainIcon className="noun-icon" />
           </span>
           <span className="st-block-value">
             TOT {fmtNum(station.properties?.precAcc ?? null, 1) || "N/A"} mm
@@ -139,7 +140,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
       <div className="st-block">
         <div className="block-left">
           <span className="st-block-icon">
-            <FontAwesomeIcon icon={faSeedling} />
+            <HumidityIcon className="noun-icon" />
           </span>
           <span className="st-block-value">
             MITJANA {fmtNum(station.properties?.humAvg ?? null, 0) || "N/A"} %
@@ -164,7 +165,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
       <div className="st-block">
         <div className="block-left">
           <span className="st-block-icon">
-            <FontAwesomeIcon icon={faTemperatureLow} />
+            <TemperatureIcon className="noun-icon" />
           </span>
           <span className="st-block-value">
             MITJANA {fmtNum(station.properties?.tempAvg ?? null, 1) || "N/A"} °C
@@ -193,7 +194,7 @@ const StationPanel = ({ station, setSelectedStation, data, daysRange, elevation,
         <div className="st-block bolet">
           <div className="block-left">
             <span className="st-block-icon">
-              <FontAwesomeIcon icon={faCarrot} />
+              <MushroomIcon className="noun-icon" />
             </span>
             <span className="st-block-value">
               {SPECIES[boletFilter.species]?.name ?? boletFilter.species}:{' '}

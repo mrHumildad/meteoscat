@@ -1,8 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCarrot, faCheck, faDroplet, faFloppyDisk, faLayerGroup, faMountain, faSeedling, faTemperatureLow, faTree, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCompass, faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { RainIcon, HumidityIcon, TemperatureIcon, MushroomIcon, ForestIcon, MountainIcon, AnticlineIcon } from '../logic/nounIcons.jsx';
 import { useState } from 'react';
 import RangeSlider from 'react-range-slider-input';
 import { DEFAULTDAYRANGE, dayRangeLabel, limitsForWindow, TYPE_TO_VARIABLE, windowToDates } from '../logic/filterAggregate.js';
+import { ASPECT_MIN_SLOPE_DEG, ASPECT_SECTORS } from '../logic/elevation.js';
 import { fmtNum, fmtShortCat } from '../logic/utils.js';
 import { MCSC_LEGEND } from '../logic/mcscLegend.js';
 import { SPECIES, SPECIES_KEYS } from '../logic/speciesRules.js';
@@ -22,11 +24,17 @@ const MAX_PER_TYPE = 5;      // hard cap per type (panel readability + layer bou
 // the labels all agree. Rain/temp keep 1 decimal; `decimals` only rounds what
 // the labels show (utils.fmtNum).
 const METEO_DEFS = [
-  { type: 'rain', label: 'Pluja', unit: 'mm', step: 0.1, decimals: 1, icon: faDroplet, className: 'rain' },
-  { type: 'hum', label: 'Humitat', unit: '%', step: 1, decimals: 0, icon: faSeedling, className: 'humidity' },
-  { type: 'temp', label: 'Temperatura', unit: '°C', step: 0.1, decimals: 1, icon: faTemperatureLow, className: 'temp' },
+  { type: 'rain', label: 'Pluja', unit: 'mm', step: 0.1, decimals: 1, icon: RainIcon, className: 'rain' },
+  { type: 'hum', label: 'Humitat', unit: '%', step: 1, decimals: 0, icon: HumidityIcon, className: 'humidity' },
+  { type: 'temp', label: 'Temperatura', unit: '°C', step: 0.1, decimals: 1, icon: TemperatureIcon, className: 'temp' },
 ];
 const defOf = type => METEO_DEFS.find(d => d.type === type) ?? null;
+
+// Compass names for the orientation chips (Catalan), used as tooltips.
+const ASPECT_LABELS = {
+  N: 'nord', NE: 'nord-est', E: 'est', SE: 'sud-est',
+  S: 'sud', SW: 'sud-oest', W: 'oest', NW: 'nord-oest',
+};
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
@@ -35,6 +43,8 @@ const FilterPanel = ({
   reliefRange,
   busy = false, // repaint in flight → controls disabled to avoid input floods
   onApplyRelief,
+  aspectSectors,
+  onApplyAspect,
   meteoFilters,
   onAddFilter,
   onUpdateFilter,
@@ -57,6 +67,8 @@ const FilterPanel = ({
   const [draft, setDraft] = useState(null);           // { from, to, range } while editing
   const [reliefEditing, setReliefEditing] = useState(false);
   const [reliefDraft, setReliefDraft] = useState(null);
+  const [aspectEditing, setAspectEditing] = useState(false);
+  const [draftAspect, setDraftAspect] = useState(() => new Set());
   const [forestEditing, setForestEditing] = useState(false);
   const [draftForest, setDraftForest] = useState(() => new Set());
   const [geoEditing, setGeoEditing] = useState(false);
@@ -193,6 +205,26 @@ const FilterPanel = ({
     setReliefEditing(true);
   };
 
+  // ── Orientation (slope aspect) — single timeless filter ─────────────────
+  // Keep-selected sectors: no selection (or all 8, which App normalises to
+  // null) is "off"; otherwise only land facing one of the picked directions
+  // is painted. Flat land (< ASPECT_MIN_SLOPE_DEG) has no sector and is
+  // therefore excluded while the filter is active (D2 strict).
+  const aspectPicked = ASPECT_SECTORS.filter(s => (aspectSectors ?? []).includes(s));
+  const aspectApplied = aspectPicked.length > 0;
+  const openAspectEditor = () => {
+    setDraftAspect(new Set(aspectSectors ?? []));
+    setAspectEditing(true);
+  };
+  const toggleAspectSector = key => {
+    setDraftAspect(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
   const daySliderMax = Math.max(0, maxDays - 1);
 
   // ── Save preset ─────────────────────────────────────────────────────────
@@ -215,18 +247,9 @@ const FilterPanel = ({
   return (
     <div className={`filter-panel${busy ? ' busy' : ''}`} aria-busy={busy || undefined}>
       <div className="filter-header">
-        <span className="filter-title">Filtres</span>
-        <span className="filter-anchor" title="Dia de referència (últimes dades disponibles)">
-          fins a les dades del {shortDate(refDay)}
-        </span>
+        
         <div className="filter-actions">
-          <div
-            className="sel-button filter-close"
-            title="Tanca"
-            onClick={onClose}
-          >
-            <FontAwesomeIcon icon={faXmark} />
-          </div>
+         
         </div>
       </div>
       <div className="filter-body">
@@ -237,14 +260,21 @@ const FilterPanel = ({
             title="Filtre de bosc"
             onClick={() => (forestEditing ? setForestEditing(false) : openForestEditor())}
           >
-            <FontAwesomeIcon icon={faTree} />
+            <ForestIcon className="noun-icon" />
           </div>
           <div
             className={`sel-button mountain${reliefApplied ? ' on' : ''}`}
             title="Filtre de relleu"
             onClick={() => (reliefEditing ? setReliefEditing(false) : openReliefEditor())}
           >
-            <FontAwesomeIcon icon={faMountain} />
+            <MountainIcon className="noun-icon" />
+          </div>
+          <div
+            className={`sel-button compass${aspectApplied ? ' on' : ''}`}
+            title="Filtre d'orientació (cara del pendent)"
+            onClick={() => (aspectEditing ? setAspectEditing(false) : openAspectEditor())}
+          >
+            <FontAwesomeIcon icon={faCompass} />
           </div>
           {lithoLegend.length > 0 && (
             <div
@@ -252,16 +282,28 @@ const FilterPanel = ({
               title="Filtre de substrat geològic"
               onClick={() => (geoEditing ? setGeoEditing(false) : openGeoEditor())}
             >
-              <FontAwesomeIcon icon={faLayerGroup} />
+              <AnticlineIcon className="noun-icon" />
             </div>
           )}
-          <div
-            className={`sel-button bolet${boletFilter ? ' on' : ''}`}
-            title="Filtre de bolets (regles d'espècie — prova)"
-            onClick={() => (boletEditing ? setBoletEditing(false) : setBoletEditing(true))}
-          >
-            <FontAwesomeIcon icon={faCarrot} />
-          </div>
+          
+          {/* Meteo filter creators: icon-only, same row/size as the filters
+              above — each click appends an instance below ("Mètriques"). */}
+          {METEO_DEFS.map(def => {
+            const capped = meteoFilters.filter(f => f.type === def.type).length >= MAX_PER_TYPE;
+            return (
+              <div
+                key={def.type}
+                className={`sel-button ${def.className}`}
+                title={capped
+                  ? `Màxim ${MAX_PER_TYPE} filtres de ${def.label.toLowerCase()}`
+                  : `Afegeix un filtre de ${def.label.toLowerCase()}`}
+                style={capped ? { opacity: 0.45, pointerEvents: 'none' } : undefined}
+                onClick={() => { if (!capped) add(def.type); }}
+              >
+                <def.icon className="noun-icon" />
+              </div>
+            );
+          })}
         </div>
 
         {forestEditing && (
@@ -479,6 +521,77 @@ const FilterPanel = ({
           </div>
         )}
 
+        {aspectEditing && (
+          <div className="filter-line">
+            <div className="filter-line-header">
+              <span className="filter-line-label">Orientació</span>
+              <span className="range-value">
+                {draftAspect.size === 0
+                  ? 'Cap cara'
+                  : `només ${ASPECT_SECTORS.filter(s => draftAspect.has(s)).join(' · ')}`}
+              </span>
+              <div className="filter-line-actions">
+                <div
+                  className="sel-button filter-line-ok"
+                  title="D'acord"
+                  onClick={() => {
+                    // No sector picked = filter off. All 8 picked is also off
+                    // (App collapses it), so it never repaints for nothing.
+                    const picked = ASPECT_SECTORS.filter(s => draftAspect.has(s));
+                    onApplyAspect?.(picked.length && picked.length < 8 ? picked : null);
+                    setAspectEditing(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCheck} />
+                </div>
+                <div
+                  className="sel-button filter-line-cancel"
+                  title="Cancel·la"
+                  onClick={() => setAspectEditing(false)}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </div>
+              </div>
+            </div>
+            <div className="filter-chips">
+              {ASPECT_SECTORS.map(s => (
+                <button
+                  type="button"
+                  key={s}
+                  className={`filter-chip${draftAspect.has(s) ? ' on' : ''}`}
+                  aria-pressed={draftAspect.has(s)}
+                  title={ASPECT_LABELS[s]}
+                  onClick={() => toggleAspectSector(s)}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+            <div className="filter-editor-hint">
+              Conserva només els pendents orientats a les cares triades
+              (mínim {ASPECT_MIN_SLOPE_DEG}°; el terreny pla queda fora).
+            </div>
+          </div>
+        )}
+
+        {!aspectEditing && aspectApplied && (
+          <div className="filter-line applied">
+            <div className="filter-line-header">
+              <span className="filter-line-label">Orientació</span>
+              <div className="filter-line-actions">
+                <div
+                  className="sel-button filter-line-cancel"
+                  title="Treu el filtre"
+                  onClick={() => onApplyAspect?.(null)}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </div>
+              </div>
+            </div>
+            <span className="range-value">només {aspectPicked.join(' · ')}</span>
+          </div>
+        )}
+
         {/* ── Bolets: species rule filter (test) ──────────────────────── */}
         {boletEditing && (
           <div className="filter-line">
@@ -561,29 +674,6 @@ const FilterPanel = ({
             </div>
           </div>
         )}
-
-        {/* ── Mètriques: per-instance filters with their own period ─────── */}
-        <div className="filter-section-label">Mètriques (cada filtre amb el seu període)</div>
-        <div className="filter-add-buttons">
-          {METEO_DEFS.map(def => {
-            const count = meteoFilters.filter(f => f.type === def.type).length;
-            const capped = count >= MAX_PER_TYPE;
-            return (
-              <button
-                type="button"
-                key={def.type}
-                className={`filter-add-btn ${def.className}`}
-                disabled={capped}
-                title={capped
-                  ? `Màxim ${MAX_PER_TYPE} filtres de ${def.label.toLowerCase()}`
-                  : `Afegeix un filtre de ${def.label.toLowerCase()}`}
-                onClick={() => add(def.type)}
-              >
-                + <FontAwesomeIcon icon={def.icon} /> {def.label}
-              </button>
-            );
-          })}
-        </div>
 
         {meteoFilters.map(f => {
           const def = defOf(f.type);
@@ -727,7 +817,7 @@ const FilterPanel = ({
               onClick={openSave}
             >
               <FontAwesomeIcon icon={faFloppyDisk} />{' '}
-              {savedName ? `Desat: ${savedName}` : 'Desa els filtres'}
+              {"Desa la teva 'reCeta'"}
             </button>
           )}
         </div>

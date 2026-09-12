@@ -5,6 +5,27 @@
 > **Date:** 2026-09-10 · branch `main` · 18 commits since 2025-10-14
 > **Related docs:** `TILE_RENDERING.md` (tile pipeline), `FILTER_REFACTOR_PLAN.md` (per-instance windows, §13 stacked overlay), `MUSHROOM_APP_PLAN.md` (bolet scoring)
 
+> ### ✅ Status update — 2026-09-12 (read this before the body)
+>
+> **Implemented.** The body below is the plan *as written before coding*; the sections are in
+> the present tense of the pre-refactor code, so treat §1–§3 as history.
+>
+> - **Phase A (stations info-only): DONE.** Stations are never dimmed; `filteredStationsCodes`
+>   no longer drives the layers. `filterStationCodes` survives only as pure, tested code that
+>   nothing calls (see `APP_STATE_REPORT.md` §7.5).
+> - **§7 Phase A.3 (fixed rain-last-15 window): SUPERSEDED.** The station value window now
+>   *follows the filters* — each variable's label aggregates over its last ACTIVE filter's day
+>   range, or the 60-day default when none is active (`App.jsx` `stationDayRange`). The old
+>   5-way `LABEL_MODES` cycle survived, but with filter-following windows.
+> - **§6.2 / Phase B (crimson veil) : REVERTED and then replaced.** `none` now paints a green
+>   highlight on the land that passes every active filter, and falls back to a zero-fetch
+>   transparent tile when no filter is active (`TILE_RENDERING.md` §4.1).
+> - **Phase C (palette/gate scope): DONE** — both `off` and `geoOff` gate every render mode.
+> - **Test counts: this file is stale.** It lists 14 files / 196 tests; the suite is now
+>   **339 tests / 24 files** (`npm test`, 2026-09-12).
+>
+> For the current state of everything, see `APP_STATE_REPORT.md`.
+
 ---
 
 ## 0. TL;DR — what the user just clarified
@@ -48,7 +69,7 @@ public/logic/daily/*.json — 60 shards (~2.1 MB), index.json, stations.geojson,
 vite.config.js            — base /meteoscat/ in prod, ?worker&url for maplibre worker
 ```
 
-**Test files (14):** `terrainOverlay.test.js`, `terrainOverlay.tile.test.js`, `seaOverlay.test.js`, `meteoGrid.test.js`, `lithology.test.js`, `filterAggregate.test.js`, `filterStations.test.js`, `elevation.test.js`, `mapFit.test.js`, `mcscLegend.test.js`, `utils.test.js`, `boletEngine.test.js`, `speciesRules.test.js`, `App.render.test.jsx`.
+**Test files (24, 339 tests)** — counted 2026-09-12, so longer than the 14 this report was written against: `elevation.test.js` (30, incl. the slope-aspect helpers), `filterAggregate.test.js` (25), `terrainOverlay.tile.test.js` (24), `terrainOverlay.test.js` (24), `utils.test.js` (22), `speciesRules.test.js` (22), `filterStations.test.js` (20, now guards unused code), `meteoGrid.test.js` (19), `savedFilters.test.js` (15), `areaFilterMatch.test.js` (15), `savedLocations.test.js` (14), `DirectionsModal.test.jsx` (13), `areaElevation.test.js` (12), `areaComposition.test.js` (12), `webgl2.test.js` (11), `seaOverlay.test.js` (11), `nearestStations.test.js` (9), `mcscLegend.test.js` (8), `mapFit.test.js` (8), `lithology.test.js` (8), `boletEngine.test.js` (7), `refineData.test.js` (6), `FilterPanel.render.test.jsx` (2), `App.render.test.jsx` (2).
 
 ---
 
@@ -89,13 +110,15 @@ filteredStationsCodes: string[]        // derived (see §2.3)
 - `boletScores = scoreStations(data, last windowDays of displayWindow, species, forestByCode)` + `boletPassing = Set(codes ≥ threshold)`
 - `terrainState = { mode, off: sorted(mcscOff), alt: reliefRange if narrowed, filters: active instances sorted, geoOff: sorted(geoOff) if substrate else [] }`
 - `terrainTiles = [terrainTileUrl(terrainState)]` — `terrain://{z}/{x}/{y}?s=<sig>` with `&r` cache buster on change.
-- `seaColorHex = mcscOff has Aigües ? null : '000080'`
+- `seaColorHex = mcscOff has Aigües ? null : '2a2ab7'`
 
 ### 2.3 Station filtering (today — contradicts desired)
 
 `filterStationCodes(stationsFeatures, meteoFilters, reliefRange, agg, {off:geoOff, grid:lithoGrid})` → `filteredStationsCodes` is then intersected with `boletPassing` if a bolet filter is on. Active check: an instance constrains only if `range !== limitsForWindow(type, from, to)` (full span = inert). Relief active only if narrowed below `altLimits`. Geo active only if grid loaded + set non-empty. Returns `[]` when nothing constrains → caller treats as "show everything". Stations with `inRange=false` are rendered dimmed (smaller, faded, grey, value hidden via `valueFieldDimmed`).
 
 > **Gap vs desired:** stations must stop being filtered at all. The entire `filteredStationsCodes` pipeline and its visual dimming need to be retired (or kept only as an optional debug overlay). See §6.
+>
+> **✅ Resolved (Phase A):** this effect and the dimmed circle/label paint are gone. Stations always render at full style. `filterStations.js` is kept only as pure, tested code with no caller.
 
 ### 2.4 Map lifecycle (`onMapLoad`)
 
@@ -169,7 +192,7 @@ Water is never gated. Nodata litho (family 0) never gated. Inclusive bounds. Fai
 
 ### 3.4 Known bug & fix (2026-09, §8 of TILE_RENDERING.md)
 
-Detached `ArrayBuffer` on transfer: `transparentPng` and worker `run` now always `slice(0)` before transfer; `OffscreenCanvas` now `getContext('2d')` before `convertToBlob`. Without this, toggling `none→terrain` after 2 cycles wedged the layer (DataCloneError → fallback transparent stuck, zoom recovered patchily). Playwright 10-click repro + 196 unit tests guard it. **Keep the `slice(0)`.**
+Detached `ArrayBuffer` on transfer: `transparentPng` and worker `run` now always `slice(0)` before transfer; `OffscreenCanvas` now `getContext('2d')` before `convertToBlob`. Without this, toggling `none→terrain` after 2 cycles wedged the layer (DataCloneError → fallback transparent stuck, zoom recovered patchily). Playwright 10-click repro + the unit suite guard it (196 at the time; **339 tests / 24 files** today). **Keep the `slice(0)`.**
 
 ---
 
@@ -305,7 +328,7 @@ Interpretation: the stack is always the same set of conditions, but the **palett
    ```
    Compute the label value via `aggregateWindow(agg, codi, 'rain', 15, 0)` per station (or `computeGeoValues` over `[refDay-14, refDay]`), not the displayWindow. Keep `valueField` + hide on `none` only. Add a follow-up ticket: make the station window configurable in `FilterPanel` (small "Station info" row).
 
-### Phase B — Semitransparent veil for `none` (IMPLEMENTED, THEN REVERTED — see §6.2)
+### Phase B — Semitransparent veil for `none` (⛔ HISTORY: implemented, reverted, later replaced by a green highlight — see §6.2 and `TILE_RENDERING.md` §4.1)
 
 4. **Extend `tilePaint.buildTerrainTile` for `mode==='none'`:** stop early-returning transparent; instead run the single-pass veil of §6.2 (`passing ? transparent : VEIL`). Extract the AND into a shared `passesAllGates(colour,isWater,elev,altBand,values,…,familyKey,offGeo)` helper so `terrain`/`substrate` (write `c` if passes) and `none` (write `VEIL` if !passes) share the same gate logic — no divergence.
 5. **Veil appearance:** one signal colour `VEIL=[220,20,60,90]` (crimson ~35% — legible over both hillshade and dark basemap; alpha 70–110 tunable). Passing → transparent (relief), failing (dimmed/230–234/nodata-gated/alt/meteo) → veil, MCSC `band==0` stays transparent, water never veiled. No palette-coloured veil, no halo needed.
@@ -369,7 +392,7 @@ Interpretation: the stack is always the same set of conditions, but the **palett
 ## 11. How to verify (manual + automated)
 
 - **Unit:** `terrainOverlay.tile.test.js` stubs `loadMcscBandTile`/`loadTileImageData`/`FakeCanvas` and feeds a 256×256 band image (water block / nodata block / forest elsewhere): in `terrain`/`substrate` mode only land passing every gate is painted, water keeps its class colour and failing land stays transparent; in `none` mode the tile is transparent with **no MCSC / DEM fetch and no pixel loop at all**.
-- **Integration:** `npm test` (all 14 files), `npm run build`, `npm run lint`.
+- **Integration:** `npm test` (all 24 files / 339 tests today; 14 files when written), `npm run build`, `npm run lint`.
 - **Manual:** dev server, add `rain 100 mm day 4–8` + `temp 20–26 day 12–21` + `geoOff=calcaric` + `mcscOff=one class`, cycle `terrain→substrate→none` 10×, check: terrain/substrate show filled areas only where all pass; `none` shows relief + basemap with **no tint anywhere** (no red patches, in particular none over the 230–234 no-data bands, even with no filter active); pan/zoom burst doesn't wedge; stations stay full opacity and their labels keep their rain15 values.
 
 ---
@@ -379,9 +402,9 @@ Interpretation: the stack is always the same set of conditions, but the **palett
 - `TILE_SIZE 256`, `TERRAIN_OVERLAY_BOUNDS [-1.25,39.75,4.25,44.25]`, `CATALONIA_BOUNDS [[-1,40],[4,44]]`, `FIT_ZOOM_FLOOR 5.5`
 - `GRID_STEP 0.01°`, `GRID_BOUNDS {w-1,s40,e4,n44}`, `DEFAULT_MAX_DIST_KM 50`, `LAPSE_RATE 6.5`
 - `TERRAIN_REPAINT_MS 150`, `repaintBusy` timeout 5000 ms, `MAX_ACTIVE 6`, tile caches 300, grid cache 30, `limitsCache` WeakMap 200
-- `DISPLAY_DAYS 60` (chart), proposed `STATION_VALUE_DAYS 15` (label), `MAX_PER_TYPE 5`
+- `DISPLAY_DAYS 60` (chart), `MAX_PER_TYPE 5` — and **`STATION_VALUE_DAYS 15` was not adopted**: the label window now follows the active filters (default 60 days); see the status banner above.
 - DEM `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png`, WMS `cobertes_2024` with `renderBandSld` `band→#vv0000`
 
 ---
 
-*No code was changed to produce this report. Next step: get sign-off on §8 decisions, then implement Phase A → B.*
+*This report was written before implementation (no code was changed to produce it). Phases A and C have since shipped; the §6.2/Phase B crimson veil was implemented, reverted, and replaced by the green highlight of `TILE_RENDERING.md` §4.1. Decisions §8.1 and §8.5 are moot (there is no veil); §8.2–§8.4 were resolved by the implementation. See the status banner at the top and `APP_STATE_REPORT.md`.*

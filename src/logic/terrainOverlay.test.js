@@ -16,10 +16,10 @@ import {
 } from './terrainOverlay.js';
 
 describe('colourForBand', () => {
-  it('returns the official class colour when the band is selected', () => {
-    expect(colourForBand(7)).toEqual([51, 204, 51, 255]);    // aciculifolis '#33cc33'
-    expect(colourForBand(36)).toEqual([0, 0, 128, 255]);     // aigües '#000080'
-    expect(colourForBand(41)).toEqual([0, 0, 128, 255]);     // aigües (466)
+  it('returns the palette class colour when the band is selected', () => {
+    expect(colourForBand(7)).toEqual([101, 185, 101, 255]); // aciculifolis '#65b965'
+    expect(colourForBand(36)).toEqual([42, 42, 183, 255]);  // aigües '#2a2ab7'
+    expect(colourForBand(41)).toEqual([42, 42, 183, 255]);  // aigües (466)
   });
 
   it('returns null for no data and permanently-unlisted 230–234 values', () => {
@@ -34,13 +34,13 @@ describe('colourForBand', () => {
     expect(colourForBand(7, off)).toBeNull();   // aciculifolis
     expect(colourForBand(11, off)).toBeNull();  // aciculifolis (clar)
     expect(colourForBand(36, off)).toBeNull();  // aigües
-    expect(colourForBand(8)).toEqual([102, 255, 51, 255]); // caducifolis stays on
+    expect(colourForBand(8)).toEqual([82, 240, 29, 255]); // caducifolis stays on
   });
 });
 
 describe('classifyTerrainPixel', () => {
-  const green = [51, 204, 51, 255];
-  const water = [0, 0, 128, 255];
+  const green = [101, 185, 101, 255];
+  const water = [42, 42, 183, 255];
 
   it('stays transparent when the class is not selected (no colour)', () => {
     expect(classifyTerrainPixel(null, false, 100, null, [], [], [])).toEqual(TERRAIN_TRANSPARENT);
@@ -122,6 +122,38 @@ describe('classifyTerrainPixel', () => {
     expect(classifyTerrainPixel(green, false, 900, [500, 800], [10], [0], [20], 'volcaniques', offCarbons))
       .toEqual(TERRAIN_TRANSPARENT);
   });
+
+  it('gates land by the slope aspect (selected sector set), never water', () => {
+    const keys = ['N', 'NE'];
+    // a selected sector passes
+    expect(classifyTerrainPixel(green, false, 100, null, [], [], [], null, null, 'N', keys)).toEqual(green);
+    expect(classifyTerrainPixel(green, false, 100, null, [], [], [], null, null, 'NE', keys)).toEqual(green);
+    // a sector outside the set is excluded
+    expect(classifyTerrainPixel(green, false, 100, null, [], [], [], null, null, 'S', keys))
+      .toEqual(TERRAIN_TRANSPARENT);
+    // flat / no DEM → no sector → excluded while the filter is active
+    expect(classifyTerrainPixel(green, false, 100, null, [], [], [], null, null, null, keys))
+      .toEqual(TERRAIN_TRANSPARENT);
+    // filter off (no/empty selection) → the aspect value is ignored
+    expect(classifyTerrainPixel(green, false, 100, null, [], [], [], null, null, 'S', null)).toEqual(green);
+    expect(classifyTerrainPixel(green, false, 100, null, [], [], [], null, null, null, [])).toEqual(green);
+    // water is NEVER gated by the orientation filter
+    expect(classifyTerrainPixel(water, true, 100, null, [], [], [], null, null, 'S', keys)).toEqual(water);
+  });
+
+  it('ANDs the orientation sector with altitude, meteo and geology', () => {
+    const offCarbons = new Set(['carbonatades']);
+    const keys = ['N'];
+    // everything passes → painted
+    expect(classifyTerrainPixel(green, false, 700, [500, 800], [10], [0], [20], 'volcaniques', offCarbons, 'N', keys))
+      .toEqual(green);
+    // aspect matches but altitude fails
+    expect(classifyTerrainPixel(green, false, 900, [500, 800], [10], [0], [20], 'volcaniques', offCarbons, 'N', keys))
+      .toEqual(TERRAIN_TRANSPARENT);
+    // aspect outside the set while everything else passes
+    expect(classifyTerrainPixel(green, false, 700, [500, 800], [10], [0], [20], 'volcaniques', offCarbons, 'S', keys))
+      .toEqual(TERRAIN_TRANSPARENT);
+  });
 });
 
 describe('terrain state signature & tile URL', () => {
@@ -167,22 +199,37 @@ describe('terrain state signature & tile URL', () => {
     expect(a).not.toBe(terrainTileUrl({ mode: 'substrate', off: [], alt: null, geoOff: [], filters: [] }));
   });
 
-  it('changes when the rendering mode changes (terrain vs substrate vs none)', () => {
+  it('changes when the rendering mode changes (terrain vs substrate vs relief)', () => {
     const base = { mode: 'terrain', off: [], alt: null, filters: [], geoOff: [] };
     expect(terrainTileUrl(base)).not.toBe(terrainTileUrl({ ...base, mode: 'substrate' }));
-    expect(terrainTileUrl(base)).not.toBe(terrainTileUrl({ ...base, mode: 'none' }));
+    expect(terrainTileUrl(base)).not.toBe(terrainTileUrl({ ...base, mode: 'relief' }));
     // an absent mode canonicalises to 'terrain'
     expect(terrainStateSig(terrainStateSignature(base))).toBe(
       terrainStateSig(terrainStateSignature({ off: [], alt: null, filters: [] }))
     );
   });
 
-  it("carries the 'none' mode through the signature and tile URL", () => {
-    const s = terrainStateSignature({ mode: 'none', off: [], alt: null, filters: [], geoOff: [] });
-    expect(s.mode).toBe('none');
-    expect(terrainStateSig(s)).toBe('{"mode":"none","off":[],"alt":null,"geoOff":[],"filters":[]}');
-    expect(terrainTileUrl({ mode: 'none', off: [], alt: null, filters: [], geoOff: [] }))
-      .toMatch(/\?s=.*%22mode%22%3A%22none%22/); // encodeURIComponent: ':' → %3A
+  it("carries the 'relief' mode through the signature and tile URL", () => {
+    const s = terrainStateSignature({ mode: 'relief', off: [], alt: null, filters: [], geoOff: [] });
+    expect(s.mode).toBe('relief');
+    expect(terrainStateSig(s)).toBe('{"mode":"relief","off":[],"alt":null,"aspect":null,"geoOff":[],"filters":[]}');
+    expect(terrainTileUrl({ mode: 'relief', off: [], alt: null, filters: [], geoOff: [] }))
+      .toMatch(/\?s=.*%22mode%22%3A%22relief%22/); // encodeURIComponent: ':' → %3A
+    // the legacy 'none' spelling canonicalises to 'relief'
+    expect(terrainStateSignature({ mode: 'none' }).mode).toBe('relief');
+  });
+
+  it('changes when the orientation sectors change (and is order-insensitive)', () => {
+    const base = { off: [], alt: null, filters: [], geoOff: [] };
+    const a = terrainTileUrl({ ...base, aspect: ['N', 'NE'] });
+    const b = terrainTileUrl({ ...base, aspect: ['NE', 'N'] });
+    const c = terrainTileUrl({ ...base, aspect: ['N'] });
+    expect(a).toBe(b); // same selection, different order
+    expect(a).not.toBe(c);
+    expect(a).not.toBe(terrainTileUrl(base)); // null/absent = off
+    // empty selection collapses to null
+    expect(terrainStateSig(terrainStateSignature({ ...base, aspect: [] })))
+      .toBe(terrainStateSig(terrainStateSignature(base)));
   });
 
   it('embeds an encoded state token and parses it back', () => {
@@ -203,16 +250,19 @@ describe('terrain state signature & tile URL', () => {
 });
 
 describe('hasActiveTerrainFilter', () => {
-  it('is false for an empty / absent state (mode none would tint everything)', () => {
+  it('is false for an empty / absent state (mode relief would tint everything)', () => {
     expect(hasActiveTerrainFilter()).toBe(false);
     expect(hasActiveTerrainFilter(null)).toBe(false);
-    expect(hasActiveTerrainFilter({ mode: 'none', off: [], alt: null, filters: [], geoOff: [] })).toBe(false);
+    expect(hasActiveTerrainFilter({ mode: 'relief', off: [], alt: null, filters: [], geoOff: [] })).toBe(false);
   });
 
-  it('is true for any active condition (dimmed class, dimmed family, altitude band, meteo instance)', () => {
+  it('is true for any active condition (dimmed class, dimmed family, altitude band, orientation, meteo instance)', () => {
     expect(hasActiveTerrainFilter({ off: ['221/225'], alt: null, filters: [], geoOff: [] })).toBe(true);
     expect(hasActiveTerrainFilter({ off: [], alt: null, filters: [], geoOff: ['quaternary'] })).toBe(true);
     expect(hasActiveTerrainFilter({ off: [], alt: [100, 500], filters: [], geoOff: [] })).toBe(true);
+    expect(hasActiveTerrainFilter({ off: [], alt: null, aspect: ['N'], filters: [], geoOff: [] })).toBe(true);
+    // an empty sector selection is not a filter
+    expect(hasActiveTerrainFilter({ off: [], alt: null, aspect: [], filters: [], geoOff: [] })).toBe(false);
     expect(hasActiveTerrainFilter({
       off: [], alt: null, geoOff: [],
       filters: [{ variable: 'precAcc', from: '2026-08-01', to: '2026-09-01', band: [10, 20] }],

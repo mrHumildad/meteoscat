@@ -12,22 +12,14 @@ const SavedFiltersPanel = ({ presets = [], activeName = null, onApply, onDelete,
   <div className="filter-panel basket-panel">
     <div className="filter-header">
       <span className="filter-title">
-        Filtres desats{presets.length > 0 ? ` (${presets.length})` : ''}
+        Las mevas 'reCetas'{presets.length > 0 ? ` (${presets.length})` : ''}
       </span>
-      <div className="filter-actions">
-        <div
-          className="sel-button filter-close"
-          title="Tanca"
-          onClick={onClose}
-        >
-          <FontAwesomeIcon icon={faXmark} />
-        </div>
-      </div>
+      
     </div>
     <div className="filter-body">
       {presets.length === 0 ? (
         <div className="basket-empty">
-          Encara no hi ha cap filtre desat. Obre els filtres i desa'n un amb la disquette.
+          Encara no hi ha cap filtre desat.
         </div>
       ) : (
         presets.map(p => {

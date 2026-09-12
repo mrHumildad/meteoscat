@@ -4,33 +4,45 @@
 // asserts on the pixels that would be PNG-encoded: a class colour is painted
 // only where EVERY active condition passes, and failing pixels are
 // transparent (relief shows through) — no grey anywhere.
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { buildAggregateTable } from './filterAggregate.js';
 import { decodeLithoGrid } from './lithology.js';
 
 vi.mock('maplibre-gl', () => ({ addProtocol: vi.fn() }));
 
-// Fake DEM: every pixel is 100 m land (terrarium: R=128, G=100, B=0), so an
-// altitude band around 100 m passes and a band above it fails everywhere.
+// Fake DEM. Default: every pixel is 100 m land (terrarium: R=128, G=100,
+// B=0), so an altitude band around 100 m passes and a band above it fails
+// everywhere. A test can install a plane through `mockDemElev` (used by the
+// slope-aspect tests); it is reset after every test.
+let mockDemElev = null;
 vi.mock('./elevation.js', async importOriginal => {
   const orig = await importOriginal();
   return {
     ...orig,
     loadTileImageData: vi.fn(async () => {
       const data = new Uint8ClampedArray(256 * 256 * 4);
-      for (let i = 0; i < 256 * 256; i++) {
-        data[i * 4] = 128; data[i * 4 + 1] = 100; data[i * 4 + 2] = 0; data[i * 4 + 3] = 255;
+      for (let y = 0; y < 256; y++) {
+        for (let x = 0; x < 256; x++) {
+          const o = (y * 256 + x) * 4;
+          const v = Math.round(mockDemElev ? mockDemElev(x, y) : 100) + 32768;
+          data[o] = (v >> 8) & 255;
+          data[o + 1] = v & 255;
+          data[o + 2] = 0;
+          data[o + 3] = 255;
+        }
       }
       return { width: 256, height: 256, data };
     }),
   };
 });
 
+afterEach(() => { mockDemElev = null; });
+
 // Fake raw MCSC band tile: the red channel IS the band value (band v →
 // rgb(v,0,0)). Layout of the 256×256 tile:
 //   - top-left 32×32       → band 36 (aigües / water, never gated)
 //   - bottom-right 32×32   → band 0 (no data → transparent, like abroad)
-//   - everywhere else      → band 7 (aciculifolis, official colour #33cc33)
+//   - everywhere else      → band 7 (aciculifolis, palette colour #65b965)
 vi.mock('./mcscRaw.js', async importOriginal => {
   const orig = await importOriginal();
   return {
@@ -118,10 +130,10 @@ const landLeft = (80 * 256 + 80) * 4;    // forest land, west half of the tile
 const landRight = (200 * 256 + 128) * 4; // forest land, east half of the tile
 
 describe('buildTerrainTile', () => {
-  it("'none' mode with NO filter paints nothing: transparent tile, zero fetches (no green wash over the whole region)", async () => {
+  it("'relief' mode with NO filter paints nothing: transparent tile, zero fetches (no green wash over the whole region)", async () => {
     const { tile: t, context } = await makeContext();
     const buf = await buildTerrainTile(t.z, t.x, t.y, {
-      mode: 'none',
+      mode: 'relief',
       off: [],
       alt: null,
       filters: [],
@@ -133,14 +145,14 @@ describe('buildTerrainTile', () => {
     expect(put).toHaveLength(0);                 // no pixel loop at all
   });
 
-  it("'none' mode tints the land that passes every filter bright green (water + no-data stay transparent)", async () => {
+  it("'relief' mode tints the land that passes every filter bright green (water + no-data stay transparent)", async () => {
     const { tile: t, window: [from, to], context } = await makeContext();
     // Full stack that would paint in terrain mode: an altitude band around the
     // fake 100 m DEM plus a temperature band around the lapse-corrected value
-    // (sea-level 22 → 21.35 at 100 m). In 'none' mode the passing land carries
+    // (sea-level 22 → 21.35 at 100 m). In 'relief' mode the passing land carries
     // the palette-less green highlight instead of a class colour.
     await buildTerrainTile(t.z, t.x, t.y, {
-      mode: 'none',
+      mode: 'relief',
       off: [],
       alt: [50, 150],
       filters: [{ variable: 'tempAvg', from, to, band: [21.3, 21.4] }],
@@ -163,11 +175,11 @@ describe('buildTerrainTile', () => {
     expect(put[0].data[abroad + 3]).toBe(0);
   });
 
-  it("'none' mode leaves the land transparent when a filter gate fails", async () => {
+  it("'relief' mode leaves the land transparent when a filter gate fails", async () => {
     const { tile: t, context } = await makeContext();
     // The fake DEM is 100 m → the band [500, 800] excludes the whole land tile.
     await buildTerrainTile(t.z, t.x, t.y, {
-      mode: 'none',
+      mode: 'relief',
       off: [],
       alt: [500, 800],
       filters: [],
@@ -178,11 +190,11 @@ describe('buildTerrainTile', () => {
     expect(put[0].data[landLeft + 3]).toBe(0);
   });
 
-  it("'none' mode is gated by the class and substrate dims too (one shared AND stack)", async () => {
+  it("'relief' mode is gated by the class and substrate dims too (one shared AND stack)", async () => {
     const { t, ctx } = await makeGeoContext();
-    // Dimmed MCSC class → nothing is highlighted in 'none' mode either.
+    // Dimmed MCSC class → nothing is highlighted in 'relief' mode either.
     await buildTerrainTile(t.z, t.x, t.y,
-      { mode: 'none', off: ['221/225'], alt: null, filters: [], geoOff: [] }, ctx.context);
+      { mode: 'relief', off: ['221/225'], alt: null, filters: [], geoOff: [] }, ctx.context);
     expect(put[0].data[landLeft + 3]).toBe(0);
     expect(put[0].data[landRight + 3]).toBe(0);
 
@@ -190,7 +202,7 @@ describe('buildTerrainTile', () => {
     // while the nodata-family half (no family key → not gated) stays green.
     put.length = 0;
     await buildTerrainTile(t.z, t.x, t.y,
-      { mode: 'none', off: [], alt: null, filters: [], geoOff: ['quaternary'] }, ctx.context);
+      { mode: 'relief', off: [], alt: null, filters: [], geoOff: ['quaternary'] }, ctx.context);
     expect(put[0].data[landLeft + 3]).toBe(0);
     expect(put[0].data[landRight]).toBe(HIGHLIGHT[0]);
     expect(put[0].data[landRight + 1]).toBe(HIGHLIGHT[1]);
@@ -201,13 +213,13 @@ describe('buildTerrainTile', () => {
     const { tile: t, context } = await makeContext();
     await buildTerrainTile(t.z, t.x, t.y, { off: [], alt: null, filters: [] }, context);
 
-    // Forest green #33cc33 → rgb(51, 204, 51)
-    expect(put[0].data[forest]).toBe(51);
-    expect(put[0].data[forest + 1]).toBe(204);
-    expect(put[0].data[forest + 2]).toBe(51);
+    // Forest green #65b965 → rgb(101, 185, 101)
+    expect(put[0].data[forest]).toBe(101);
+    expect(put[0].data[forest + 1]).toBe(185);
+    expect(put[0].data[forest + 2]).toBe(101);
     expect(put[0].data[forest + 3]).toBe(255);
-    // Water blue #000080, painted even though nothing constrains
-    expect(put[0].data[water + 2]).toBe(128);
+    // Water blue #2a2ab7, painted even though nothing constrains
+    expect(put[0].data[water + 2]).toBe(183);
     expect(put[0].data[water + 3]).toBe(255);
     // No-data stays transparent (relief / abroad)
     expect(put[0].data[abroad + 3]).toBe(0);
@@ -221,7 +233,7 @@ describe('buildTerrainTile', () => {
 
     expect(put[0].data[forest + 3]).toBe(0);            // aciculifolis dimmed → transparent
     expect(put[0].data[water + 3]).toBe(255);           // aigües still on → painted
-    expect(put[0].data[water + 2]).toBe(128);
+    expect(put[0].data[water + 2]).toBe(183);
   });
 
   it('gates land by the altitude band (transparent when out), never gates water', async () => {
@@ -237,7 +249,7 @@ describe('buildTerrainTile', () => {
     put.length = 0;
     await buildTerrainTile(t.z, t.x, t.y, { off: [], alt: [50, 150], filters: [] }, context);
     expect(put[0].data[forest + 3]).toBe(255);
-    expect(put[0].data[forest]).toBe(51);
+    expect(put[0].data[forest]).toBe(101);
   });
 
   it('gates land by a meteo instance band over its own window (AND)', async () => {
@@ -261,7 +273,7 @@ describe('buildTerrainTile', () => {
       filters: [{ variable: 'precAcc', from, to, band: [10, 10] }],
     }, context);
     expect(put[0].data[forest + 3]).toBe(255);
-    expect(put[0].data[forest]).toBe(51);
+    expect(put[0].data[forest]).toBe(101);
   });
 
   // A substrate grid over the WHOLE tile: family 1 (quaternary, #e3d47f) on
@@ -305,7 +317,7 @@ describe('buildTerrainTile', () => {
     expect(put[0].data[landLeft + 3]).toBe(0);
     // …while the nodata-family half has no key → still painted with the class colour
     expect(put[0].data[landRight + 3]).toBe(255);
-    expect(put[0].data[landRight]).toBe(51);
+    expect(put[0].data[landRight]).toBe(101);
     expect(put[0].data[water + 3]).toBe(255);
   });
 
@@ -321,7 +333,7 @@ describe('buildTerrainTile', () => {
     // east half has no substrate data → transparent, even though the MCSC
     // forest class under it is fine
     expect(put[0].data[landRight + 3]).toBe(0);
-    expect(put[0].data[water + 2]).toBe(128); // water keeps its class colour
+    expect(put[0].data[water + 2]).toBe(183); // water keeps its class colour
     expect(put[0].data[water + 3]).toBe(255);
     expect(loadDemMock).not.toHaveBeenCalled();
   });
@@ -369,7 +381,7 @@ describe('buildTerrainTile', () => {
     put.length = 0;
     await buildTerrainTile(t.z, t.x, t.y,
       { mode: 'substrate', off: [], alt: null, filters: [], geoOff: [] }, baseCtx.context);
-    expect(put[0].data[landLeft]).toBe(51); // MCSC green, not family colour
+    expect(put[0].data[landLeft]).toBe(101); // MCSC green, not family colour
     expect(put[0].data[landLeft + 3]).toBe(255);
   });
 
@@ -406,6 +418,71 @@ describe('buildTerrainTile', () => {
 
     // Water is painted through every stacked combination.
     expect(put[0].data[water + 3]).toBe(255);
+  });
+
+  it('gates land by slope aspect (Horn 3×3 over the DEM), never gates water', async () => {
+    const { tile: t, context } = await makeContext();
+    // North-facing plane: elevation rises 100 m per pixel toward the SOUTH
+    // (bottom row highest) → downhill points north → aspect ≈ 0° → sector N.
+    mockDemElev = (x, y) => 100 + y * 100;
+    try {
+      await buildTerrainTile(t.z, t.x, t.y, {
+        mode: 'terrain', off: [], alt: null, aspect: ['N'], filters: [], geoOff: [],
+      }, context);
+      // The aspect filter needs the DEM even with no altitude band, and the
+      // tile's outer ring needs the 8 neighbouring DEM tiles (border policy A).
+      expect(loadDemMock).toHaveBeenCalled();
+      expect(loadDemMock.mock.calls.length).toBeGreaterThan(1);
+      expect(put[0].data[forest + 3]).toBe(255);   // sector N → painted
+      expect(put[0].data[forest]).toBe(101);
+      expect(put[0].data[landLeft + 3]).toBe(255);
+      expect(put[0].data[landRight + 3]).toBe(255);
+      expect(put[0].data[water + 3]).toBe(255);    // water never gated by aspect
+
+      // A selection without N turns the same land transparent.
+      put.length = 0;
+      await buildTerrainTile(t.z, t.x, t.y, {
+        mode: 'terrain', off: [], alt: null, aspect: ['S'], filters: [], geoOff: [],
+      }, context);
+      expect(put[0].data[forest + 3]).toBe(0);
+      expect(put[0].data[landLeft + 3]).toBe(0);
+      expect(put[0].data[landRight + 3]).toBe(0);
+      expect(put[0].data[water + 3]).toBe(255);
+    } finally {
+      mockDemElev = null;
+    }
+  });
+
+  it('excludes flat land while an orientation filter is active (slope < 5°)', async () => {
+    const { tile: t, context } = await makeContext(); // flat 100 m DEM
+    await buildTerrainTile(t.z, t.x, t.y, {
+      mode: 'terrain', off: [], alt: null, aspect: ['N', 'S', 'E', 'W'], filters: [], geoOff: [],
+    }, context);
+    expect(loadDemMock).toHaveBeenCalled();
+    expect(put[0].data[forest + 3]).toBe(0);      // no sector on flat land
+    expect(put[0].data[landLeft + 3]).toBe(0);
+    expect(put[0].data[water + 3]).toBe(255);     // water is never gated
+  });
+
+  it("'relief' mode highlights only the correctly-oriented land", async () => {
+    const { tile: t, context } = await makeContext();
+    mockDemElev = (x, y) => 100 + y * 100; // pure north-facing plane
+    try {
+      await buildTerrainTile(t.z, t.x, t.y, {
+        mode: 'relief', off: [], alt: null, aspect: ['N'], filters: [], geoOff: [],
+      }, context);
+      expect(put[0].data[forest + 3]).toBe(HIGHLIGHT[3]);
+
+      // NW/NE do not include N, so the same land is not highlighted.
+      put.length = 0;
+      await buildTerrainTile(t.z, t.x, t.y, {
+        mode: 'relief', off: [], alt: null, aspect: ['NW', 'NE'], filters: [], geoOff: [],
+      }, context);
+      expect(put[0].data[forest + 3]).toBe(0);
+      expect(put[0].data[water + 3]).toBe(0); // water is never highlighted either
+    } finally {
+      mockDemElev = null;
+    }
   });
 });
 

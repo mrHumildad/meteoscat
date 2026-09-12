@@ -29,6 +29,36 @@
   height: 100%;
 }
 
+/* ── Map scale bar — bottom centre ───────────────────────────────────────
+   MapLibre's ScaleControl draws the live distance legend (it re-measures on
+   every move, so the label follows the zoom). MapLibre only offers the four
+   corners, and the bottom-left corner container is otherwise unused (the
+   app's own button stack is plain CSS, not a control), so that slot is
+   re-anchored to the horizontal centre. */
+.map-view .maplibregl-ctrl-bottom-left {
+  left: 50%;
+  right: auto;
+  bottom: 10px;
+  transform: translateX(-50%);
+}
+/* Drop the corner's own offset (margin 0 0 10px 10px + float) so the
+   translate above centres the BAR exactly, not bar-plus-offset. */
+.map-view .maplibregl-ctrl-bottom-left .maplibregl-ctrl {
+  margin: 0;
+  float: none;
+}
+/* Themed like the other map overlays instead of MapLibre's white default,
+   which disappears against the relief / dark basemaps. */
+.map-view .maplibregl-ctrl-scale {
+  background-color: var(--color-overlay-soft);
+  border-color: var(--color-border-strong);
+  border-radius: 0 0 4px 4px;
+  color: var(--color-text-on-dark);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 3px 8px;
+}
+
 /* "My location" marker (basket.png), always visible once the browser location
    is known. It is decorative — never a click target — so it must not eat map
    gestures. */
@@ -138,12 +168,15 @@
   position: absolute;
   top: 1vh;
   left: 1vh;
-  width: max(10vw, 10vh);
-  height: max(10vw, 10vh);
+  /* totallogo.png is a wide transparent wordmark (1249×426) — size by width
+     and let the height follow, instead of the old square circular badge. */
+  width: max(16vw, 16vh);
+  height: auto;
   pointer-events: none;
   z-index: 10;
-  border-radius: 50%;
-  border: 3px solid var(--color-border-strong);
+  /* Just enough halo to detach the wordmark from the map behind it: a single
+     faint rim, no glow. drop-shadow follows the PNG's silhouette. */
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.45));
 }
 
 /* ── Shared overlay surfaces (previously duplicated rgba(0,0,0,0.8)) ──────
@@ -164,24 +197,28 @@
   left: 50%;
   transform: translateX(-50%);
   color: var(--color-text-on-dark);
-  padding: 10px;
+  padding: 10px 16px;
   z-index: 10;
-  display: flex;
-  gap: 1rem;
-  align-items: center;
+  max-width: 90vw;
+  text-align: center;
   font-size: max(2vw, 2vh);
 }
 
-.header-updated {
-  font-size: 0.6em;
-  opacity: 0.75;
-  white-space: nowrap;
-  border-left: 1px solid var(--color-border-light);
-  padding-left: 1rem;
+/* One item of the applied-filter ticker (HeaderStatus). The span is remounted
+   per item, so this entry animation replays on every rotation. */
+.header-status {
+  display: inline-block;
+  animation: header-status-in 0.4s ease-out;
 }
-.header-updated.stale {
-  color: var(--color-accent-stale);
-  opacity: 1;
+@keyframes header-status-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .selectors {
@@ -217,6 +254,17 @@
   border-radius: 25%;
   color: var(--color-text-inverse);
   font-size: var(--sel-font);
+}
+
+/* Noun Project icons (see ATTRIBUTIONS.md): render like the Font Awesome
+   glyphs they replace — 1em box inheriting the button's colour. inline-block
+   + small baseline drop so they sit inline with text like the FA glyphs did. */
+.noun-icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: -0.125em;
+  fill: currentColor;
 }
 
 .filter-panel .sel-button {
@@ -909,6 +957,32 @@
   gap: 4px;
 }
 
+/* Orientation (slope aspect) sector chips — keep-selected compass buttons */
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.filter-chip {
+  min-width: 34px;
+  padding: 4px 6px;
+  border: 1px solid var(--color-border-focus);
+  border-radius: 4px;
+  background: none;
+  color: var(--color-text-on-dark);
+  font-family: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.filter-chip:hover {
+  background-color: var(--color-surface-card-hover);
+}
+.filter-chip.on {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+  font-weight: bold;
+}
+
 /* ── Legend ─────────────────────────────────────────────────────────────── */
 .mcsc-legend {
   position: absolute;
@@ -992,34 +1066,8 @@
   letter-spacing: 0.05em;
   opacity: 0.65;
 }
-.filter-add-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.filter-add-btn {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
-  background-color: var(--type-color, var(--color-disabled-fallback));
-  color: var(--color-text-inverse);
-  font-family: inherit;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-.filter-add-btn:hover:not(:disabled) {
-  outline: 2px solid var(--color-border-focus);
-}
-.filter-add-btn.rain     { --type-color: var(--color-data-rain); }
-.filter-add-btn.humidity { --type-color: var(--color-data-humidity); }
-.filter-add-btn.temp     { --type-color: var(--color-data-temp); }
-.filter-add-btn:disabled,
-.filter-add-btn.at-cap {
-  --type-color: var(--color-disabled-bg);
-  color: var(--color-disabled-text);
-  cursor: not-allowed;
-  opacity: 0.5;
-}
+/* (Meteo filter creators reuse the existing global .rain/.humidity/.temp
+   background classes on their .sel-button — no extra rules needed here.) */
 
 .filter-instance {
   display: flex;
@@ -1198,7 +1246,7 @@
 
 /* ── Busy state ─────────────────────────────────────────────────────────── */
 .filter-panel.busy .sel-button,
-.filter-panel.busy .filter-add-btn,
+.filter-panel.busy .filter-chip,
 .filter-panel.busy .filter-instance {
   pointer-events: none;
   opacity: 0.45;
@@ -1206,4 +1254,7 @@
 .sel-button.busy {
   pointer-events: none;
   opacity: 0.5;
+}
+.compass {
+  background-color: var(--color-layer-terrain3d);
 }

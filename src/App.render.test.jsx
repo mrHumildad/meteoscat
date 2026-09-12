@@ -11,7 +11,9 @@ describe('App smoke render', () => {
   it('renders without throwing', () => {
     let html;
     expect(() => { html = renderToString(React.createElement(App)); }).not.toThrow();
-    expect(html).toContain('MeteoSeps');
+    // The header now holds only the applied-filter ticker (empty until filters
+    // exist), so the stable marker is the app's logo.
+    expect(html).toContain('class="logo"');
   });
 
   it('explains the failure instead of mounting the map when WebGL2 is unavailable', () => {

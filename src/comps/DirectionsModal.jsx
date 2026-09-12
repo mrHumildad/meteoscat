@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCar, faCheck, faCircleInfo, faFilter, faFloppyDisk, faTowerBroadcast, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCircleInfo, faFilter, faFloppyDisk, faTowerBroadcast, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { JeepIcon } from '../logic/nounIcons.jsx';
 import { fmtNum } from '../logic/utils.js';
 import { suggestLocationName } from '../logic/savedLocations.js';
 import AreaElevationChart from './AreaElevationChart.jsx';
@@ -246,8 +247,7 @@ const DirectionsTabs = ({
           ? 'Obre la ruta a Google Maps des de la meva ubicaci\u00f3'
           : 'Obre la ruta a Google Maps'}
         onClick={onNavigate}
-      >
-        <FontAwesomeIcon icon={faCar} />
+      >          <JeepIcon className="noun-icon" />
         {distanceKm != null
           ? `Com hi arribo \u00b7 ${fmtNum(distanceKm, 1)} km`
           : 'Com hi arribo (Google Maps)'}

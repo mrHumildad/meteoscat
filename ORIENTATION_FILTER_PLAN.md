@@ -1,6 +1,11 @@
 # Spec: Orientation filter — "només cara nord" (slope aspect)
 
-> **Status:** Planning document — no code changed.
+> **Status:** ✅ **Implemented — kept as the design record** (2026-09-12). Shipped exactly as
+> proposed: D1 8 sectors keep-selected · D2 flat land (< 5°) excluded · D3 overlay only (no
+> station dots) · D4 all-8 = off · D5 neighbour-DEM border fetch (option A) · D6 no zoom
+> special case. Test suite grew from 312 to **339 tests / 24 files**. Current behaviour is
+> documented in `TILE_RENDERING.md` §4.4. **The sections below describe the plan as written**;
+> see the implementation notes at the end of this file for the few deviations.
 > **Goal:** a new single, timeless filter **Orientació** that keeps only slopes
 > facing the selected compass direction(s), e.g. "solo cara nord" / *obaga*.
 > It behaves exactly like the Relleu (altitude) filter but gates on the DEM
@@ -246,11 +251,10 @@ gate + borders 0.5–1 · UI 0.5–1 · plumbing + integration 0.5 · manual QA 
 
 ---
 
-## 11. Decisions recorded / open questions
-
-**Proposed (confirm before coding):** D1 8 sectors keep-selected · D2 flat
-excluded, min slope 5° · D3 overlay only (no station dots) in v1 · D4 all-8
-= off · D5 neighbour-DEM border fetch · D6 no zoom special case.
+## 11. Decisions recorded / open questions**Proposed (confirm before coding):** D1 8 sectors keep-selected · D2 flat
+  excluded, min slope 5° · D3 overlay only (no station dots) in v1 · D4 all-8
+  = off · D5 neighbour-DEM border fetch · D6 no zoom special case.
+  **✅ All six adopted and implemented (2026-09-12).**
 
 **Open / future:**
 - Gate station dots by aspect in v2 — mechanism exists (Substrat gates by
@@ -263,3 +267,34 @@ excluded, min slope 5° · D3 overlay only (no station dots) in v1 · D4 all-8
   this filter.
 - Permissive flat rule (flats pass) if the filter is ever reused as a
   highlight instead of an exclusion — one-line flip of the D2 guard.
+
+---
+
+## 12. Implementation notes (2026-09-12)
+
+Shipped as specced. Where the code differs from or extends the plan:
+
+- **Pure helpers landed in `elevation.js`** with slightly different names than
+  §4.1, because the border policy needs the maths without a single tile buffer:
+  `hornGradientFromElevations(cells, cellSizeM)`, `slopeAspectFromElevations`,
+  `aspectSectorFromElevations(cells, cellSizeM, minSlopeDeg)` and the constant
+  `metresPerPixel(z, lat)`. The byte-offset conveniences §4.1 named are also
+  there for a single 256 px tile: `neighboursAt(data, i)`, `terrainGradient(data, i)`,
+  `slopeAspectAt(data, i, cellSizeM)` — they return `null` on the outer ring.
+- **Sign convention** as pinned: `dzdy` is the *southward* gradient and the
+  bearing is `atan2(−dzdx, dzdy)`, so a plane rising toward the south is
+  north-facing (0°). `N = [337.5, 22.5)`.
+- **Slope is physical.** `cellSizeM = metresPerPixel(z, tile-centre latitude)` is
+  passed to the classifier, so the ≥5° flat guard is a real angle (a 2 m/px rise
+  is 12° at z13 in Catalonia but 0.7° at z8).
+- **Border policy A** is implemented by padding the DEM into a ±1-pixel grid
+  (`ASPECT_PAD = 258`) built from the 8 adjacent tiles, then reading each pixel's
+  3×3 straight out of a flat `Float32Array` — the pixel loop has no per-pixel
+  awaits or Map lookups. A missing neighbour → `NaN` → no sector → unpainted.
+- **Deliberately out of scope** (as the plan said): station dots are not gated,
+  and the orientation selection is **not** snapshot into saved filter presets
+  (`savedFilters.js`) — saving a preset while Orientació is active drops it.
+- **Tests:** pure sign/edge/threshold cases in `elevation.test.js`; the
+  `classifyTerrainPixel` gate in `terrainOverlay.test.js`; a sloped-DEM tile
+  integration (including flat-land exclusion and the `none`-mode highlight) in
+  `terrainOverlay.tile.test.js`.

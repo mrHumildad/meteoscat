@@ -1,6 +1,9 @@
 # WebGL / hardware-acceleration failure in Brave — diagnosis & workaround report
 
-Status: **investigation only, no code changed.** Nothing in `src/` was modified.
+Status: **investigation resolved.** §4 **option A is implemented** (`src/logic/webgl2.js` probes
+WebGL2 before the map mounts; `src/comps/MapUnavailable.jsx` replaces the blank canvas — see the
+"✅ IMPLEMENTED" note in §4 and the §5 recommendation). Options B and C remain
+**evaluated, not built**. The diagnosis in §1–§3 and the costings in §6 are unchanged.
 
 ## 1. Why the app breaks
 
@@ -108,7 +111,8 @@ Ordered by effort:
 Scope: keep the app usable with **no WebGL2 available at all**, by rendering the
 map with Leaflet's DOM/canvas stack while MapLibre keeps serving capable
 browsers. This is the honest cost of option B, derived from the current
-`src/App.jsx` (1267 lines) and the `src/logic/*` overlay modules.
+`src/App.jsx` (1632 lines on 2026-09-12; 1267 when this was written) and the `src/logic/*`
+overlay modules.
 
 ### 6.1 Capability-by-capability port map
 

@@ -48,6 +48,150 @@ export const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 // Terrarium encoding: elevation (m) = (R * 256 + G + B / 256) - 32768
 export const terrariumElevation = (r, g, b) => (r * 256 + g + b / 256) - 32768;
 
+// ── Slope aspect (orientation filter) — pure, unit-testable ───────────────
+// The Orientació filter (ORIENTATION_FILTER_PLAN.md) gates the painted
+// terrain by the DEM slope ASPECT — the compass direction a slope faces — so
+// "només cara nord" (*obaga*) becomes a first-class filter. Everything here
+// is pure maths over elevations in metres; tilePaint.js feeds it the decoded
+// terrarium values of the DEM's 3×3 neighbourhood.
+
+// 8 sectors of 45°, centred on the cardinals: N = [337.5°, 22.5°), then every
+// 45° clockwise. Only `aspectSectorOf` classifies a bearing.
+export const ASPECT_SECTORS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+
+// Below this slope a pixel counts as FLAT and gets no sector — aspect on flat
+// ground is DEM noise. The filter is exclusion-based, so flat pixels are
+// excluded while it is active: plains and valley floors are deliberately not
+// "cara nord".
+export const ASPECT_MIN_SLOPE_DEG = 5;
+
+// Ground resolution of a Web Mercator DEM pixel at latitude `lat` (m/px).
+// Turns the per-pixel gradient into a real slope in degrees, so the flat
+// threshold above is a physical angle rather than pixels of rise.
+export const metresPerPixel = (z, lat) =>
+  (156543.03392 * Math.cos((lat * Math.PI) / 180)) / 2 ** z;
+
+/**
+ * Horn (1981) 3×3 finite difference over nine elevations in the layout
+ *
+ *     NW  N  NE
+ *     W   C  E
+ *     SW  S  SE
+ *
+ * (`cells` order matters; the centre is unused). Returns the gradient in
+ * metres per metre — `dzdx` positive to the EAST, `dzdy` positive to the
+ * SOUTH (rows grow downward, matching the pixel buffer) — or null when any
+ * cell is not finite (DEM no-data / a missing neighbour tile) or the cell
+ * size is not positive. Pure, unit-testable.
+ */
+export const hornGradientFromElevations = (cells, cellSizeM = 1) => {
+  if (!cells || cells.length !== 9 || !(cellSizeM > 0)) return null;
+  // The centre (index 4) is not part of Horn's differences, so only the eight
+  // neighbours must be finite — a missing neighbour tile leaves NaN there and
+  // invalidates the window.
+  for (let k = 0; k < 9; k++) if (k !== 4 && !Number.isFinite(cells[k])) return null;
+  const nw = cells[0], n = cells[1], ne = cells[2];
+  const w = cells[3], e = cells[5];
+  const sw = cells[6], s = cells[7], se = cells[8];
+  const eight = 8 * cellSizeM;
+  return {
+    dzdx: ((ne + 2 * e + se) - (nw + 2 * w + sw)) / eight,
+    dzdy: ((sw + 2 * s + se) - (nw + 2 * n + ne)) / eight,
+  };
+};
+
+/**
+ * Slope (degrees) and aspect (compass bearing of the DOWNSLOPE direction,
+ * degrees clockwise from north, 0/360 = N) of a 3×3 elevation window, or null
+ * when the window is unusable (see hornGradientFromElevations).
+ *
+ * Downslope is the negated gradient; with east/north components
+ * `(dzdx, −dzdy)` the bearing is `atan2(−dzdx, dzdy)`. That is the sign
+ * convention the tests pin: a plane whose elevation RISES toward the south
+ * (`dzdy > 0`, `dzdx = 0`) is a NORTH-facing slope (aspect ≈ 0°).
+ */
+export const slopeAspectFromElevations = (cells, cellSizeM = 1) => {
+  const g = hornGradientFromElevations(cells, cellSizeM);
+  if (!g) return null;
+  const slopeDeg = (Math.atan(Math.hypot(g.dzdx, g.dzdy)) * 180) / Math.PI;
+  let aspectDeg = (Math.atan2(-g.dzdx, g.dzdy) * 180) / Math.PI;
+  if (aspectDeg < 0) aspectDeg += 360;
+  return { slopeDeg, aspectDeg };
+};
+
+/** Sector key of an aspect bearing (N = [337.5, 22.5), then every 45°), or
+ * null for a non-finite bearing. Pure, unit-testable. */
+export const aspectSectorOf = aspectDeg => {
+  if (!Number.isFinite(aspectDeg)) return null;
+  let d = aspectDeg % 360;
+  if (d < 0) d += 360;
+  return ASPECT_SECTORS[Math.round(d / 45) % 8];
+};
+
+/**
+ * Sector of a 3×3 elevation window, or null when the window is unusable OR
+ * its slope is below `minSlopeDeg` (flat land gets no sector). This is what
+ * the tile painter calls per pixel. Pure, unit-testable.
+ */
+export const aspectSectorFromElevations = (
+  cells,
+  cellSizeM = 1,
+  minSlopeDeg = ASPECT_MIN_SLOPE_DEG
+) => {
+  const sa = slopeAspectFromElevations(cells, cellSizeM);
+  if (!sa || sa.slopeDeg < minSlopeDeg) return null;
+  return aspectSectorOf(sa.aspectDeg);
+};
+
+// 3×3 byte offsets inside a 256 px-wide RGBA DEM tile (x ± 1 → ± 4 bytes,
+// y ± 1 → ± 1024 bytes), in the same order as hornGradientFromElevations.
+const TILE_W = 256;
+const NEIGHBOUR_BYTE_OFFSETS = [
+  -TILE_W * 4 - 4, -TILE_W * 4, -TILE_W * 4 + 4,
+  -4, 0, 4,
+  TILE_W * 4 - 4, TILE_W * 4, TILE_W * 4 + 4,
+];
+
+// Terrarium elevation (m) of the RGBA pixel at byte offset `i`.
+export const elevationAtOffset = (data, i) =>
+  terrariumElevation(data[i], data[i + 1], data[i + 2]);
+
+// True when byte offset `i` is on the tile's outer ring: the 3×3 window needs
+// the neighbouring tile there, which these offset-only helpers cannot reach
+// (tilePaint.js resolves the ring across the 8 adjacent DEM tiles itself).
+const onTileRing = i => {
+  const px = (i >> 2) & 255;
+  const py = i >> 10;
+  return px === 0 || px === 255 || py === 0 || py === 255;
+};
+
+/**
+ * Nine elevations (m) around byte offset `i` of a 256 px-wide RGBA DEM tile,
+ * or null on the outer ring. Convenience for callers/tests holding a single
+ * tile; the tile painter builds a padded grid so the ring is covered too.
+ */
+export const neighboursAt = (data, i) => {
+  if (onTileRing(i)) return null;
+  const cells = new Array(9);
+  for (let k = 0; k < 9; k++) cells[k] = elevationAtOffset(data, i + NEIGHBOUR_BYTE_OFFSETS[k]);
+  return cells;
+};
+
+/** Horn gradient at byte offset `i` of a 256 px-wide RGBA DEM tile; null on
+ * the outer ring (see neighboursAt). Pure, unit-testable. */
+export const terrainGradient = (data, i) => {
+  const cells = neighboursAt(data, i);
+  return cells ? hornGradientFromElevations(cells, 1) : null;
+};
+
+/** Slope + aspect at byte offset `i` of a 256 px-wide RGBA DEM tile, or null
+ * on the outer ring. `cellSizeM` turns the per-pixel gradient into real
+ * degrees (default 1 → the raw metres-per-pixel gradient). Pure. */
+export const slopeAspectAt = (data, i, cellSizeM = 1) => {
+  const cells = neighboursAt(data, i);
+  return cells ? slopeAspectFromElevations(cells, cellSizeM) : null;
+};
+
 // Browser-side tile decoding -------------------------------------------------
 
 const tileCache = new Map(); // `${z}/${x}/${y}` -> Promise<ImageData>

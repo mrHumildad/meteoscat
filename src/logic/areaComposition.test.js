@@ -69,7 +69,7 @@ describe('countLandCover', () => {
     });
 
     expect(entries).toHaveLength(1);
-    expect(entries[0]).toMatchObject({ key: '221/225', color: '#33cc33', count: expect.any(Number) });
+    expect(entries[0]).toMatchObject({ key: '221/225', color: '#65b965', count: expect.any(Number) });
     expect(entries[0].label).toContain('aciculifolis');
 
     // Independent check: a disc of this radius holds πr² m², each COUNTED

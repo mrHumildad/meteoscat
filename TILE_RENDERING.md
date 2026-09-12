@@ -34,7 +34,7 @@ No server WMS colour, no grey mask. Failing pixels are **transparent** → relie
 |-------|-----------|------|---------------|-------|
 | Basemap | Stadia `alidade_smooth_dark` | vector | `App.jsx: styleUrl` | Dark, no key. |
 | `hillshade` | `hillshade-dem` | `hillshade` | `App.jsx:onMapLoad:addAreaOverlays` | terrarium DEM, `exaggeration 0.4`. **Not bounds-clipped** (would leave edge). Own source — the DEM is **not** shared with 3D terrain (see below). |
-| `sea` | `sea` | `raster` (`sea://`) | same | DEM `elev ≤ 0` → navy `#000080` else transparent. Sits **above** hillshade, **below** terrain so land-water class draws on top. Also not clipped. |
+| `sea` | `sea` | `raster` (`sea://`) | same | DEM `elev ≤ 0` → navy `#2a2ab7` else transparent. Sits **above** hillshade, **below** terrain so land-water class draws on top. Also not clipped. |
 | `terrain` | `terrain` | `raster` (`terrain://`) | same | The stacked overlay. `TERRAIN_OVERLAY_BOUNDS = [-1.25,39.75,4.25,44.25]` – MapLibre never requests tiles fully outside. `minzoom 7 maxzoom 14 opacity 0.85`. Always visible. |
 | `stations-circle/label/value` | `stations` | `circle/symbol` | `onMapLoad` | GeoJSON, dimmed when filtered (`inRange=false`). |
 
@@ -66,7 +66,7 @@ All heavy raster sources (`terrain`, `sea`, `hillshade-dem`, `terrain-dem`) are 
 ### 3.3 MCSC legend (`src/logic/mcscLegend.js`)
 
 * `MCSC_LEGEND` 9 entries, each `{color, label, codes, values: [band,…]}`. Bands 1..41 follow class-code order (see file header). Water bands `36..41` (`MCSC_WATER_VALUES`).
-* `entryForBand`, `isWaterBand`, `renderBandSld`, constants `MCSC_WATER_COLOR #000080`, `MCSC_GREY`, `MCSC_EXTRA_VALUES [16..20]` (230–234, never selectable → always transparent).
+* `entryForBand`, `isWaterBand`, `renderBandSld`, constants `MCSC_WATER_COLOR #2a2ab7`, `MCSC_GREY`, `MCSC_EXTRA_VALUES [16..20]` (230–234, never selectable → always transparent).
 
 ### 3.4 Meteo grid (`src/logic/meteoGrid.js`)
 
@@ -107,12 +107,49 @@ Water pixels keep **class colour** in both modes (shared `Aigües` switch), neve
 colourForBand → null? → [0,0,0,0]
 isWater? → paint (no gates)
 familyKey ∈ offKeys? → transparent          // geology
+aspectKeys active && (aspectKey ∉ aspectKeys)? → transparent   // orientation
+                                     // (null sector — flat land — also fails)
 altBand && (elev≤0 || elev∉alt)? → transparent
 for each meteo instance: sampledValue ∉ [lo,hi]? → transparent
 else → paint
 ```
 
-`altBand` is inclusive; sea/no-data fails altitude. `values/his/los` are per-pixel arrays; missing value (`NaN`) fails.
+`altBand` is inclusive; sea/no-data fails altitude. `values/his/los` are per-pixel arrays; missing value (`NaN`) fails. `aspectKeys` (the selected compass sectors) is OR within itself and ANDed with everything else; water never reaches the gate.
+
+### 4.4 Orientation filter (slope aspect, `terrainState.aspect`)
+
+`aspect` is the list of selected 8-sector compass keys (`['N','NE']`…), or `null`
+when off — an empty selection *and* an all-8 selection both collapse to off. It
+arrives from the Orientació filter in `FilterPanel.jsx` (`App.jsx` normalises it),
+is part of `terrainStateSignature` (so changing it repaints the tiles), and is
+gated per pixel in `classifyTerrainPixel`.
+
+The sector comes from the DEM already fetched (`src/logic/elevation.js`,
+`ORIENTATION_FILTER_PLAN.md`):
+
+* `slopeAspectFromElevations(cells, cellSizeM)` — Horn (1981) 3×3 finite
+difference over `[NW,N,NE,W,C,E,SW,S,SE]`. `dzdx` is the eastward gradient,
+`dzdy` the **southward** one; the aspect is the downslope bearing
+`atan2(−dzdx, dzdy)` normalised to `[0,360)`, i.e. a plane rising toward the
+**south** is north-facing (0°).
+* `aspectSectorOf(deg)` — 8 sectors of 45°, `N = [337.5, 22.5)`, then every 45°.
+* `aspectSectorFromElevations(cells, cellSizeM, minSlopeDeg = 5)` — the sector, or
+`null` when the window is unusable **or the slope is below `ASPECT_MIN_SLOPE_DEG`**.
+Flat land therefore gets *no* sector and is excluded while the filter is active.
+* `metresPerPixel(z, lat)` — Web Mercator ground resolution, so the ≥5° guard is a
+physical angle (the DEM tile is 256 px at every zoom).
+
+**Border policy (option A).** Horn's 3×3 reaches one pixel outside the tile, so
+while the filter is active `buildTerrainTile` also requests the **8 adjacent DEM
+tiles** (same `elevation.js` cache; they are the centre tiles of their own paints)
+and resolves them into one padded ±1-pixel elevation grid, so the ring pixels get
+real sectors instead of hairline seams. A neighbour that fails to load leaves `NaN`
+there: that ring pixel gets no sector and is simply not painted — the same
+"no info = not shown" contract as the altitude gate.
+
+**Not gated:** water (as always) and, per the plan's D3, the station dots — only the
+painted terrain is filtered. The orientation selection is **not** part of saved
+filter presets (`savedFilters.js`), which the plan left out of scope.
 
 ### 4.3 Build steps (`buildTerrainTile(z,x,y,state,getContext)`)
 
@@ -126,6 +163,10 @@ else → paint
 8. `putImageData` → `canvasToBlob` → `ArrayBuffer`.
 
 `TILE_SIZE=256`. `lngs[]`/`lats[]` precomputed per column/row via `tileXYToLngLat`. Reused `Float64Array values`.
+
+When `st.aspect` is active the DEM is fetched even with no altitude band and no
+temperature instance (`needElev = !!aspectKeys || !!st.alt || any lapseRate`), plus
+the 8 neighbouring tiles for the ring. Everything else is unchanged.
 
 `classifySea` (for `buildSeaTile`) is simpler: `elev>0 || NaN → transparent` else `color`.
 
@@ -210,12 +251,13 @@ Bundled by Vite as `assets/tileWorker-*.js` (separate chunk). Needs `OffscreenCa
 ```js
 off = [...mcscOff].sort()
 altActive = reliefRange && altLimits && reliefRange !== altLimits
+aspect = aspectSectors?.length && aspectSectors.length < 8 ? [...aspectSectors].sort() : null
 filters = meteoFilters.map(f=>{ variable=TYPE_TO_VARIABLE[f.type]; span=limitsForWindow(agg,…); w=windowToDates(refDay,…); active = span && range!==span; if(active) push({variable,from:w.from,to:w.to,band:range}) })
-terrainState = {mode:terrainMode, off, alt: altActive? reliefRange:null, filters: sorted, geoOff: mode==='substrate'? [...geoOff].sort():[]}
+terrainState = {mode:terrainMode, off, alt: altActive? reliefRange:null, aspect, filters: sorted, geoOff: [...geoOff].sort()}
 terrainTiles = [terrainTileUrl(terrainState)]
 ```
 
-Each palette filtered by **own** switch only (`geoOff` only in `substrate`). `mode` is part of signature.
+All dims and bands travel in the state (both `off` and `geoOff` gate every mode). `mode` and `aspect` are part of the signature, so switching either repaints.
 
 ### 7.2 URL → repaint
 
@@ -258,7 +300,7 @@ Throttled `TERRAIN_REPAINT_MS=150`. Same for sea (`sea://{z}/{x}/{y}?c=…&r=N`,
 * `tilePaint.js:getTransparentPngBuffer()` ensures `c.getContext('2d')` before `convertToBlob`, resets promise on throw, and **every** `transparentTilePng()` returns `buf.slice(0)` (copy).
 * `tileWorker.js:run()` does `const buf = (await cachedTile()).slice(0); postMessage(...,[buf])`. Cache keeps original, each reply gets a clone.
 
-**Test:** Playwright 10 clicks dev server (`http://127.0.0.1:5173/`) 0 detached errors; unit tests 196/196. Keep the `slice(0)` – removing it reintroduces the bug.
+**Test:** Playwright 10 clicks dev server (`http://127.0.0.1:5173/`) 0 detached errors; unit suite green (196/196 when this was fixed; **339 tests / 24 files** as of 2026-09-12). The Playwright repro is not committed — see `APP_STATE_REPORT.md` §7.9. Keep the `slice(0)` – removing it reintroduces the bug.
 
 ---
 
@@ -284,13 +326,13 @@ Transient paint failures produce `max-age=10` tiles so MapLibre re-requests soon
 * Integration: `terrainOverlay.tile.test.js` – stubs `elevation.js`/`mcscRaw.js` + `FakeCanvas`/`FakeCtx`, captures `putImageData` pixels, asserts water vs land vs abroad, dimmed, altitude/meteo gates, substrate modes, **and** protocol resilience (`paintTerrainTile` never rejects, `abort` → transparent, `cacheControl max-age=10`).
 * Playwright repro (not committed): click forest button 10× with `repaintBusy` wait, assert no `detached` logs.
 
-Run `npm test`, `npm run build` after touching pipeline.
+Run `npm test` (**339 tests / 24 files** as of 2026-09-12), `npm run build` after touching pipeline.
 
 ---
 
 ## 11. How to modify safely
 
-* **New filter** → add to `terrainState` memo + `terrainStateSignature` + `classifyTerrainPixel` or `buildTerrainTile` sampling. Ensure `off/alt/filters` canonical sorting, or `terrainTileUrl` won't bust cache.
+* **New filter** → add to `terrainState` memo + `terrainStateSignature` + `classifyTerrainPixel` or `buildTerrainTile` sampling. Ensure `off/alt/aspect/filters` canonical sorting, or `terrainTileUrl` won't bust cache. The orientation filter is the worked example (§4.4): state key + signature entry + a `passesAllGates` gate + DEM sampling in the pixel loop.
 * **New mode** → extend `PAINT_MODES`, `terrainStateSignature.mode` mapping, `buildTerrainTile` branch, legend.
 * **Keep `tilePaint.js` free of `maplibre-gl`** – it runs in worker (no DOM).
 * **Never return same `ArrayBuffer` twice** – always `slice(0)` before `postMessage` / handing to MapLibre. Same for `transparentTilePng`.
@@ -308,8 +350,8 @@ src/logic/tilePaint.js      ─ pure painters & helpers, buildSeaTile, buildTerr
 src/logic/tileWorker.js     ─ Web Worker queue, cache, postMessage (transfer)
 src/logic/tilePipeline.js   ─ main→worker facade, ensureWorker, pending, fallback, paintTerrainTile/SeaTile
 src/logic/terrainOverlay.js ─ terrain:// protocol, terrainStateSig/signature/tileUrl, registerTerrainProtocol
-src/logic/seaOverlay.js     ─ sea:// protocol, registerSeaProtocol (re-exports from tilePaint)
-src/logic/elevation.js      ─ DEM tiles, terrariumElevation, lngLat↔tile, loadTileImageData
+src/logic/seaOverlay.js     ─ sea:// protocol, registerSeaProtocol (re-exports from tilePaint)src/logic/elevation.js     ─ DEM tiles, terrariumElevation, lngLat↔tile, loadTileImageData,
+                             slope-aspect helpers (ASPECT_SECTORS, slopeAspectAt, …)
 src/logic/mcscRaw.js        ─ WMS band tiles, tileBbox3857, mcscBandTileUrl, loadMcscBandTile
 src/logic/mcscLegend.js     ─ colours, values, entryForBand, isWaterBand, renderBandSld
 src/logic/meteoGrid.js      ─ IDW grid, featuresForWindow, sampleMeteoGrid, getMeteoGrid

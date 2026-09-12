@@ -11,7 +11,7 @@
  * per-request filter state always travels with the request itself.
  */
 
-import { buildTerrainTile, buildSeaTile, transparentTilePng } from './tilePaint.js';
+import { buildTerrainTile, buildSeaTile, buildIsohypseTile, transparentTilePng } from './tilePaint.js';
 
 // Painting needs both Worker and OffscreenCanvas. Detection is lazy (module
 // import must stay side-effect free so unit tests can import this in node).
@@ -144,6 +144,23 @@ export const paintSeaTile = (z, x, y, color, signal) => {
         : buildSeaTile(z, x, y, color).then(buf => ({ data: buf })));
   return paint.catch(err => {
     console.warn('Sea tile paint failed — serving a transparent tile:', err?.message ?? err);
+    return fallbackTransparent();
+  });
+};
+
+/**
+ * Paint one isohypse (contour-line) tile — `state`-free: the interval is a
+ * pure function of z. Resolves `{ data }` and never rejects — see
+ * paintTerrainTile.
+ */
+export const paintIsohypseTile = (z, x, y, signal) => {
+  const paint = isWorkerMode()
+    ? requestInWorker('isohypses', { z, x, y }, signal)
+    : (signal?.aborted
+        ? transparentResult()
+        : buildIsohypseTile(z, x, y).then(buf => ({ data: buf })));
+  return paint.catch(err => {
+    console.warn('Isohypse tile paint failed — serving a transparent tile:', err?.message ?? err);
     return fallbackTransparent();
   });
 };

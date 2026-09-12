@@ -4,8 +4,9 @@
  *
  * Protocol (all messages plain objects; replies transfer the ArrayBuffer):
  *   main → worker  { type: 'ctx',    context: { agg, features, lithoGrid } }
- *   main → worker  { type: 'tile',   id, kind: 'terrain'|'sea',
- *                    payload: { z, x, y, state } | { z, x, y, color } }
+ *   main → worker  { type: 'tile',   id, kind: 'terrain'|'sea'|'isohypses',
+ *                    payload: { z, x, y, state } | { z, x, y, color } |
+ *                             { z, x, y } }
  *   main → worker  { type: 'abort',  id }  // drop if still queued (zoom burst)
  *   worker → main  { type: 'tile', id, ok: true,  buf: ArrayBuffer }
  *   worker → main  { type: 'tile', id, ok: false, error: string }
@@ -22,7 +23,7 @@
  * small concurrency cap so a zoom burst can't melt down the WMS / DEM hosts.
  */
 
-import { buildTerrainTile, buildSeaTile } from './tilePaint.js';
+import { buildTerrainTile, buildSeaTile, buildIsohypseTile } from './tilePaint.js';
 
 let context = {}; // latest { agg, features, lithoGrid }
 
@@ -58,14 +59,21 @@ const seaTile = ({ z, x, y, color }) => {
   return cached(key, () => buildSeaTile(z, x, y, color));
 };
 
+// Isohypse tiles are stateless per (z,x,y): the contour interval follows the
+// zoom, so there is nothing else in the key.
+const isohypseTile = ({ z, x, y }) =>
+  cached(`isohypses|${z}/${x}/${y}`, () => buildIsohypseTile(z, x, y));
+
 const run = async job => {
   try {
     const raw = job.kind === 'sea'
       ? await seaTile(job.payload)
-      : await terrainTile(job.payload);
+      : job.kind === 'isohypses'
+        ? await isohypseTile(job.payload)
+        : await terrainTile(job.payload);
     // ArrayBuffers are transferable and become detached after postMessage.
     // The cache holds the original buffer; every reply must get a COPY so
-    // cache hits (e.g. toggling 'none' → 'terrain' where the state repeats
+    // cache hits (e.g. toggling 'relief' → 'terrain' where the state repeats
     // after 3 clicks, i.e. 6 clicks = 2 full cycles, and parallel duplicate
     // requests for the same tile) do not hit "ArrayBuffer already detached".
     const buf = raw.slice(0);

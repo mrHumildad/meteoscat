@@ -1,4 +1,4 @@
-import Map from '@vis.gl/react-maplibre';
+import Map, { ScaleControl } from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // MapLibre v6 is ESM-only and loads its internal worker from a real URL: under
 // a bundler, import.meta.url does not resolve to the worker file, so the map
@@ -8,25 +8,30 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { Marker, setWorkerUrl } from 'maplibre-gl';
 import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 setWorkerUrl(maplibreWorkerUrl);
-import logo from './assets/logo.png';
+import logo from './assets/totallogo.png';
 import basketImg from './assets/basket.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faBasketShopping, faCar, faDroplet, faFilter, faLayerGroup, faList, faLocationDot, faMountainSun, faRulerVertical, faSeedling, faTemperatureLow, faTree } from '@fortawesome/free-solid-svg-icons';
+import {
+  RainIcon, HumidityIcon, TemperatureIcon, ForestIcon, AnticlineIcon, FilterIcon, AltitudeIcon,
+  Icon3D, TreasureMapIcon, BasketIcon, HiddenIcon, PickingMushroomsIcon, LegendIcon, JeepIcon, MushroomIcon, MountainIcon
+} from './logic/nounIcons.jsx';
 import { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import { loadAvailableDays, loadSummaries } from './logic/refineData.js'
-import { getDaysInRange, fmtDateCat, fmtShortCat, parseDay } from './logic/utils.js';
+import { getDaysInRange, fmtShortCat, parseDay } from './logic/utils.js';
 import './App.css'
 
 import { computeGeoValues } from './logic/computeGeoValues.js';
 import { buildFilterConfig, readSavedFilters, removeSavedFilter, sameFilterConfig, saveFilterPreset } from './logic/savedFilters.js';
 import { readSavedLocations, removeSavedLocation, saveLocation } from './logic/savedLocations.js';
 import { hasFilterConditions } from './logic/areaFilterMatch.js';
+import { appliedFilterItems } from './logic/appliedFilters.js';
 import { aggregateWindow, buildAggregateTable, DEFAULTDAYRANGE, limitsForWindow, windowToDates, TYPE_TO_VARIABLE } from './logic/filterAggregate.js';
 import { scoreStations, scoreByCode } from './logic/boletEngine.js';
 import { MCSC_LEGEND, MCSC_WATER_COLOR, MCSC_WATER_ENTRY } from './logic/mcscLegend.js';
 import { ELEVATION_TILES, ELEVATION_ATTRIBUTION, sampleElevation } from './logic/elevation.js';
 import { MCSC_ATTRIBUTION } from './logic/mcscRaw.js';
 import { registerTerrainProtocol, terrainTileUrl } from './logic/terrainOverlay.js';
+import { registerIsohypseProtocol, isohypsesTileUrl, CONTOUR_MIN_ZOOM } from './logic/isohypsesOverlay.js';
 import { registerSeaProtocol } from './logic/seaOverlay.js';
 import { CATALONIA_BOUNDS, TERRAIN_OVERLAY_BOUNDS, fitZoomForViewport } from './logic/mapFit.js';
 import { pushTerrainContext } from './logic/tilePipeline.js';
@@ -38,6 +43,7 @@ import DirectionsModal, { ROUTE_RADIUS_DEFAULT } from './comps/DirectionsModal.j
 import MapUnavailable from './comps/MapUnavailable.jsx';
 import SavedFiltersPanel from './comps/SavedFiltersPanel.jsx';
 import SavedLocationsPanel from './comps/SavedLocationsPanel.jsx';
+import HeaderStatus from './comps/HeaderStatus.jsx';
 import StationPanel from './comps/StationPanel.jsx';
 
 // Catalonia — the app never leaves it. CATALONIA_BOUNDS constrains the
@@ -64,13 +70,24 @@ const fittedMinZoom = (w, h) => {
 // and follow each variable's active filter when one is applied (see
 // stationDayRange below) — one reference constant everywhere.
 
+// Unit appended to each station-circle value (metres for the static
+// altitude, the filter panel's units for the meteo means/totals) so the
+// number on the map is never ambiguous.
+const LABEL_UNIT = {
+  altitud: 'm',
+  precAccVal: 'mm',
+  tempAvgVal: '°C',
+  humAvgVal: '%'
+};
+
 // MapLibre expression for the value shown inside each station circle.
-// Data-driven: reads the feature property `variable` and renders it as text.
+// Data-driven: reads the feature property `variable` and renders it as text
+// with its unit ('123m', '4.2mm', '15.3°C', '78%').
 const valueField = variable => [
   'case',
   ['==', ['get', variable], null],
   '',
-  ['to-string', ['get', variable]]
+  ['concat', ['to-string', ['get', variable]], LABEL_UNIT[variable] ?? '']
 ];
 
 // Station-info cycle (Phase A): none (hidden) → altitude (static) → rain Σ →
@@ -79,11 +96,11 @@ const valueField = variable => [
 // last ACTIVE filter's day range when one is applied.
 const LABEL_MODES = ['none', 'altitud', 'precAcc', 'tempAvg', 'humAvg'];
 const LABEL_ICONS = {
-  none: faBan,
-  altitud: faRulerVertical,
-  precAcc: faDroplet,
-  tempAvg: faTemperatureLow,
-  humAvg: faSeedling
+  none: HiddenIcon,
+  altitud: AltitudeIcon,
+  precAcc: RainIcon,
+  tempAvg: TemperatureIcon,
+  humAvg: HumidityIcon
 };
 const LABEL_CLASSES = {
   none: 'stationinfo',
@@ -92,6 +109,43 @@ const LABEL_CLASSES = {
   tempAvg: 'temp',
   humAvg: 'humidity'
 };
+
+// Noun Project credits — ALL bundled icons, the ones rendered in the UI and
+// the ones kept for upcoming features (CC BY 3.0 requires attribution as soon
+// as the files ship; full list in ATTRIBUTIONS.md at the repo root). Rendered
+// as one compact HTML line inside MapLibre's attribution control
+// (.maplibregl-ctrl-attrib-inner) — the same bar that credits the basemap,
+// tiles and DEM, so no extra screen is needed.
+const NOUN_CREDITS = [
+  [8462912, 'Rain', 'Fina Uswania'],
+  [1512650, 'Humidity', 'icon 54'],
+  [8071262, 'Temperature', 'Liberus PJ'],
+  [7835204, 'Mushroom', 'Neneng Yuliani Lestari'],
+  [8180155, 'Forest', 'Ar2ar'],
+  [1732297, 'Mountain', 'revo250'],
+  [5399274, 'Anticline', 'M. Oki Orlando'],
+  [7041032, '3D', 'Geni Alando'],
+  [8434542, 'Treasure map', 'Rizsign'],
+  [2204138, 'Round bottom basket', 'icon 54'],
+  [5837641, 'Altitude', 'Gregor Cresnar'],
+  [8351735, 'Jeep', 'Sanjaya'],
+  [5741525, 'Hidden', 'iconbysonny'],
+  [5741547, 'View', 'iconbysonny'],
+  [6051842, 'North', 'Daniil Churakov'],
+  [8192897, 'Binocular', 'Rizsign'],
+  [715985, 'Search', 'Bernar Novalyi'],
+  [5833149, 'Config', 'devilllorentina'],
+  [8445610, 'Boots', 'Anggara Putra'],
+  [78369, 'Picking mushrooms', 'Eric Milet'],
+  [6490884, 'Thermometer', 'Supanut Piyakanont'],
+  [7994795, 'Back', 'ICONIC'],
+  [5181774, 'Manuscript', 'Lars Meiertoberens'],
+  [8408218, 'Close', 'Styfico']
+];
+const nounCreditsHtml = () =>
+  `Icons by ${NOUN_CREDITS.map(([id, name, by]) =>
+    `<a href="https://thenounproject.com/icon/${id}/" title="“${name}” icon by ${by}" target="_blank" rel="noopener">${name}</a>`
+  ).join(', ')} from <a href="https://thenounproject.com" target="_blank" rel="noopener">Noun Project</a>`;
 const LABEL_PROP = {
   altitud: 'altitud',
   precAcc: 'precAccVal',
@@ -112,22 +166,42 @@ const defaultRange = () => ({ from: DEFAULTDAYRANGE, to: 0 });
 // Cycle order of the bottom-left render-mode button, and the icon / button
 // colour of each state: 'terrain' paints MCSC land-cover colours (green
 // forest button), 'substrate' paints the geology families (brown substrat),
-// 'none' paints no palette — it tints the land pixels that pass every filter
-// bright green over the relief (grey relief button) so the filter's coverage
+// 'relief' paints no palette — it shows the DEM's isohypses (contour lines,
+// isohypsesOverlay.js) over the relief and tints the land pixels that pass
+// every filter bright green (grey relief button) so the filter's coverage
 // stays visible. The tint only renders while at least one filter condition is
-// active (see hasActiveTerrainFilter); with no filter it is the plain
-// relief-only view. 'none' is skipped from the cycle only while the geology
-// grid is still loading (substrate unavailable anyway).
-const PAINT_MODES = ['terrain', 'substrate', 'none'];
+// active (see hasActiveTerrainFilter); with no filter it is the plain relief
+// view with contours. 'substrate' is skipped from the cycle only while the
+// geology grid is still loading (substrate unavailable anyway).
+const PAINT_MODES = ['terrain', 'substrate', 'relief'];
 const PAINT_ICONS = {
-  terrain: faTree,
-  substrate: faLayerGroup,
-  none: faBan
+  terrain: ForestIcon,
+  substrate: AnticlineIcon,
+  relief: HiddenIcon
 };
 const PAINT_CLASSES = {
   terrain: 'forest',
   substrate: 'substrat',
-  none: 'relief'
+  relief: 'relief'
+};
+
+// Basemap toponym text sizes are plain pixels ('place_village' 10,
+// 'place_city_large' 14, 'water_name' 12) or zoom interpolations
+// ('place_country_major'). At their stock size the names read as map texture
+// once an overlay palette sits underneath, so onMapLoad scales every text
+// size by this factor — the plain number, and the value of each stop of an
+// interpolation (the zoom ramp itself is kept, and country names stay small
+// when zoomed out). Unknown shapes are returned untouched.
+const TOPONYM_SCALE = 1.4;
+const scaleTextSize = size => {
+  const grow = v => Math.round(v * TOPONYM_SCALE);
+  if (typeof size === 'number') return grow(size);
+  if (Array.isArray(size) && size[0] === 'interpolate') {
+    const out = size.slice(); // ['interpolate', type, ['zoom'], z0, v0, z1, v1, …]
+    for (let i = 4; i < out.length; i += 2) out[i] = grow(out[i]);
+    return out;
+  }
+  return size;
 };
 
 // Hex colour (no '#') for the open sea, matching the MCSC water class. When
@@ -166,7 +240,7 @@ const App = ()  => {
   const [stationsGeo, setStationsGeo] = useState(null);
   const [geoWithData, setGeoWithData] = useState(null);
   const [showLegend, setShowLegend] = useState(false);           // legend panel of the ACTIVE rendering mode
-  const [terrainMode, setTerrainMode] = useState('terrain');    // painted areas: 'terrain' (MCSC) | 'substrate' (geology) | 'none' (green filter highlight over the relief)
+  const [terrainMode, setTerrainMode] = useState('terrain');    // painted areas: 'terrain' (MCSC) | 'substrate' (geology) | 'relief' (isohypses + green filter highlight over the relief)
   const [showTerrain3D, setShowTerrain3D] = useState(true);     // 3D terrain (tilts the camera)
   const [mapReady, setMapReady] = useState(false); // true once the heavy area overlays exist (added on first idle — see onMapLoad)
   const [mapLoaded, setMapLoaded] = useState(false); // true once the map + stations source/layers exist (onMapLoad) — re-syncs the station source data
@@ -191,6 +265,7 @@ const App = ()  => {
   const [savedFilters, setSavedFilters] = useState(() => readSavedFilters()); // named presets from localStorage, newest first
   const [savedLocations, setSavedLocations] = useState(() => readSavedLocations()); // saved places from localStorage, newest first
   const [reliefRange, setReliefRange] = useState(null); // applied altitude band [lo, hi]; null = off
+  const [aspectSectors, setAspectSectors] = useState(null); // applied slope-aspect sectors (sorted keys) | null = off
   const [meteoFilters, setMeteoFilters] = useState([]); // [{ id, type, from, to, range }] — one per meteo filter instance
   const [nextFilterId, setNextFilterId] = useState(1);
   const [boletFilter, setBoletFilter] = useState(null); // { species, threshold } | null — mushroom rule filter (test)
@@ -309,15 +384,21 @@ const App = ()  => {
     // Both dims always travel in the overlay state — the shared AND stack
     // (the module never mixes palettes, but every palette honours every
     // dim). `off` also keeps the shared water handling working in both
-    // modes.
+    // modes. The orientation selection is inert when every sector is picked
+    // (OR within the selection, AND with everything else), so all-8 collapses
+    // to null (off) exactly like a full-span band.
+    const aspect = aspectSectors && aspectSectors.length && aspectSectors.length < 8
+      ? [...aspectSectors].sort()
+      : null;
     return {
       mode: terrainMode,
       off,
       alt: altActive ? [reliefRange[0], reliefRange[1]] : null,
+      aspect,
       filters,
       geoOff: [...geoOff].sort(),
     };
-  }, [mcscOff, reliefRange, altLimits, meteoFilters, agg, refDay, geoOff, terrainMode]);
+  }, [mcscOff, reliefRange, altLimits, meteoFilters, agg, refDay, geoOff, terrainMode, aspectSectors]);
 
   // Terrain tile URL — the state signature token changes whenever any filter
   // does, so setTiles() re-requests and the protocol repaints.
@@ -433,6 +514,12 @@ const App = ()  => {
     map.setMaxZoom(maxZoom);
     map.jumpTo({ center, zoom: Math.min(floorZoom + 1, maxZoom) });
 
+    // Icon credits (Noun Project, CC BY 3.0) into the map's attribution bar
+    // (.maplibregl-ctrl-attrib-inner) — all bundled icons, used or reserved.
+    if (typeof map.addAttribution === 'function') {
+      map.addAttribution(nounCreditsHtml());
+    }
+
     // ensure a 'stations' source exists immediately. Prefer the enriched
     // geoWithData (value props) when it already arrived — the enrichment
     // usually finishes BEFORE the map does (local fetches vs remote tiles),
@@ -515,6 +602,7 @@ const App = ()  => {
     // separately — see the pushTerrainContext effect further down.
     setMapLoaded(true); // stations source/layers exist — station-source effect re-syncs now
     registerTerrainProtocol(map, () => terrainStateRef.current);
+    registerIsohypseProtocol();
     registerSeaProtocol();
 
     map.on('click', 'stations-circle', (e) => {
@@ -702,6 +790,63 @@ const App = ()  => {
         paint: { 'raster-opacity': 1 }
       }, 'terrain');
 
+      // Isohypses (isohypsesOverlay.js): the DEM's elevation contours, only
+      // shown in the palette-less 'relief' rendering mode (the visibility
+      // effect below keeps this in sync) AND only at close zoom — the layer's
+      // `minzoom` hides it in the general view, and a hidden layer makes
+      // MapLibre skip loading the contour tiles entirely. It sits ABOVE the
+      // hillshade so the light lines (and their elevation labels) read over
+      // the relief, and below the stations. The tiles are stateless per
+      // (z,x,y) — the contour interval follows the zoom — so nothing ever has
+      // to regenerate them, only show / hide. The Catalonia bounds clip keeps
+      // it from painting contours outside the region the app can reach.
+      map.addSource('isohypses', {
+        type: 'raster',
+        tiles: [isohypsesTileUrl()],
+        tileSize: 256,
+        bounds: TERRAIN_OVERLAY_BOUNDS,
+        minzoom: CONTOUR_MIN_ZOOM,
+        maxzoom: 15,
+        attribution: ELEVATION_ATTRIBUTION
+      });
+      map.addLayer({
+        id: 'isohypses',
+        type: 'raster',
+        source: 'isohypses',
+        minzoom: CONTOUR_MIN_ZOOM, // general view stays clean (see tilePaint.js)
+        layout: { visibility: terrainStateRef.current?.mode === 'relief' ? 'visible' : 'none' },
+        paint: { 'raster-opacity': 1 }
+      }, 'stations-circle');
+
+      // Toponyms (the basemap's place / street / water names) must stay
+      // readable in EVERY render mode. Our overlays are inserted below the
+      // stations, which puts them ABOVE the whole basemap — its symbol layers
+      // included — so the terrain / substrate / relief rasters would bury the
+      // village and town names. Hoist every text symbol to just under the
+      // stations (relative order preserved) and harden its paint: the dark
+      // style's mid-grey fill (rgb(101,101,101)) with a 1px softened halo all
+      // but disappears over the bright terrain colours, so give it a solid
+      // dark halo and a light fill. The base sizes (10px) also read as map
+      // texture rather than names, so every text size is scaled up
+      // (TOPONYM_SCALE) — numbers as-is, zoom interpolations stop by stop, so
+      // country names keep their zoom ramp. The town / city dot (the style's
+      // built-in circle sprite) is dropped: the name alone marks the place, so
+      // the label is detached from any marker (icon-image null = text-only
+      // symbol, the sprite / glyph never requested). Icon-only symbols
+      // (one-way arrows) stay where they are, and the stations-* layers are
+      // untouched.
+      const hostId = map.getLayer('stations-circle') ? 'stations-circle' : undefined;
+      for (const l of map.getStyle()?.layers ?? []) {
+        if (l.type !== 'symbol' || !l.layout?.['text-field'] || l.id.startsWith('stations')) continue;
+        map.setPaintProperty(l.id, 'text-halo-color', 'rgba(0,0,0,0.95)');
+        map.setPaintProperty(l.id, 'text-halo-width', 1.8);
+        map.setPaintProperty(l.id, 'text-halo-blur', 0);
+        map.setPaintProperty(l.id, 'text-color', '#f2f2f2');
+        map.setLayoutProperty(l.id, 'text-size', scaleTextSize(l.layout['text-size']));
+        if (l.layout['icon-image']) map.setLayoutProperty(l.id, 'icon-image', null);
+        map.moveLayer(l.id, hostId);
+      }
+
       // Layers are all in place — let the terrain/sea/3D effects run now
       // (they key off mapReady and need these sources to exist).
       setMapReady(true);
@@ -856,6 +1001,17 @@ const App = ()  => {
     }
     map.getSource('sea').setTiles([url]);
   }, [mcscOff, mapReady]);
+
+  // 2.7.2️⃣ Isohypses are only meaningful in the palette-less 'relief' mode
+  // (they supply the ground shape there). In terrain / substrate they are
+  // hidden; a hidden raster source loads no tiles, so they cost nothing until
+  // the mode asks for them. Depends on mapReady because the layer is created
+  // lazily on first idle.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady || !map.getLayer('isohypses')) return;
+    map.setLayoutProperty('isohypses', 'visibility', terrainMode === 'relief' ? 'visible' : 'none');
+  }, [terrainMode, mapReady]);
 
   // keep the latest selected station in a ref so async DEM samples can check
   // they still match the station the user last clicked
@@ -1112,6 +1268,21 @@ const App = ()  => {
     return hit ? hit.name : null;
   }, [savedFilters, currentFilterConfig]);
 
+  // The header ticker: the applied preset's name followed by one line per
+  // ACTIVE condition (appliedFilters.appliedFilterItems). Derived from the
+  // live filter state, so it needs no bookkeeping in the apply handlers and
+  // falls back to no header at all when nothing filters.
+  const headerFilterItems = useMemo(() => appliedFilterItems({
+    presetName: activePresetName,
+    meteoFilters,
+    agg,
+    reliefRange,
+    altLimits,
+    forestCount: mcscOff.size,
+    geoCount: geoOff.size,
+    boletSpecies: boletFilter?.species ?? null,
+  }), [activePresetName, meteoFilters, agg, reliefRange, altLimits, mcscOff, geoOff, boletFilter]);
+
   // Delete a saved preset (basket row ✕). Removing a preset never touches the
   // live filters — it only shrinks the basket.
   const deleteFilterPreset = (name) => {
@@ -1210,6 +1381,15 @@ const App = ()  => {
     if (!beginRepaint()) return;
     setReliefRange(range);
   };
+  const applyAspectSectors = (sectors) => {
+    const next = sectors && sectors.length ? [...sectors].sort() : null;
+    const cur = aspectSectors ?? null;
+    const same = next === cur ||
+      (next && cur && next.length === cur.length && next.every((v, i) => v === cur[i]));
+    if (same) return;                              // nothing changes
+    if (!beginRepaint()) return;
+    setAspectSectors(next);
+  };
   const applyForestCodes = (codes) => {
     if (sameSet(codes, mcscOff)) return;           // nothing changes
     if (!beginRepaint()) return;
@@ -1297,27 +1477,19 @@ const App = ()  => {
     ? `${reliefRange[0]}m – ${reliefRange[1]}m`
     : null;
 
-  // latest available data day (index.json is oldest-first) + staleness hint
-  const latestDate = days.length ? new Date(days[days.length - 1]) : null;
-  const dataStale = latestDate ? (Date.now() - latestDate.getTime()) / 86400000 > 1 : false;
-
   const stationObj = selectedStation
   ? geoWithData?.features?.find(f => f.properties.codi === selectedStation)
   : null;
+  // Icon of the ACTIVE render mode and of the ACTIVE station-label mode —
+  // components, not elements, so the JSX below picks them by key.
+  const ActiveIcon = PAINT_ICONS[terrainMode] ?? ForestIcon;
+  const ActiveLabelIcon = LABEL_ICONS[labelMode] ?? HiddenIcon;
   return (
     <div className={`app${mapUnavailable ? ' no-webgl' : ''}`}>
-      <img  className='logo' src={logo} alt="MetoSeps" />
-      <div className="app-header">
-        <span className='header-title'>MeteoSeps</span>
-        {latestDate && (
-          <span
-            className={`header-updated${dataStale ? ' stale' : ''}`}
-            title={`Darreres dades disponibles: ${fmtDateCat(latestDate)}`}
-          >
-            Últimes dades: {fmtDateCat(latestDate)}
-          </span>
-        )}
-      </div>
+      <img className='logo' src={logo} alt="MeteoSeps" />
+      {/* Header: nothing but the applied-filter ticker (HeaderStatus) — the
+          preset name and each active condition, one at a time. */}
+      <HeaderStatus items={headerFilterItems} />
       {data && (
         <div className="top-buttons">
           {/* Three buttons share one row (saved places, saved filters, filter);
@@ -1333,7 +1505,7 @@ const App = ()  => {
                 setShowFilter(false);
               }}
             >
-              <FontAwesomeIcon icon={faLocationDot} />
+              <TreasureMapIcon className="noun-icon" />
             </div>
             <div
               className={`sel-button filter-button${showBasket ? ' on' : ''}`}
@@ -1344,7 +1516,7 @@ const App = ()  => {
                 setShowLocations(false);
               }}
             >
-              <FontAwesomeIcon icon={faBasketShopping} />
+              <BasketIcon className="noun-icon" />
             </div>
             <div
               className={`sel-button filter-button${showFilter ? ' on' : ''}`}
@@ -1355,7 +1527,7 @@ const App = ()  => {
                 setShowLocations(false);
               }}
             >
-              <FontAwesomeIcon icon={faFilter} />
+              <FilterIcon className="noun-icon" />
             </div>
           </div>
           {showLocations && (
@@ -1382,6 +1554,8 @@ const App = ()  => {
               reliefRange={reliefRange}
               busy={repaintBusy}
               onApplyRelief={applyReliefRange}
+              aspectSectors={aspectSectors}
+              onApplyAspect={applyAspectSectors}
               meteoFilters={meteoFilters}
               onAddFilter={addFilter}
               onUpdateFilter={applyFilterUpdate}
@@ -1416,7 +1590,7 @@ const App = ()  => {
           title="Llegenda de la capa activa"
           onClick={() => setShowLegend(!showLegend)}
         >
-          <FontAwesomeIcon icon={faList} />
+          <LegendIcon className="noun-icon" />
         </div>
         {/* Render-mode cycle: painted areas show terrain types (MCSC class
             colours) → substrate (geology family colours) → NONE (no palette;
@@ -1449,14 +1623,14 @@ const App = ()  => {
             beginRepaint();
           }}
         >
-          <FontAwesomeIcon icon={PAINT_ICONS[terrainMode] ?? faTree} />
+          <ActiveIcon className="noun-icon" />
         </div>
         <div
           className={`sel-button terrain3d${showTerrain3D ? ' on' : ''}`}
           title="Terreny 3D"
           onClick={() => setShowTerrain3D(!showTerrain3D)}
         >
-          <FontAwesomeIcon icon={faMountainSun} />
+          <Icon3D className="noun-icon" />
         </div>
         {/* Station value: none → altitud → rain → temp → hum → none. Never
             dimmed — area filters paint pixels only. Each meteo value covers
@@ -1477,7 +1651,7 @@ const App = ()  => {
               setLabelMode(LABEL_MODES[(i + 1) % LABEL_MODES.length]);
             }}
           >
-            <FontAwesomeIcon icon={LABEL_ICONS[labelMode] ?? faBan} />
+            <ActiveLabelIcon className="noun-icon" />
           </div>
           {stationRangeLabel && (
             <span
@@ -1503,7 +1677,7 @@ const App = ()  => {
           title="Com hi arribo — tria un punt al mapa"
           onClick={() => setPickRoute(!pickRoute)}
         >
-          <FontAwesomeIcon icon={faCar} />
+          <PickingMushroomsIcon className="noun-icon" />
         </div>
       </div>
       {/* @vis.gl/react-maplibre's Map only forwards `style` to its container
@@ -1523,7 +1697,15 @@ const App = ()  => {
             mapStyle={styleUrl}
             onLoad={onMapLoad}
             onError={onMapError}
-          />
+          >
+            {/* Live scale bar (bottom centre): MapLibre re-measures it on
+                every move, so the distance it shows always matches the
+                current zoom / latitude. It only accepts corner positions —
+                the bottom-left slot is free (the app's own button stack is
+                plain CSS, not a control) and App.css re-anchors that slot to
+                the horizontal centre. */}
+            <ScaleControl position="bottom-left" unit="metric" maxWidth={150} />
+          </Map>
         )}
       </div>
       {dataLoading && !data && (
@@ -1556,12 +1738,13 @@ const App = ()  => {
       />}
       {showLegend && (
         <div className="mcsc-legend">
-          {terrainMode === 'none' ? (
+          {terrainMode === 'relief' ? (
             <>
-              <div className="mcsc-legend-title">Filtre sobre el relleu</div>
+              <div className="mcsc-legend-title">Relleu · isòhipsis</div>
               <div className="mcsc-legend-label">
-                Sense cobertes pintades: el terreny que compleix tots els filtres
-                es marca en verd.
+                Corbes de nivell del terreny (les mestres, més gruixudes, cada
+                5 corbes). Sense cobertes pintades: el terreny que compleix
+                tots els filtres es marca en verd.
               </div>
             </>
           ) : terrainMode === 'substrate' && lithoGrid ? (

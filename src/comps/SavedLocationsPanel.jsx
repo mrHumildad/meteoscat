@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLocationDot, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { TreasureMapIcon } from '../logic/nounIcons.jsx';
 import { describeSavedLocation } from '../logic/savedLocations.js';
 
 // Basket of the locations saved in localStorage (savedLocations.js). Same
@@ -12,23 +13,14 @@ const SavedLocationsPanel = ({ locations = [], activeName = null, onSelect, onDe
   <div className="filter-panel basket-panel">
     <div className="filter-header">
       <span className="filter-title">
-        Llocs desats{locations.length > 0 ? ` (${locations.length})` : ''}
+        Als mues Llocs{locations.length > 0 ? ` (${locations.length})` : ''}
       </span>
-      <div className="filter-actions">
-        <div
-          className="sel-button filter-close"
-          title="Tanca"
-          onClick={onClose}
-        >
-          <FontAwesomeIcon icon={faXmark} />
-        </div>
-      </div>
+      
     </div>
     <div className="filter-body">
       {locations.length === 0 ? (
         <div className="basket-empty">
-          Encara no hi ha cap lloc desat. Tria un punt amb el cotxe i desa'l
-          des del detall del lloc.
+          Encara no hi ha cap lloc desat.
         </div>
       ) : (
         locations.map(l => {
@@ -42,7 +34,7 @@ const SavedLocationsPanel = ({ locations = [], activeName = null, onSelect, onDe
                 onClick={() => onSelect?.(l)}
               >
                 <span className="basket-item-name">
-                  <FontAwesomeIcon icon={faLocationDot} /> {l.name}
+                  <TreasureMapIcon className="noun-icon" /> {l.name}
                 </span>
                 <span className="basket-item-meta">{describeSavedLocation(l)}</span>
                 {l.description && (

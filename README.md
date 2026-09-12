@@ -57,6 +57,35 @@ Two gotchas, both learned the hard way:
    `Open Sans Regular, Arial Unicode MS Regular`; leaving `text-font` unset
    makes those labels 404 and vanish silently.
 
+## Rendering modes
+
+The bottom-left aspect button cycles the area rendering mode:
+
+| Mode | Shows |
+| :--- | :--- |
+| `terrain` | MCSC land-cover class colours |
+| `substrate` | Geological-family colours |
+| `relief` | No palette: the DEM's **isohypses** (elevation contour lines) over the relief, plus a green highlight on the land that passes every active filter |
+
+Isohypses are painted client-side from the same terrarium DEM as the hillshade
+(`src/logic/isohypsesOverlay.js` + `buildIsohypseTile` in `tilePaint.js`,
+marching squares over a ±1-pixel padded DEM so lines stay continuous across
+tile seams). Contours step every 50 m, every 5th line is a thicker **master**
+contour carrying its elevation as a label, and nothing is drawn at or below
+sea level.
+
+They only appear at **close zoom** (`CONTOUR_MIN_ZOOM = 11`): the layer's
+style `minzoom` hides it in the general view, and a hidden MapLibre layer
+marks its source unused, so the contour tiles are not even requested there.
+The layer is also only visible in `relief` mode.
+
+## Icon attributions
+
+UI icons come from [Noun Project](https://thenounproject.com) under CC BY 3.0 —
+the per-icon creator credits (mandatory attribution) live in
+[`ATTRIBUTIONS.md`](./ATTRIBUTIONS.md). The replacement of the previous Font
+Awesome icons is tracked in [`ICON_MIGRATION_PLAN.md`](../ICON_MIGRATION_PLAN.md).
+
 ## Development
 
 ```bash

@@ -1,7 +1,13 @@
 # Refactor: Per-Filter Time Ranges (calendar removed)
 
-> **Status:** Planning document — no code changed.
-> **Goal:** Remove the global calendar date window. Every meteo filter (rain / humidity / temperature) becomes a *filter instance* carrying its own day range + value range (two sliders each). Multiple instances of the same type are allowed. Altitude and terrain (forest) filters stay single and timeless, as today.
+> **Status:** ✅ **Implemented — kept as the design record.** Verified against the code on
+> 2026-09-12. The sections below are written in the present tense of the *pre-refactor* code,
+> so read them as history, not as a description of today's app: the refactor shipped, and §5
+> was itself later superseded by the single client-side `terrain://` composite (§13). The one
+> genuinely historical piece is §5 (see its banner). Current test suite: **339 tests / 24 files**
+> (this file says 125/10 and 126/196-era numbers). For today's architecture read
+> `TILE_RENDERING.md`; for the full state see `APP_STATE_REPORT.md`.
+> **Goal (achieved):** Remove the global calendar date window. Every meteo filter (rain / humidity / temperature) becomes a *filter instance* carrying its own day range + value range (two sliders each). Multiple instances of the same type are allowed. Altitude and terrain (forest) filters stay single and timeless, as today.
 
 ---
 
@@ -37,7 +43,7 @@ App.jsx
 
 - `Selectors.jsx` (calendar + 4 sliders) is **already commented out** in App — the rebuilt `FilterPanel.jsx` is the live filter UI.
 - `FilterPanel.jsx` today: buttons per filter key (`relief/rain/hum/temp`) + forest; one editor open at a time (single RangeSlider per key); applied ranges collapse into rows with a remove ✕.
-- Daily data: `public/logic/daily/<YYYY-MM-DD>.json`, each shard `{ "<stationCodi>": { tempAvg, tempMin, tempMax, humAvg, humMin, humMax, precAcc }, dayStats }`. **60 days, ≈ 2.1 MB total** (2026-07-05 → 2026-09-02 today).
+- Daily data: `public/logic/daily/<YYYY-MM-DD>.json`, each shard `{ "<stationCodi>": { tempAvg, tempMin, tempMax, humAvg, humMin, humMax, precAcc }, dayStats }`. **60 days, ≈ 2.1 MB total** (2026-07-05 → 2026-09-02 — as of the time of writing).
 - `filterStations.js` / `computeGeoValues.js` / `meteoGrid.js` / `meteoOverlay.js` all key off the **single global window**.
 
 **The core problem:** values (precAcc, tempAvg, humAvg) are computed once over the global window and shared by everything — filters, slider limits, station circles, the map grid. Removing the global window means each filter needs its **own** aggregation over its **own** window.
@@ -308,9 +314,9 @@ Clicking an applied row (or a freshly added instance) expands it **in place**; t
 | File | Change |
 |---|---|
 | `src/logic/filterAggregate.js` | **NEW (done)** — prefix-sum aggregate table, `aggregateWindow` + `aggregateWindowByDates`, `windowToDates`, `limitsForWindow` (§4.1–4.2) |
-| `src/logic/filterAggregate.test.js` | **NEW (done)** — 20 tests: rain Σ / missing-day-as-0 / null-window, temp+hum means over usable days, offset→concrete window, naive cross-check, limits incl. no-data + cache (§9) |
+| `src/logic/filterAggregate.test.js` | **NEW (done)** — 25 tests (was 20; the suite grew): rain Σ / missing-day-as-0 / null-window, temp+hum means over usable days, offset→concrete window, naive cross-check, limits incl. no-data + cache (§9) |
 | `src/logic/filterStations.js` | **REWRITE (done)** — instance-list + relief signature, AND semantics on the aggregate table (§4.3) |
-| `src/logic/filterStations.test.js` | **REWRITE (done)** — 16 tests: no-filters → `[]`, inert/malformed instances, AND across types + same-type, per-instance windows, relief ANDed in + full-span-off, no-data/no-codi exclusion, inclusive bounds (§9) |
+| `src/logic/filterStations.test.js` | **REWRITE (done)** — 20 tests (was 16). ⚠️ The module this tests is now **unused** — `App` no longer calls `filterStationCodes` (stations are never filtered); see `APP_STATE_REPORT.md` §7.5. no-filters → `[]`, inert/malformed instances, AND across types + same-type, per-instance windows, relief ANDed in + full-span-off, no-data/no-codi exclusion, inclusive bounds (§9) |
 | `src/comps/FilterPanel.jsx` | **DONE** — header anchor + single ✕ (✓ dropped), add-type buttons (5-per-type cap), in-place two-slider editors, inert rows, relief/forest unchanged (§6) |
 | `src/logic/utils.js` | **DONE** — `fmtShortCat` compact date helper + tests (§6.2) |
 | `src/App.jsx` | **DONE** — state model (§3), all-days loading (§7), refDay/maxDays, add/update/remove handlers, `terrainState` memo (§13) + single always-on `terrain` source/layer replacing remote MCSC + altitude + per-instance meteo layers, sea transparent when Aigües off, display window, header without day range (§6) |
@@ -324,7 +330,7 @@ Clicking an applied row (or a freshly added instance) expands it **in place**; t
 | `src/comps/StationPanel.jsx` | unchanged — receives the display window via the `daysRange` prop (§6) |
 | `src/comps/Selectors.jsx` | **DELETED** (calendar) |
 | `package.json` | react-day-picker removed (lockfile updated via `npm install`) |
-| tests (`filterAggregate`, `filterStations`, `meteoGrid`, `terrainOverlay*`, `mcscLegend`, `utils`, …) | **DONE** — 125 tests / 10 files (after deleting the superseded overlay tests) |
+| tests (`filterAggregate`, `filterStations`, `meteoGrid`, `terrainOverlay*`, `mcscLegend`, `utils`, …) | **DONE** — 125 tests / 10 files *at the time of this refactor*; the suite has since grown to **339 tests / 24 files** (`npm test`, 2026-09-12) |
 
 ---
 
@@ -335,8 +341,8 @@ Clicking an applied row (or a freshly added instance) expands it **in place**; t
 3. ~~**`meteoGrid.js` / `meteoOverlay.js`** — done~~ — concrete-window cache key, URL `w`/`id`, context via aggregate table; update overlay tests.
 4. ~~**`App.jsx`** — done~~ — new state model, all-days load, refDay, add/update/remove handlers, dynamic meteo layers, display window for `computeGeoValues`/`StationPanel`, header.
 5. ~~**`FilterPanel.jsx`** — done~~ — new UI (add buttons, two-slider editor, applied rows, remove). Implemented together with step 4 (the old panel called the old `filterStationCodes` signature, so the two are coupled).
-6. ~~**Cleanup** — done~~ — `Selectors.jsx` deleted, `react-day-picker` dropped, `npm test` (126) + `npm run build` + `npm run lint` all green.
-7. ~~**Stacked terrain overlay** — done~~ — replace the grey-mask architecture (§5) with one client-side `terrain://` composite (§13): legend rework + `mcscRaw` + `terrainOverlay` + App rewire + retire `altitudeOverlay`/`meteoOverlay`; 125 tests / 10 files, lint + build green.
+6. ~~**Cleanup** — done~~ — `Selectors.jsx` deleted, `react-day-picker` dropped, `npm test` (126 at the time; now 339) + `npm run build` + `npm run lint` all green.
+7. ~~**Stacked terrain overlay** — done~~ — replace the grey-mask architecture (§5) with one client-side `terrain://` composite (§13): legend rework + `mcscRaw` + `terrainOverlay` + App rewire + retire `altitudeOverlay`/`meteoOverlay`; 125 tests / 10 files at the time (now 339 / 24), lint + build green.
 
 ---
 
@@ -399,4 +405,4 @@ as the legend-UI swatch for a dimmed entry.
 **Tests:** `terrainOverlay.test.js` (pure classification + URL/state) and
 `terrainOverlay.tile.test.js` (painted-tile integration with stubbed
 band/DEM/canvas) — all-conditions AND, relief-on-fail, water/sea never gated,
-no grey anywhere. 125 tests / 10 files, lint + build green.
+no grey anywhere. 125 tests / 10 files at the time of the overlay work (now 339 tests / 24 files), lint + build green.
