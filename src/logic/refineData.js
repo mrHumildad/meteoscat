@@ -1,16 +1,32 @@
-// Daily station summaries, pre-aggregated server-side by
-// meteokat/aggregate.py into public/logic/daily/*.json. Fetched lazily so the
-// raw dataset (full_dades.json) never ships inside the JS bundle.
+// Daily station summaries, pre-aggregated server-side and published by the
+// meteoscat **server** repo (see its aggregate.py) to its GitHub Pages data
+// site as daily/YYYY-MM-DD.json + daily/index.json. Fetched lazily so no
+// dataset ships inside the JS bundle.
+//
+// The data lives in a different repo than this app — the daily cron commits
+// there, never here — so the shards are fetched cross-origin from
+// VITE_DATA_BASE_URL (set in .env; GitHub Pages serves them with
+// `Access-Control-Allow-Origin: *`). When that variable is unset the app
+// falls back to a same-origin `logic/` directory, which is handy for offline
+// work: copy the server's data/daily/ into public/logic/daily/ and the app
+// behaves exactly as before the split.
 //
 // Shape of a day shard (identical to the old refineData() output):
 //   { "<stationCodi>": { tempAvg, tempMin, tempMax, humAvg, humMin, humMax,
 //                        precAcc }, ..., dayStats: {...} }
 
-const findEndpoint = path => `${import.meta.env.BASE_URL || '/'}${path}`;
+const withSlash = url => (url.endsWith('/') ? url : `${url}/`);
+
+// Trailing slash is normalized so both "https://host/repo" and a base ending
+// in "/" resolve the same way.
+const DATA_BASE = withSlash(
+  import.meta.env.VITE_DATA_BASE_URL ||
+    `${import.meta.env.BASE_URL || '/'}logic`
+);
 
 export const ENDPOINTS = {
-  dayIndex: () => findEndpoint('logic/daily/index.json'),
-  dayShard: day => findEndpoint(`logic/daily/${day}.json`),
+  dayIndex: () => `${DATA_BASE}daily/index.json`,
+  dayShard: day => `${DATA_BASE}daily/${day}.json`,
 };
 
 const fetchJson = async url => {

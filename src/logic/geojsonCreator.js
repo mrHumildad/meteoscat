@@ -12,7 +12,8 @@ const MCSC_ATTRIBUTION =
 /**
  * stations.json entries -> GeoJSON FeatureCollection.
  * Optional enrichment:
- *   meta  = meteokat/meta.json map {codi: {tipus, emplacament, municipi}}
+ *   meta  = the server repo's meteokat/meta.json map {codi: {tipus,
+ *            emplacament, municipi}}
  *   forest = public/logic/forest_types.json map {codi: {mcscClass,
  *            mcscName, forestType}}
  */
@@ -79,7 +80,11 @@ async function runCli() {
     return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : dflt;
   };
   const inPath = opt('--stations', path.join(root, 'src', 'logic', 'stations.json'));
-  const metaPath = opt('--meta', path.join(root, 'meteokat', 'meta.json'));
+  // meta.json is the scraper's station index and lives in the SERVER repo.
+  // Default to the sibling checkout (../server, the layout of a combined
+  // checkout); in a standalone clone pass --meta to point at it — this is
+  // optional enrichment, so a miss only logs a warning.
+  const metaPath = opt('--meta', path.join(root, '..', 'server', 'meteokat', 'meta.json'));
   const forestPath = opt('--forest', path.join(root, 'public', 'logic', 'forest_types.json'));
   const outPath = opt('--out', path.join(root, 'public', 'logic', 'stations.geojson'));
 

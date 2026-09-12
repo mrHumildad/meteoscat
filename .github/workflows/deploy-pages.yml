@@ -1,8 +1,14 @@
-# Builds the app and deploys it to GitHub Pages on every push to main
-# (including the daily-data workflow's data refresh commits).
+# Builds the app and deploys it to GitHub Pages on every push to main.
 #
-# Requires GitHub Pages to be enabled in the repo settings with the
-# source set to "GitHub Actions" (Settings → Pages).
+# The daily meteo data is NOT built here: it lives in the separate
+# meteoscat-server repo, which commits and publishes it on its own schedule.
+# A data refresh therefore never triggers a client rebuild — only a change to
+# this repo's code does. The app reads the data at runtime from
+# VITE_DATA_BASE_URL (committed in .env, overridable via the repo variable
+# below).
+#
+# Requires GitHub Pages enabled in the repo with the source set to
+# "GitHub Actions" (Settings → Pages).
 
 name: deploy to GitHub Pages
 
@@ -37,6 +43,10 @@ jobs:
         run: npm ci
 
       - name: Build
+        # vars.VITE_DATA_BASE_URL lets you retarget the data site without a
+        # code change; .env's value is used when the variable is unset.
+        env:
+          VITE_DATA_BASE_URL: ${{ vars.VITE_DATA_BASE_URL }}
         run: npm run build
 
       - name: Configure Pages

@@ -2,7 +2,7 @@
  * Substrate (lithology-family) grid — the data behind the geology filter.
  *
  * The grid file (public/logic/litho_grid.json, built by
- * meteokat/build_lithology.py from the ICGC "Mapa geològic de Catalunya
+ * the server repo's meteokat/build_lithology.py from the ICGC "Mapa geològic de Catalunya
  * 1:50.000 v3.0" GeoPackage) is a uniform lon/lat raster where every cell
  * holds ONE substrate-family id:
  *
@@ -34,7 +34,8 @@ export const LITHO_NODATA = 0;
  * Decode a grid JSON payload into a sampleable structure.
  *
  * @param {object} json  `{ cols, rows, west, north, step, families, rle, meta }`
- *                       exactly as written by meteokat/build_lithology.py.
+ *                       exactly as written by meteokat/build_lithology.py
+ *                       (server repo); the JSON is copied into this repo.
  * @returns {object} `{ cols, rows, west, north, step, cells, entries, keyById }`
  *   - `cells`: Uint8Array row-major (row 0 = north), one family id per cell.
  *   - `entries`: legend rows `[{ id, key, label, color }]` sorted by id,

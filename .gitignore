@@ -6,7 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-meteokat/venv
+
 node_modules
 dist
 dist-ssr
@@ -22,15 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-MUSHROOM_APP_PLAN.md
 
+# Scratch / local notes
+MUSHROOM_APP_PLAN.md
 basura
 
-# Raw scraped XEMA payloads (rebuilt daily by CI; too big for git). The
-# committed artifact is the aggregated public/logic/daily/ shards instead.
-dades_*.json
-full_dades.json
-
-# Raw ICGC geology download (155 MB zip / 283 MB gpkg) — source for
-# build_lithology.py; the committed artifact is public/logic/litho_grid.json.
-meteokat/raw
+# Daily meteo data belongs to the server repo and is fetched at runtime from
+# VITE_DATA_BASE_URL. A local copy under public/logic/daily/ enables offline
+# work (see src/logic/refineData.js) and must never be committed.
+public/logic/daily/

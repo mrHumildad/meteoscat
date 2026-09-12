@@ -119,7 +119,7 @@ export const fmtNum = (v, maxDec = 1) => {
   const n = Number(v);
   if (!Number.isFinite(n)) return '';
   // Round HALF AWAY FROM ZERO, matching the ECMA-262 toFixed behaviour the
-  // data pipeline already mirrors (meteokat/aggregate.py safe_avg).
+  // data pipeline already mirrors (the server repo's aggregate.py safe_avg).
   const f = 10 ** maxDec;
   const r = Math.round(Math.abs(n) * f) / f;
   return String(n < 0 ? -r : r);
