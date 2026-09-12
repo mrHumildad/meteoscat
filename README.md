@@ -54,5 +54,9 @@ npm run build    # production bundle → dist/
 Deployment is automatic: pushing to `main` builds and publishes to GitHub
 Pages via `.github/workflows/deploy-pages.yml`. Data refreshes in the server
 repo do **not** trigger this — if you need to point the app somewhere else,
-change `VITE_DATA_BASE_URL` (the workflow also honours a `VITE_DATA_BASE_URL`
-repo variable without a code change).
+edit `VITE_DATA_BASE_URL` in `.env` and push.
+
+> **Don't** set `VITE_DATA_BASE_URL` via the workflow's `env:`. An undefined
+> repo variable expands to an empty string, which overrides `.env` and makes
+> the build fall back to same-origin `/logic/daily/` — a path this repo no
+> longer has, so the deployed app 404s on every data request.
