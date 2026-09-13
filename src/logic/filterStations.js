@@ -61,6 +61,7 @@ export const filterStationCodes = (stations, meteoFilters, reliefRange, agg, geo
 
   const filters = Array.isArray(meteoFilters) ? meteoFilters : [];
   const active = filters.filter(f => {
+    if (f.enabled === false) return false; // muted instance filters nothing
     if (!usableRange(f)) return false;
     const span = limitsForWindow(agg, f.type, f.from, f.to);
     return span != null && !sameBand(f.range, span);

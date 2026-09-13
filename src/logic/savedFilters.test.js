@@ -43,15 +43,33 @@ describe('buildFilterConfig', () => {
     expect(config).toEqual({
       reliefRange: [100, 600],
       meteoFilters: [
-        { type: 'rain', from: 10, to: 0, range: [1, 20.5] },
-        { type: 'hum', from: 5, to: 2, range: [40, 80] },
+        { type: 'rain', from: 10, to: 0, range: [1, 20.5], enabled: true },
+        { type: 'hum', from: 5, to: 2, range: [40, 80], enabled: true },
       ],
       forestOff: ['111–116', '223/227'],
       geoOff: ['carbonatades', 'volcaniques'],
+      muted: [],
       boletFilter: { species: 'ceps', threshold: 0.7 },
     });
     // Instance ids are session counters and must not travel with the preset.
     expect(config.meteoFilters.some(f => 'id' in f)).toBe(false);
+  });
+
+  it('keeps the single-filter mute keys sorted', () => {
+    const config = buildFilterConfig({ muted: new Set(['relief', 'forest']) });
+    expect(config.muted).toEqual(['forest', 'relief']);
+  });
+
+  it('carries the per-instance mute switch', () => {
+    const config = buildFilterConfig({
+      meteoFilters: [{ type: 'rain', from: 10, to: 0, range: [1, 5], enabled: false }],
+    });
+    expect(config.meteoFilters[0].enabled).toBe(false);
+    // Missing flag (older presets) means enabled — never muted by accident.
+    const legacy = buildFilterConfig({
+      meteoFilters: [{ type: 'rain', from: 10, to: 0, range: [1, 5] }],
+    });
+    expect(legacy.meteoFilters[0].enabled).toBe(true);
   });
 
   it('represents an empty / off state with nulls and empty arrays', () => {
@@ -60,6 +78,7 @@ describe('buildFilterConfig', () => {
       meteoFilters: [],
       forestOff: [],
       geoOff: [],
+      muted: [],
       boletFilter: null,
     });
   });

@@ -6,9 +6,10 @@
 // creator credits per icon are listed there. The credit <text> blocks that the
 // downloads embed inside the SVGs were stripped only because that file exists.
 //
-// Icons not listed here (future features: search, config, boots, north,
-// binocular, back, manuscript, close, picking-mushrooms, thermometer) stay as
-// plain files until wired up.
+// Icons not listed here (future features: search, north, back, close,
+// thermometer) stay as plain files until wired up.
+// Every SVG exported here must be credit-text-free and cropped to a square
+// viewBox — otherwise the embedded Noun Project credit renders inside buttons.
 
 export { default as RainIcon } from '../assets/noun_Rain_8462912.svg?react';
 export { default as HumidityIcon } from '../assets/noun_humidity_1512650.svg?react';
@@ -29,5 +30,9 @@ export { default as ViewIcon } from '../assets/noun_View_5741547.svg?react';
 
 
 export { default as LegendIcon } from '../assets/noun_manuscript_5181774.svg?react';
+// Boots = the "my location" map marker (round .map-icon badge)
+export { default as BootsIcon } from '../assets/noun_Boots_8445610.svg?react';
 export { default as PickingMushroomsIcon } from '../assets/noun_PickingMushrooms_78369.svg?react';
 export { default as FilterIcon } from '../assets/noun_config_5833149.svg?react';
+// Binocular = the main "Filtres" entry button (look at what the map shows)
+export { default as BinocularIcon } from '../assets/noun_binocular_8192897.svg?react';

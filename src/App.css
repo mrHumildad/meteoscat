@@ -59,15 +59,44 @@
   padding: 3px 8px;
 }
 
-/* "My location" marker (basket.png), always visible once the browser location
-   is known. It is decorative — never a click target — so it must not eat map
-   gestures. */
-.user-location-marker {
-  width: max(3vw, 3vh);
-  height: max(3vw, 3vh);
-  object-fit: contain;
+/* "My location" marker: a round badge holding the Noun Project boots glyph
+   (see ATTRIBUTIONS.md), always visible once the browser location is known. It
+   is decorative — never a click target — so it must not eat map gestures.
+   Green like the primary filter button (--color-success), with a black border
+   and black glyph so it reads on both light and dark basemaps. */
+.map-icon {
+  width: max(4vw, 4vh);
+  height: max(4vw, 4vh);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-success);
+  border: 2px solid var(--color-text-inverse);
+  color: var(--color-text-inverse);
+  font-size: max(2.1vw, 2.1vh);
   pointer-events: none;
   filter: drop-shadow(0 0 3px var(--color-border-strong));
+}
+
+/* Saved-point markers reuse the .map-icon badge but must not be mistaken for
+   "my location": they are smaller and red (mushroom badge) instead of the
+   green "my location" disc. They are actionable too — clicking one flies to
+   that spot — so they opt back into pointer events and invert to a solid black
+   disc with a red glyph on hover (border stays black). */
+.map-icon.clickable {
+  width: max(3.2vw, 3.2vh);
+  height: max(3.2vw, 3.2vh);
+  font-size: max(1.7vw, 1.7vh);
+  background-color: var(--color-danger);
+  border-width: 1px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.map-icon.clickable:hover {
+  background-color: var(--color-text-inverse);
+  color: var(--color-danger);
 }
 
 .app-loading {
@@ -181,44 +210,13 @@
 
 /* ── Shared overlay surfaces (previously duplicated rgba(0,0,0,0.8)) ──────
    Grouped to keep a single source for the dark translucent backdrop used
-   by header, selectors, station panel, filter panel and legend. */
-.app-header,
+   by selectors, station panel, filter panel and legend. */
 .selectors,
 .station-panel,
 .filter-panel,
 .mcsc-legend,
 .app-loading {
   background-color: var(--color-overlay);
-}
-
-.app-header {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  color: var(--color-text-on-dark);
-  padding: 10px 16px;
-  z-index: 10;
-  max-width: 90vw;
-  text-align: center;
-  font-size: max(2vw, 2vh);
-}
-
-/* One item of the applied-filter ticker (HeaderStatus). The span is remounted
-   per item, so this entry animation replays on every rotation. */
-.header-status {
-  display: inline-block;
-  animation: header-status-in 0.4s ease-out;
-}
-@keyframes header-status-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.4em);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .selectors {
@@ -385,12 +383,15 @@
 .calendar { background-color: var(--color-layer-calendar); }
 .forest { background-color: var(--color-layer-forest); }
 .substrat { background-color: var(--color-layer-substrat); }
+/* Bolets (species rule) — no creator button exists, so amber marks it out */
+.bolet { background-color: var(--color-accent-amber); }
 .relief { background-color: var(--color-layer-relief); }
 .altitude,
 .mountain { background-color: var(--color-data-altitude); }
 .terrain3d { background-color: var(--color-layer-terrain3d); }
-.stationinfo,
-.filter-button { background-color: var(--color-accent-amber); }
+.stationinfo { background-color: var(--color-accent-amber); }
+/* Filtres — the single primary entry point; green marks it out from the rows */
+.filter-button { background-color: var(--color-success); }
 .directions { background-color: var(--color-layer-directions); }
 .legend-layer { background-color: var(--color-layer-legend); }
 
@@ -422,6 +423,14 @@
   gap: 10px;
 }
 
+/* The three top-row buttons (saved places / saved filters / filters) are the
+   app's primary entry points, so they read a step larger than the base
+   .sel-button. Scoped to the row so the panels below keep their own sizes. */
+.top-button-row .sel-button {
+  --sel-size: max(6vw, 6vh);
+  --sel-font: max(4.8vw, 4.8vh);
+}
+
 .bottom-buttons {
   position: absolute;
   left: 10px;
@@ -430,6 +439,36 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+/* Top-row and bottom-stack buttons float over live map tiles, so they get a
+   raised, bevelled treatment: a light rim to cut them out of the map, a top
+   highlight + inner shade for depth, and two stacked drop shadows (a hard
+   1-step edge plus a soft ambient one) that lift them off the terrain at any
+   zoom. Scoped to the chrome rows so panel buttons stay flat. */
+.top-button-row .sel-button,
+.bottom-buttons .sel-button {
+  border: 1px solid var(--color-border-light);
+  background-image: linear-gradient(
+    180deg,
+    var(--color-border-light) 0%,
+    transparent 55%
+  );
+  box-shadow:
+    inset 0 1px 0 var(--color-border-strong),
+    inset 0 -3px 6px var(--color-overlay-soft),
+    0 3px 0 var(--color-overlay-soft),
+    0 5px 10px var(--color-overlay);
+}
+
+/* Pressed: the button sinks into its own edge — no depth shadow left, an
+   inner shade instead — so the 3D read survives interaction. */
+.top-button-row .sel-button:active,
+.bottom-buttons .sel-button:active {
+  box-shadow:
+    inset 0 2px 6px var(--color-overlay),
+    0 1px 0 var(--color-overlay-soft);
+  transform: translateY(2px);
 }
 
 .stationinfo-row {
@@ -528,6 +567,45 @@
   font-size: 1.2em;
   font-weight: bold;
 }
+
+/* Saved-place action: takes the save form's slot (same top border / padding)
+   when the open point already matches a stored place, so the modal never
+   offers to save the same place twice. */
+.directions-saved {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid var(--color-border-faint);
+  padding-top: 10px;
+}
+.directions-saved-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.directions-saved-name { font-weight: bold; }
+.directions-saved-desc {
+  font-size: 0.75rem;
+  font-style: italic;
+  opacity: 0.7;
+}
+.directions-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--color-danger);
+  color: var(--color-text-inverse);
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.directions-delete:hover { filter: brightness(1.1); }
 
 .directions-rows {
   display: flex;
@@ -890,8 +968,16 @@
   color: var(--color-text-on-dark);
   border-radius: 5px;
   padding: 10px;
-  min-width: 200px;
-  max-width: min(92vw, 440px);
+  /* FIXED width: the panel must never resize while a slider drags — with a
+     content-driven width the whole card blinks as the value labels grow and
+     shrink on every tick. */
+  width: min(92vw, 440px);
+}
+/* Tabular figures keep the value labels themselves from jittering mid-drag. */
+.range-value,
+.filter-row-value,
+.filter-row-range {
+  font-variant-numeric: tabular-nums;
 }
 .filter-header {
   display: flex;
@@ -919,6 +1005,41 @@
   gap: 10px;
 }
 
+/* Preset selector at the top of the panel: the loaded 'reCeta' name, or
+   "Manual" when nothing is loaded / the loaded one was modified. Toggling it
+   opens the accordion of saved presets (shared .basket-item rows). */
+.filter-preset {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.filter-preset-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  background-color: var(--color-surface-card);
+  color: var(--color-text-on-dark);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.filter-preset-toggle:hover { background-color: var(--color-surface-card-hover); }
+.filter-preset-name { font-weight: bold; }
+.filter-preset-caret { transition: transform 0.15s ease; }
+.filter-preset.open .filter-preset-caret { transform: rotate(180deg); }
+.filter-preset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 30vh;
+  overflow-y: auto;
+}
+
 /* Shared card surface for lines + instance rows (previously duplicated) */
 .filter-line,
 .filter-instance {
@@ -932,6 +1053,53 @@
   flex-direction: column;
   gap: 10px;
 }
+
+/* ONE schema for every applied / instance filter row: the filter's icon badge
+   (left), its value with the day range below it (middle), and the mute + ✕
+   buttons (right, eye left of ✕). Same padding + min-height everywhere so the
+   list reads as a single column. */
+.filter-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  min-height: max(4vw, 4vh);
+  background-color: var(--color-surface-card);
+  border-radius: 5px;
+}
+.filter-row .sel-button {
+  --sel-size: max(2.5vw, 2.5vh);
+  --sel-font: max(2vw, 2vh);
+}
+/* The badge's inline margin is for in-text use, not for the grid cell. */
+.filter-row .filter-instance-icon { margin-right: 0; }
+.filter-row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.filter-row-value {
+  font-weight: bold;
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.filter-row-range {
+  font-size: 0.72rem;
+  opacity: 0.75;
+}
+.filter-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.filter-row.clickable { cursor: pointer; }
+.filter-row.clickable:hover { background-color: var(--color-surface-card-hover); }
+.filter-row.inert { outline: 1px dashed var(--color-border-light); }
+.filter-row.muted { opacity: 0.55; }
 .filter-line-header {
   display: flex;
   justify-content: space-between;
@@ -957,31 +1125,59 @@
   gap: 4px;
 }
 
-/* Orientation (slope aspect) sector chips — keep-selected compass buttons */
-.filter-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
+/* Orientation (slope aspect): one compass circle split into 8 clickable
+   wedges (keep-selected) instead of a row of letter chips. A wedge is "on"
+   while its sector is picked; its label sits on the sector's bisector. */
+.aspect-rose {
+  display: block;
+  width: 100%;
+  max-width: 130px;
+  height: auto;
+  margin: 0 auto;
 }
-.filter-chip {
-  min-width: 34px;
-  padding: 4px 6px;
-  border: 1px solid var(--color-border-focus);
-  border-radius: 4px;
-  background: none;
-  color: var(--color-text-on-dark);
-  font-family: inherit;
-  font-size: 0.72rem;
+.aspect-wedge {
+  fill: var(--color-overlay-soft);
+  stroke: none;
   cursor: pointer;
 }
-.filter-chip:hover {
-  background-color: var(--color-surface-card-hover);
+.aspect-wedge:hover { fill: var(--color-border-light); }
+/* Keyboard focus only — a click must not leave a ring around the wedge. */
+.aspect-wedge:focus { outline: none; }
+.aspect-wedge:focus-visible {
+  outline: none;
+  stroke: var(--color-border-focus);
+  stroke-width: 2;
 }
-.filter-chip.on {
-  background-color: var(--color-success);
-  border-color: var(--color-success);
+.aspect-wedge.on { fill: var(--color-success); }
+.aspect-wedge-label {
+  fill: var(--color-text-on-dark);
+  font-size: 11px;
   font-weight: bold;
+  pointer-events: none;
+  user-select: none;
 }
+.aspect-wedge.on + .aspect-wedge-label { fill: var(--color-text-inverse); }
+/* Centre hub, drawn over the wedges' meeting point (purely decorative) */
+.aspect-hub {
+  fill: var(--color-border-faint);
+  stroke: none;
+  pointer-events: none;
+}
+
+/* Applied Orientació row: the picked sectors as a tiny graphic disc (no
+   labels, no interaction) — just the shape of what is being filtered. */
+.aspect-mini {
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+}
+.aspect-mini-wedge {
+  fill: var(--color-overlay-soft);
+  stroke: none;
+}
+.aspect-mini-wedge.on { fill: var(--color-success); }
+.aspect-mini-hub { fill: var(--color-border-faint); }
 
 /* ── Legend ─────────────────────────────────────────────────────────────── */
 .mcsc-legend {
@@ -1094,11 +1290,36 @@
   font-weight: bold;
   font-size: 0.85rem;
 }
+/* Type badge of an instance row — mirrors the creator button it was added
+   from (same size, radius and colours: the .rain/.humidity/.temp background +
+   the base .sel-button's inverse icon colour). */
+.filter-instance-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: max(3vw, 3vh);
+  height: max(3vw, 3vh);
+  border-radius: 25%;
+  color: var(--color-text-inverse);
+  font-size: max(2.5vw, 2.5vh);
+  vertical-align: middle;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
 .filter-instance-actions {
   margin-left: auto;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 6px;
 }
+/* Mute switch under the delete button: eye = filtering, eye-off = muted */
+.filter-instance-toggle { background-color: var(--color-success); }
+.filter-instance-toggle.off {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-text-on-dark);
+}
+.filter-instance.muted { opacity: 0.55; }
 .filter-instance-meta {
   font-size: 0.75rem;
   opacity: 0.75;
@@ -1144,11 +1365,6 @@
 }
 .filter-editor-label .range-value { font-size: 0.75rem; }
 .filter-editor .range-slider { width: 100%; }
-.filter-editor-hint {
-  font-size: 0.68rem;
-  font-style: italic;
-  opacity: 0.6;
-}
 
 /* ── Saved-filter basket ─────────────────────────────────────────────────── */
 .basket-empty {
@@ -1222,6 +1438,11 @@
 }
 .filter-save-btn:hover { background-color: var(--color-surface-card-hover); }
 .filter-save-btn.saved { color: var(--color-success); }
+.filter-save-btn.disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.filter-save-btn.disabled:hover { background-color: var(--color-surface-card); }
 .filter-save-row {
   display: flex;
   align-items: center;
@@ -1246,7 +1467,7 @@
 
 /* ── Busy state ─────────────────────────────────────────────────────────── */
 .filter-panel.busy .sel-button,
-.filter-panel.busy .filter-chip,
+.filter-panel.busy .aspect-wedge,
 .filter-panel.busy .filter-instance {
   pointer-events: none;
   opacity: 0.45;

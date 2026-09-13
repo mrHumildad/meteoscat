@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faCircleInfo, faFilter, faFloppyDisk, faTowerBroadcast, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCircleInfo, faFilter, faFloppyDisk, faTowerBroadcast, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { JeepIcon } from '../logic/nounIcons.jsx';
 import { fmtNum } from '../logic/utils.js';
 import { suggestLocationName } from '../logic/savedLocations.js';
@@ -205,6 +205,8 @@ const DirectionsTabs = ({
   onRadiusChange,
   onNavigate,
   onSaveLocation,
+  savedLocation,
+  onDeleteLocation,
 }) => {
   const [tab, setTab] = useState(initialTab);
   return (
@@ -252,7 +254,29 @@ const DirectionsTabs = ({
           ? `Com hi arribo \u00b7 ${fmtNum(distanceKm, 1)} km`
           : 'Com hi arribo (Google Maps)'}
       </button>
-      <SaveLocationForm nearest={nearest} onSaveLocation={onSaveLocation} />
+      {/* Point-level action: saving a NEW place, or — when the point already
+          matches a stored place — deleting it. Both are the same slot: there
+          is no point offering to save the same place twice. */}
+      {savedLocation ? (
+        <div className="directions-saved">
+          <div className="directions-saved-text">
+            <span className="directions-saved-name">{savedLocation.name}</span>
+            {savedLocation.description && (
+              <span className="directions-saved-desc">{savedLocation.description}</span>
+            )}
+          </div>
+          <button
+            type="button"
+            className="directions-delete"
+            title="Esborra aquest lloc desat"
+            onClick={() => onDeleteLocation?.(savedLocation.name)}
+          >
+            <FontAwesomeIcon icon={faTrash} /> Esborra el lloc
+          </button>
+        </div>
+      ) : (
+        <SaveLocationForm nearest={nearest} onSaveLocation={onSaveLocation} />
+      )}
     </>
   );
 };
@@ -283,6 +307,11 @@ const DirectionsTabs = ({
  * `onSaveLocation(name, description)` stores the picked point (App owns the
  * localStorage list); the name is suggested from `nearest` but editable.
  *
+ * `savedLocation` is the stored place matching the open point, or null when it
+ * was never saved. When set, the save form is replaced by that place's name /
+ * description and the `onDeleteLocation(name)` action — so clicking a saved
+ * mushroom marker on the map is enough to review or remove the place.
+ *
  * `radius` (metres) is the size of the AREA analysed around the point — the
  * single-value slider between ROUTE_RADIUS_MIN and ROUTE_RADIUS_MAX; App owns
  * the state so the rest of the analysis (nearest stations, map circle) can
@@ -310,6 +339,8 @@ const DirectionsModal = ({
   onClose,
   onNavigate,
   onSaveLocation,
+  savedLocation = null,
+  onDeleteLocation,
 }) => {
   if (!point) return null;
   const { lat, lng, elevation, pending } = point;
@@ -323,16 +354,7 @@ const DirectionsModal = ({
       onClick={onClose}
     >
       <div className="directions-card" onClick={e => e.stopPropagation()}>
-        <div className="directions-header">
-          <span className="directions-title">Com hi arribo</span>
-          <div
-            className="sel-button directions-close"
-            title="Tanca"
-            onClick={onClose}
-          >
-            <FontAwesomeIcon icon={faXmark} />
-          </div>
-        </div>
+       
         {/* Keyed by the point: a newly picked point remounts the tabs (back to
             the first one) and the save form's suggested toponym. */}
         <DirectionsTabs
@@ -350,6 +372,8 @@ const DirectionsModal = ({
           onRadiusChange={onRadiusChange}
           onNavigate={onNavigate}
           onSaveLocation={onSaveLocation}
+          savedLocation={savedLocation}
+          onDeleteLocation={onDeleteLocation}
         />
       </div>
     </div>

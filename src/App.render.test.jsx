@@ -11,8 +11,7 @@ describe('App smoke render', () => {
   it('renders without throwing', () => {
     let html;
     expect(() => { html = renderToString(React.createElement(App)); }).not.toThrow();
-    // The header now holds only the applied-filter ticker (empty until filters
-    // exist), so the stable marker is the app's logo.
+    // The app-header ticker is gone, so the stable marker is the app's logo.
     expect(html).toContain('class="logo"');
   });
 

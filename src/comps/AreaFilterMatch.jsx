@@ -58,7 +58,7 @@ const AreaFilterMatch = ({ lat, lng, radius, areaAnalysis = null }) => {
     sampleDiscPoints(lat, lng, radius, { lithoGrid })
       .then(samples => {
         if (req !== reqRef.current) return;
-        setRows(matchAreaFilters(samples, configs, { refDay, agg, features }));
+        setRows(matchAreaFilters(samples, configs, { agg, features }));
         setStatus('ready');
       })
       .catch(err => {

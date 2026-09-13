@@ -8,9 +8,14 @@
 //
 // The snapshot is deliberately an app state, not the app's own data shapes:
 //   { reliefRange: [lo, hi] | null,
-//     meteoFilters: [{ type, from, to, range: [lo, hi] }],
+//     meteoFilters: [{ type, from, to, range: [lo, hi], enabled }],
 //     forestOff: [codes...], geoOff: [keys...],   // sorted (Sets → arrays)
+//     muted: [keys...],                            // sorted single-filter mutes
 //     boletFilter: { species, threshold } | null }
+// `enabled` is the per-instance mute switch (the visible/hidden toggle in the
+// panel): a muted instance keeps its window and band but filters nothing.
+// `muted` does the same for the single filters (relief / forest / geo / bolet /
+// aspect) — the picked value is kept, only its effect is switched off.
 // Filter instance ids are dropped: they are per-session counters (`f1`, `f2`…)
 // that a reloaded preset must not reuse.
 //
@@ -44,6 +49,7 @@ export const buildFilterConfig = ({
   forestOff = null,
   geoOff = null,
   boletFilter = null,
+  muted = null,
 } = {}) => ({
   reliefRange: reliefRange ? [reliefRange[0], reliefRange[1]] : null,
   meteoFilters: meteoFilters.map(f => ({
@@ -51,9 +57,11 @@ export const buildFilterConfig = ({
     from: f.from,
     to: f.to,
     range: [f.range[0], f.range[1]],
+    enabled: f.enabled !== false,
   })),
   forestOff: [...(forestOff ?? [])].sort(),
   geoOff: [...(geoOff ?? [])].sort(),
+  muted: [...(muted ?? [])].sort(),
   boletFilter: boletFilter
     ? { species: boletFilter.species, threshold: boletFilter.threshold }
     : null,
@@ -115,9 +123,11 @@ const TYPE_LABEL = { rain: 'Pluja', hum: 'Humitat', temp: 'Temperatura' };
 export const describeFilterConfig = (config) => {
   if (!config || typeof config !== 'object') return '';
   const parts = [];
+  const muted = new Set(config.muted ?? []);
 
   const counts = {};
   for (const f of config.meteoFilters ?? []) {
+    if (f?.enabled === false) continue; // muted instances don't filter
     if (TYPE_LABEL[f?.type]) counts[f.type] = (counts[f.type] ?? 0) + 1;
   }
   for (const [type, label] of Object.entries(TYPE_LABEL)) {
@@ -127,17 +137,19 @@ export const describeFilterConfig = (config) => {
   }
 
   const relief = config.reliefRange;
-  if (Array.isArray(relief) && relief.length === 2) {
+  if (Array.isArray(relief) && relief.length === 2 && !muted.has('relief')) {
     parts.push(`Relleu ${relief[0]}–${relief[1]} m`);
   }
 
   const forest = config.forestOff?.length ?? 0;
-  if (forest) parts.push(forest > 1 ? `Bosc (${forest})` : 'Bosc');
+  if (forest && !muted.has('forest')) parts.push(forest > 1 ? `Bosc (${forest})` : 'Bosc');
 
   const geo = config.geoOff?.length ?? 0;
-  if (geo) parts.push(geo > 1 ? `Substrat (${geo})` : 'Substrat');
+  if (geo && !muted.has('geo')) parts.push(geo > 1 ? `Substrat (${geo})` : 'Substrat');
 
-  if (config.boletFilter?.species) parts.push(`Bolets ${config.boletFilter.species}`);
+  if (config.boletFilter?.species && !muted.has('bolet')) {
+    parts.push(`Bolets ${config.boletFilter.species}`);
+  }
 
   return parts.length ? parts.join(' · ') : 'Sense filtres';
 };
@@ -156,7 +168,8 @@ export const sameFilterConfig = (a, b) => {
   const sameMeteo = mfA.every((f, i) => {
     const g = mfB[i];
     return f.type === g.type && f.from === g.from && f.to === g.to &&
-      f.range?.[0] === g.range?.[0] && f.range?.[1] === g.range?.[1];
+      f.range?.[0] === g.range?.[0] && f.range?.[1] === g.range?.[1] &&
+      (f.enabled !== false) === (g.enabled !== false);
   });
   if (!sameMeteo) return false;
 
@@ -171,6 +184,7 @@ export const sameFilterConfig = (a, b) => {
     sameList(a.reliefRange, b.reliefRange) &&
     sameList(a.forestOff, b.forestOff) &&
     sameList(a.geoOff, b.geoOff) &&
+    sameList(a.muted, b.muted) &&
     (boA == null || boB == null
       ? boA === boB
       : boA.species === boB.species && boA.threshold === boB.threshold)

@@ -51,14 +51,16 @@ export const MATCH_ACTIVE_KEY = '__active__';
  * meaning (it scores stations, it never gates terrain), so it is not counted.
  * Pure, unit-testable.
  */
-export const hasFilterConditions = (config) => !!(
-  config && (
-    (config.meteoFilters?.length ?? 0) > 0 ||
-    config.reliefRange ||
-    (config.forestOff?.length ?? 0) > 0 ||
-    (config.geoOff?.length ?? 0) > 0
-  )
-);
+export const hasFilterConditions = (config) => {
+  if (!config) return false;
+  const muted = new Set(config.muted ?? []);
+  return !!(
+    (config.meteoFilters ?? []).some(f => f?.enabled !== false) ||
+    (config.reliefRange && !muted.has('relief')) ||
+    ((config.forestOff?.length ?? 0) > 0 && !muted.has('forest')) ||
+    ((config.geoOff?.length ?? 0) > 0 && !muted.has('geo'))
+  );
+};
 
 /**
  * Stored filter config (savedFilters.js shape: day OFFSETS + meteo type) →
@@ -68,22 +70,25 @@ export const hasFilterConditions = (config) => !!(
  */
 export const normalizeFilterConfig = (config, refDay) => {
   if (!config || typeof config !== 'object') return null;
+  const muted = new Set(config.muted ?? []);
   const meteo = [];
   for (const f of config.meteoFilters ?? []) {
     const variable = TYPE_TO_VARIABLE[f?.type];
-    if (!variable || !refDay || !Array.isArray(f.range)) continue;
+    if (!variable || f.enabled === false || !refDay || !Array.isArray(f.range)) continue;
     const w = windowToDates(refDay, f.from, f.to);
     if (!w) continue;
     meteo.push({ variable, from: w.from, to: w.to, band: [f.range[0], f.range[1]] });
   }
   return {
-    reliefRange: Array.isArray(config.reliefRange)
+    // A muted single filter keeps its value in the stored config but gates
+    // nothing here, exactly like the map.
+    reliefRange: Array.isArray(config.reliefRange) && !muted.has('relief')
       ? [config.reliefRange[0], config.reliefRange[1]]
       : null,
     // Sets travel as arrays in the stored config; the copies keep callers from
     // mutating a stored preset.
-    forestOff: [...(config.forestOff ?? [])],
-    geoOff: [...(config.geoOff ?? [])],
+    forestOff: muted.has('forest') ? [] : [...(config.forestOff ?? [])],
+    geoOff: muted.has('geo') ? [] : [...(config.geoOff ?? [])],
     meteo,
   };
 };
@@ -168,7 +173,7 @@ export const matchesFilterGates = (sample, config, meteoValues = []) => {
  * window (featuresForWindow + getMeteoGrid, both cached) and sampled per
  * point exactly like the terrain overlay does.
  */
-export const matchAreaFilters = (samples, configs, { refDay, agg, features } = {}) => {
+export const matchAreaFilters = (samples, configs, { agg, features } = {}) => {
   const list = samples ?? [];
   const windows = new Map(); // `variable|from|to` -> { variable, from, to }
   for (const row of configs ?? []) {

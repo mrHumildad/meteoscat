@@ -1,6 +1,7 @@
 // Directions modal: pick a map point with the car button armed → an area
 // analysis card split over tabs (info / stations), with the point actions
-// (close, Google Maps, save) always visible.
+// (Google Maps, save) always visible. Closing is backdrop-click / Esc only —
+// there is no explicit "Tanca" button.
 import { describe, it, expect } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import React from 'react';
@@ -19,7 +20,6 @@ describe('DirectionsModal', () => {
     expect(html).toContain('1.90000');
     expect(html).toContain('512 m');
     expect(html).toContain('Com hi arribo (Google Maps)');
-    expect(html).toContain('Tanca');
   });
 
   it('shows a placeholder while the DEM sample is still pending', () => {
@@ -154,5 +154,32 @@ describe('DirectionsModal', () => {
       onSaveLocation: () => {},
     }));
     expect(html).toContain('Desa aquest lloc');
+  });
+
+  it('replaces the save form with the saved place and its delete action', () => {
+    const html = renderToString(React.createElement(DirectionsModal, {
+      point: { lat: 41.9, lng: 1.9, elevation: 512, pending: false },
+      savedLocation: {
+        name: 'Rovellons',
+        description: 'Sota els pins',
+        lat: 41.9,
+        lng: 1.9,
+        elevation: 512,
+      },
+      onDeleteLocation: () => {},
+    }));
+    expect(html).toContain('Rovellons');
+    expect(html).toContain('Sota els pins');
+    expect(html).toContain('directions-delete');
+    expect(html).toContain('Esborra el lloc');
+    // The point is already stored — no second "save this place" form.
+    expect(html).not.toContain('Desa aquest lloc');
+  });
+
+  it('shows no delete action for a point that was never saved', () => {
+    const html = renderToString(React.createElement(DirectionsModal, {
+      point: { lat: 41.9, lng: 1.9, elevation: 512, pending: false },
+    }));
+    expect(html).not.toContain('directions-delete');
   });
 });

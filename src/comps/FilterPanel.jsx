@@ -1,10 +1,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faCompass, faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { RainIcon, HumidityIcon, TemperatureIcon, MushroomIcon, ForestIcon, MountainIcon, AnticlineIcon } from '../logic/nounIcons.jsx';
+import { faCheck, faChevronDown, faCompass, faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { RainIcon, HumidityIcon, TemperatureIcon, MushroomIcon, ForestIcon, MountainIcon, AnticlineIcon, ViewIcon, HiddenIcon } from '../logic/nounIcons.jsx';
 import { useState } from 'react';
 import RangeSlider from 'react-range-slider-input';
-import { DEFAULTDAYRANGE, dayRangeLabel, limitsForWindow, TYPE_TO_VARIABLE, windowToDates } from '../logic/filterAggregate.js';
-import { ASPECT_MIN_SLOPE_DEG, ASPECT_SECTORS } from '../logic/elevation.js';
+import { DEFAULTDAYRANGE, limitsForWindow, TYPE_TO_VARIABLE, windowToDates } from '../logic/filterAggregate.js';
+import { describeFilterConfig } from '../logic/savedFilters.js';
+import { ASPECT_SECTORS } from '../logic/elevation.js';
 import { fmtNum, fmtShortCat } from '../logic/utils.js';
 import { MCSC_LEGEND } from '../logic/mcscLegend.js';
 import { SPECIES, SPECIES_KEYS } from '../logic/speciesRules.js';
@@ -30,11 +31,85 @@ const METEO_DEFS = [
 ];
 const defOf = type => METEO_DEFS.find(d => d.type === type) ?? null;
 
-// Compass names for the orientation chips (Catalan), used as tooltips.
+// Compass names for the orientation sectors (Catalan), used as tooltips.
 const ASPECT_LABELS = {
   N: 'nord', NE: 'nord-est', E: 'est', SE: 'sud-est',
   S: 'sud', SW: 'sud-oest', W: 'oest', NW: 'nord-oest',
 };
+
+// Compass-rose geometry for the Orientació picker: the 8 sectors as wedges of
+// ONE circle (0° = north/up, clockwise), so picking a facing reads like a
+// compass instead of a row of letter chips. Each wedge is centred on its
+// sector's bearing and its label sits on the bisector.
+const ASPECT_ROSE_R = 44;
+const rosePoint = (radius, angleDeg) => {
+  const a = ((angleDeg - 90) * Math.PI) / 180;
+  return [50 + radius * Math.cos(a), 50 + radius * Math.sin(a)];
+};
+const roseWedge = index => {
+  const [x1, y1] = rosePoint(ASPECT_ROSE_R, index * 45 - 22.5);
+  const [x2, y2] = rosePoint(ASPECT_ROSE_R, index * 45 + 22.5);
+  return `M50 50 L${x1.toFixed(2)} ${y1.toFixed(2)} A${ASPECT_ROSE_R} ${ASPECT_ROSE_R} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z`;
+};
+
+// ONE schema for every applied filter row, so the panel reads as a single
+// list: the filter's own icon on the left (a badge matching its creator
+// button), its value in the middle with the day range — when it has one — on
+// a second line, and the mute + remove buttons on the right (eye left of ✕).
+// Uniform height comes from the `.filter-row` CSS grid. `children` renders
+// under the value (the forest / substrate swatches, the aspect disc).
+const FilterRow = ({
+  icon,
+  iconClass,
+  value = null,
+  range = null,
+  muted = false,
+  inert = false,
+  clickable = false,
+  title,
+  onClick,
+  onToggle,
+  onRemove,
+  children,
+}) => (
+  <div
+    className={`filter-row${inert ? ' inert' : ''}${muted ? ' muted' : ''}${clickable ? ' clickable' : ''}`}
+    title={title}
+    onClick={onClick}
+  >
+    <span className={`filter-instance-icon ${iconClass}`}>{icon}</span>
+    <div className="filter-row-main">
+      {value != null && <span className="filter-row-value">{value}</span>}
+      {range != null && <span className="filter-row-range">{range}</span>}
+      {children}
+    </div>
+    <div className="filter-row-actions">
+      <div
+        className={`sel-button filter-instance-toggle${muted ? ' off' : ''}`}
+        title={muted ? 'Activa el filtre' : 'Desactiva el filtre'}
+        aria-pressed={!muted}
+        onClick={e => {
+          e.stopPropagation();
+          onToggle?.();
+        }}
+      >
+        {muted
+          ? <HiddenIcon className="noun-icon" />
+          : <ViewIcon className="noun-icon" />}
+      </div>
+      <div
+        className="sel-button filter-line-cancel"
+        title="Treu el filtre"
+        onClick={e => {
+          e.stopPropagation();
+          onRemove?.();
+        }}
+      >
+        <FontAwesomeIcon icon={faXmark} />
+      </div>
+    </div>
+  </div>
+);
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
@@ -45,10 +120,13 @@ const FilterPanel = ({
   onApplyRelief,
   aspectSectors,
   onApplyAspect,
+  mutedFilters,
+  onToggleMuted,
   meteoFilters,
   onAddFilter,
   onUpdateFilter,
   onRemoveFilter,
+  onToggleFilter,
   agg,
   refDay,
   maxDays,
@@ -61,6 +139,14 @@ const FilterPanel = ({
   boletFilter,
   onApplyBolet,
   onSaveFilter,
+  // Saved presets (localStorage). The selector at the top of the panel lists
+  // them (accordion) and loads one on click; activeName is the preset the live
+  // filters currently match — null means "Manual" (nothing loaded, or a loaded
+  // preset that was then tweaked). The save button is only live in that state.
+  presets = [],
+  activeName = null,
+  onApplyPreset,
+  onDeletePreset,
 }) => {
   const [editingId, setEditingId] = useState(null);   // instance currently expanded
   const [pendingId, setPendingId] = useState(null);   // just-added instance: cancel removes it
@@ -84,6 +170,13 @@ const FilterPanel = ({
   const [saveOpen, setSaveOpen] = useState(false);
   const [saveName, setSaveName] = useState('');
   const [savedName, setSavedName] = useState(null);
+  const [presetOpen, setPresetOpen] = useState(false); // preset accordion
+
+  // "Manual" = the live filters match no saved preset: either nothing was
+  // loaded, or a loaded preset was modified afterwards (App derives activeName
+  // from the filter state, so any edit drops it back to null). Saving is only
+  // meaningful in this state — a loaded, unmodified preset has nothing to save.
+  const manual = activeName == null;
 
   const editing = editingId ? meteoFilters.find(f => f.id === editingId) ?? null : null;
 
@@ -95,7 +188,7 @@ const FilterPanel = ({
   };
   const datesOf = f => (refDay ? windowToDates(refDay, f.from, f.to) : { from: null, to: null });
   const shortDate = d => (d ? fmtShortCat(d) : '');
-  const dayLabel = f => dayRangeLabel(f.from, f.to); // shared wording with the station-info span
+
 
   // While editing, the day labels must follow the LIVE draft (slider
   // onInput), not the committed instance `f` — dates and day count recompute
@@ -104,16 +197,36 @@ const FilterPanel = ({
   const draftDates = draft && refDay ? windowToDates(refDay, draft.from, draft.to) : { from: null, to: null };
   const draftDayCount = draft ? Math.max(1, draft.from - draft.to) : 0;
 
+  // ONLY ONE editor is ever open. Opening any editor (single filter or meteo
+  // instance) first closes every other, and a never-applied "pending" new
+  // instance is dropped so it can't linger in the list. Together with new
+  // instances rendering at the TOP of the list, this keeps the open editor
+  // visible instead of pushing it past the bottom of the screen.
+  const closeEditors = () => {
+    if (pendingId) {
+      onRemoveFilter(pendingId);
+      setPendingId(null);
+    }
+    setEditingId(null);
+    setForestEditing(false);
+    setReliefEditing(false);
+    setAspectEditing(false);
+    setGeoEditing(false);
+    setBoletEditing(false);
+  };
+
   const startEdit = f => {
+    closeEditors();
     setDraft({ from: f.from, to: f.to, range: [f.range[0], f.range[1]], span: fullSpanOf(f) });
-    setPendingId(null);
     setEditingId(f.id);
   };
 
-  // Add a new instance with defaults and open its editor immediately. A
-  // pending (never-applied) editor is dropped first — one editor at a time.
+  // Add a new instance with defaults and open its editor immediately. It is
+  // appended to the state list (the app's "last active filter wins" rule for
+  // the station value windows reads the array order) but rendered FIRST by the
+  // panel — see the reversed map below — so its editor always appears on top.
   const add = type => {
-    if (pendingId) onRemoveFilter(pendingId);
+    closeEditors();
     const inst = onAddFilter(type);
     setPendingId(inst.id);
     setDraft({ from: inst.from, to: inst.to, range: [inst.range[0], inst.range[1]], span: fullSpanOf(inst) });
@@ -166,6 +279,7 @@ const FilterPanel = ({
   // ── Forest (terrain) — unchanged single filter ──────────────────────────
   const forestApplied = (filteredForestCodes?.size ?? 0) > 0;
   const openForestEditor = () => {
+    closeEditors();
     setDraftForest(new Set(filteredForestCodes ?? []));
     setForestEditing(true);
   };
@@ -185,6 +299,7 @@ const FilterPanel = ({
   // nor filtered — missing substrate info is not a reason to hide anything.
   const geoApplied = (geoOff?.size ?? 0) > 0;
   const openGeoEditor = () => {
+    closeEditors();
     setDraftGeo(new Set(geoOff ?? []));
     setGeoEditing(true);
   };
@@ -201,6 +316,7 @@ const FilterPanel = ({
   const reliefApplied = reliefRange != null;
   const reliefFull = altLimits ?? [0, 0];
   const openReliefEditor = () => {
+    closeEditors();
     setReliefDraft(reliefRange ? [...reliefRange] : [...reliefFull]);
     setReliefEditing(true);
   };
@@ -212,7 +328,11 @@ const FilterPanel = ({
   // therefore excluded while the filter is active (D2 strict).
   const aspectPicked = ASPECT_SECTORS.filter(s => (aspectSectors ?? []).includes(s));
   const aspectApplied = aspectPicked.length > 0;
+  // Single-filter mute state (relief / forest / geo / bolet / aspect); meteo
+  // instances carry their own `enabled` flag instead.
+  const isMuted = key => mutedFilters?.has(key) ?? false;
   const openAspectEditor = () => {
+    closeEditors();
     setDraftAspect(new Set(aspectSectors ?? []));
     setAspectEditing(true);
   };
@@ -248,11 +368,67 @@ const FilterPanel = ({
     <div className={`filter-panel${busy ? ' busy' : ''}`} aria-busy={busy || undefined}>
       <div className="filter-header">
         
-        <div className="filter-actions">
-         
-        </div>
       </div>
       <div className="filter-body">
+        {/* Preset selector: shows the loaded preset's name, or "Manual" when
+            nothing is loaded / the loaded preset was tweaked. The accordion
+            below it lists every saved preset (load = whole filter stack, ✕ =
+            delete). */}
+        <div className={`filter-preset${presetOpen ? ' open' : ''}`}>
+          <button
+            type="button"
+            className="filter-preset-toggle"
+            title={manual ? 'Filtres manuals' : `'reCeta' carregada: ${activeName}`}
+            aria-expanded={presetOpen}
+            onClick={() => setPresetOpen(o => !o)}
+          >
+            <span className="filter-preset-name">{activeName ?? 'Manual'}</span>
+            <FontAwesomeIcon icon={faChevronDown} className="filter-preset-caret" />
+          </button>
+          {presetOpen && (
+            <div className="filter-preset-list">
+              {presets.length === 0 ? (
+                <div className="basket-empty">
+                  Encara no hi ha cap 'reCeta' desada.
+                </div>
+              ) : (
+                presets.map(p => {
+                  const active = p.name === activeName;
+                  return (
+                    <div key={p.name} className={`basket-item${active ? ' active' : ''}`}>
+                      <button
+                        type="button"
+                        className="basket-item-main"
+                        title={active ? "'reCeta' aplicada" : 'Aplica aquesta reCeta'}
+                        onClick={() => {
+                          closeEditors(); // a loaded preset replaces the stack
+                          onApplyPreset?.(p);
+                          setPresetOpen(false);
+                        }}
+                      >
+                        <span className="basket-item-name">{p.name}</span>
+                        <span className="basket-item-meta">{describeFilterConfig(p.config)}</span>
+                      </button>
+                      {active && (
+                        <span className="basket-item-active" title="'reCeta' aplicada">
+                          <FontAwesomeIcon icon={faCheck} />
+                        </span>
+                      )}
+                      <div
+                        className="sel-button filter-line-cancel"
+                        title="Esborra aquesta 'reCeta'"
+                        onClick={() => onDeletePreset?.(p.name)}
+                      >
+                        <FontAwesomeIcon icon={faXmark} />
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Single, timeless filters: terrain + altitude */}
         <div className="filter-buttons">
           <div
@@ -356,32 +532,27 @@ const FilterPanel = ({
         )}
 
         {!forestEditing && forestApplied && (
-          <div className="filter-line applied">
-            <div className="filter-line-header">
-              <span className="filter-line-label">Bosc</span>
-              {/* Squares for the still-selected (non-dimmed) terrain types,
-                  hover shows which terrain each square corresponds to */}
-              <div className="filter-swatches">
-                {MCSC_LEGEND.filter(e => !filteredForestCodes.has(e.codes)).map(entry => (
-                  <span
-                    key={entry.codes}
-                    className="mcsc-legend-swatch"
-                    style={{ '--swatch-color': entry.color }}
-                    title={entry.label}
-                  />
-                ))}
-              </div>
-              <div className="filter-line-actions">
-                <div
-                  className="sel-button filter-line-cancel"
-                  title="Treu el filtre"
-                  onClick={() => onApplyForest?.(new Set())}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </div>
-              </div>
+          <FilterRow
+            icon={<ForestIcon className="noun-icon" />}
+            iconClass="forest"
+            title="Bosc"
+            muted={isMuted('forest')}
+            onToggle={() => onToggleMuted?.('forest')}
+            onRemove={() => onApplyForest?.(new Set())}
+          >
+            {/* Squares for the still-selected (non-dimmed) terrain types,
+                hover shows which terrain each square corresponds to */}
+            <div className="filter-swatches">
+              {MCSC_LEGEND.filter(e => !filteredForestCodes.has(e.codes)).map(entry => (
+                <span
+                  key={entry.codes}
+                  className="mcsc-legend-swatch"
+                  style={{ '--swatch-color': entry.color }}
+                  title={entry.label}
+                />
+              ))}
             </div>
-          </div>
+          </FilterRow>
         )}
 
         {geoEditing && (
@@ -435,32 +606,27 @@ const FilterPanel = ({
         )}
 
         {!geoEditing && geoApplied && (
-          <div className="filter-line applied">
-            <div className="filter-line-header">
-              <span className="filter-line-label">Substrat</span>
-              {/* Squares for the still-selected (non-dimmed) substrate
-                  families; hover shows which family each square is */}
-              <div className="filter-swatches">
-                {lithoLegend.filter(e => !geoOff.has(e.key)).map(entry => (
-                  <span
-                    key={entry.key}
-                    className="mcsc-legend-swatch"
-                    style={{ '--swatch-color': entry.color }}
-                    title={entry.label}
-                  />
-                ))}
-              </div>
-              <div className="filter-line-actions">
-                <div
-                  className="sel-button filter-line-cancel"
-                  title="Treu el filtre"
-                  onClick={() => onApplyGeo?.(new Set())}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </div>
-              </div>
+          <FilterRow
+            icon={<AnticlineIcon className="noun-icon" />}
+            iconClass="substrat"
+            title="Substrat"
+            muted={isMuted('geo')}
+            onToggle={() => onToggleMuted?.('geo')}
+            onRemove={() => onApplyGeo?.(new Set())}
+          >
+            {/* Squares for the still-selected (non-dimmed) substrate
+                families; hover shows which family each square is */}
+            <div className="filter-swatches">
+              {lithoLegend.filter(e => !geoOff.has(e.key)).map(entry => (
+                <span
+                  key={entry.key}
+                  className="mcsc-legend-swatch"
+                  style={{ '--swatch-color': entry.color }}
+                  title={entry.label}
+                />
+              ))}
             </div>
-          </div>
+          </FilterRow>
         )}
 
         {reliefEditing && (
@@ -502,34 +668,21 @@ const FilterPanel = ({
         )}
 
         {!reliefEditing && reliefApplied && (
-          <div className="filter-line applied">
-            <div className="filter-line-header">
-              <span className="filter-line-label">Relleu</span>
-              <span className="range-value">
-                {reliefRange[0]} - {reliefRange[1]} m
-              </span>
-              <div className="filter-line-actions">
-                <div
-                  className="sel-button filter-line-cancel"
-                  title="Treu el filtre"
-                  onClick={() => onApplyRelief?.(null)}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </div>
-              </div>
-            </div>
-          </div>
+          <FilterRow
+            icon={<MountainIcon className="noun-icon" />}
+            iconClass="mountain"
+            title="Relleu"
+            value={`${reliefRange[0]} - ${reliefRange[1]} m`}
+            muted={isMuted('relief')}
+            onToggle={() => onToggleMuted?.('relief')}
+            onRemove={() => onApplyRelief?.(null)}
+          />
         )}
 
         {aspectEditing && (
           <div className="filter-line">
             <div className="filter-line-header">
               <span className="filter-line-label">Orientació</span>
-              <span className="range-value">
-                {draftAspect.size === 0
-                  ? 'Cap cara'
-                  : `només ${ASPECT_SECTORS.filter(s => draftAspect.has(s)).join(' · ')}`}
-              </span>
               <div className="filter-line-actions">
                 <div
                   className="sel-button filter-line-ok"
@@ -553,43 +706,73 @@ const FilterPanel = ({
                 </div>
               </div>
             </div>
-            <div className="filter-chips">
-              {ASPECT_SECTORS.map(s => (
-                <button
-                  type="button"
-                  key={s}
-                  className={`filter-chip${draftAspect.has(s) ? ' on' : ''}`}
-                  aria-pressed={draftAspect.has(s)}
-                  title={ASPECT_LABELS[s]}
-                  onClick={() => toggleAspectSector(s)}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-            <div className="filter-editor-hint">
-              Conserva només els pendents orientats a les cares triades
-              (mínim {ASPECT_MIN_SLOPE_DEG}°; el terreny pla queda fora).
-            </div>
+            <svg
+              className="aspect-rose"
+              viewBox="0 0 100 100"
+              role="group"
+              aria-label="Orientació"
+            >
+              {ASPECT_SECTORS.map((s, i) => {
+                const on = draftAspect.has(s);
+                const [lx, ly] = rosePoint(28, i * 45);
+                return (
+                  <g key={s}>
+                    <path
+                      className={`aspect-wedge${on ? ' on' : ''}`}
+                      d={roseWedge(i)}
+                      role="button"
+                      aria-pressed={on}
+                      aria-label={ASPECT_LABELS[s]}
+                      tabIndex={0}
+                      onClick={() => toggleAspectSector(s)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          toggleAspectSector(s);
+                        }
+                      }}
+                    >
+                      <title>{ASPECT_LABELS[s]}</title>
+                    </path>
+                    <text
+                      className="aspect-wedge-label"
+                      x={lx.toFixed(2)}
+                      y={ly.toFixed(2)}
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                    >
+                      {s}
+                    </text>
+                  </g>
+                );
+              })}
+              <circle className="aspect-hub" cx="50" cy="50" r="5" />
+            </svg>
           </div>
         )}
 
         {!aspectEditing && aspectApplied && (
-          <div className="filter-line applied">
-            <div className="filter-line-header">
-              <span className="filter-line-label">Orientació</span>
-              <div className="filter-line-actions">
-                <div
-                  className="sel-button filter-line-cancel"
-                  title="Treu el filtre"
-                  onClick={() => onApplyAspect?.(null)}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </div>
-              </div>
-            </div>
-            <span className="range-value">només {aspectPicked.join(' · ')}</span>
-          </div>
+          <FilterRow
+            icon={<FontAwesomeIcon icon={faCompass} />}
+            iconClass="compass"
+            title="Orientació"
+            muted={isMuted('aspect')}
+            onToggle={() => onToggleMuted?.('aspect')}
+            onRemove={() => onApplyAspect?.(null)}
+          >
+            {/* The applied selection as a plain graphic circle — no letters,
+                much smaller than the editor's rose. */}
+            <svg className="aspect-mini" viewBox="0 0 100 100" aria-hidden="true">
+              {ASPECT_SECTORS.map((s, i) => (
+                <path
+                  key={s}
+                  className={`aspect-mini-wedge${aspectPicked.includes(s) ? ' on' : ''}`}
+                  d={roseWedge(i)}
+                />
+              ))}
+              <circle className="aspect-mini-hub" cx="50" cy="50" r="5" />
+            </svg>
+          </FilterRow>
         )}
 
         {/* ── Bolets: species rule filter (test) ──────────────────────── */}
@@ -656,26 +839,20 @@ const FilterPanel = ({
         )}
 
         {!boletEditing && boletFilter && (
-          <div className="filter-line applied">
-            <div className="filter-line-header">
-              <span className="filter-line-label">Bolets</span>
-              <span className="range-value">
-                {SPECIES[boletFilter.species]?.name} · ≥ {Math.round(boletFilter.threshold * 100)} %
-              </span>
-              <div className="filter-line-actions">
-                <div
-                  className="sel-button filter-line-cancel"
-                  title="Treu el filtre"
-                  onClick={() => onApplyBolet?.(null)}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </div>
-              </div>
-            </div>
-          </div>
+          <FilterRow
+            icon={<MushroomIcon className="noun-icon" />}
+            iconClass="bolet"
+            title="Bolets"
+            value={`${SPECIES[boletFilter.species]?.name} · ≥ ${Math.round(boletFilter.threshold * 100)} %`}
+            muted={isMuted('bolet')}
+            onToggle={() => onToggleMuted?.('bolet')}
+            onRemove={() => onApplyBolet?.(null)}
+          />
         )}
 
-        {meteoFilters.map(f => {
+        {/* Newest first: a freshly added instance (last in the state list) is
+            rendered on top, so its open editor is always in view. */}
+        {[...meteoFilters].reverse().map(f => {
           const def = defOf(f.type);
           if (!def) return null;
           const isEditingThis = f.id === editingId && editing;
@@ -745,34 +922,24 @@ const FilterPanel = ({
           }
 
           const inert = isInert(f);
+          const muted = f.enabled === false;
           return (
-            <div
+            <FilterRow
               key={f.id}
-              className={`filter-instance ${def.className}${inert ? ' inert' : ''}`}
+              clickable
+              inert={inert}
+              muted={muted}
               title="Edita el filtre"
               onClick={() => startEdit(f)}
-            >
-              <div className="filter-instance-header">
-                <span className="filter-instance-title">
-                  {def.label} · {shortDate(datesOf(f).from)} – {shortDate(datesOf(f).to)} ({dayLabel(f)})
-                </span>
-                <div className="filter-instance-actions">
-                  <div
-                    className="sel-button filter-line-cancel"
-                    title="Treu el filtre"
-                    onClick={e => {
-                      e.stopPropagation();
-                      onRemoveFilter(f.id);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faXmark} />
-                  </div>
-                </div>
-              </div>
-              <div className="filter-instance-value">
-                {inert ? 'qualsevol valor · inactiu' : `${fmtNum(f.range[0], def.decimals)} – ${fmtNum(f.range[1], def.decimals)} ${def.unit}`}
-              </div>
-            </div>
+              icon={<def.icon className="noun-icon" />}
+              iconClass={def.className}
+              value={inert
+                ? 'qualsevol valor · inactiu'
+                : `${fmtNum(f.range[0], def.decimals)} – ${fmtNum(f.range[1], def.decimals)} ${def.unit}`}
+              range={`${shortDate(datesOf(f).from)} – ${shortDate(datesOf(f).to)}`}
+              onToggle={() => onToggleFilter?.(f.id)}
+              onRemove={() => onRemoveFilter(f.id)}
+            />
           );
         })}
 
@@ -812,8 +979,11 @@ const FilterPanel = ({
           ) : (
             <button
               type="button"
-              className={`filter-save-btn${savedName ? ' saved' : ''}`}
-              title="Desa la configuració de filtres"
+              className={`filter-save-btn${manual ? (savedName ? ' saved' : '') : ' disabled'}`}
+              title={manual
+                ? "Desa la configuració de filtres"
+                : `Ja tens la 'reCeta' "${activeName}" carregada — modifica-la per tornar a Manual`}
+              disabled={!manual}
               onClick={openSave}
             >
               <FontAwesomeIcon icon={faFloppyDisk} />{' '}

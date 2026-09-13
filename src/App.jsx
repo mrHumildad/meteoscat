@@ -9,13 +9,13 @@ import { Marker, setWorkerUrl } from 'maplibre-gl';
 import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 setWorkerUrl(maplibreWorkerUrl);
 import logo from './assets/totallogo.png';
-import basketImg from './assets/basket.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  RainIcon, HumidityIcon, TemperatureIcon, ForestIcon, AnticlineIcon, FilterIcon, AltitudeIcon,
-  Icon3D, TreasureMapIcon, BasketIcon, HiddenIcon, PickingMushroomsIcon, LegendIcon, JeepIcon, MushroomIcon, MountainIcon
+  RainIcon, HumidityIcon, TemperatureIcon, ForestIcon, AnticlineIcon, BinocularIcon, AltitudeIcon,
+  Icon3D, HiddenIcon, PickingMushroomsIcon, LegendIcon, JeepIcon, MushroomIcon, MountainIcon, BootsIcon
 } from './logic/nounIcons.jsx';
 import { useCallback, useState, useEffect, useRef, useMemo } from 'react';
+import { createRoot } from 'react-dom/client';
 import { loadAvailableDays, loadSummaries } from './logic/refineData.js'
 import { getDaysInRange, fmtShortCat, parseDay } from './logic/utils.js';
 import './App.css'
@@ -24,7 +24,6 @@ import { computeGeoValues } from './logic/computeGeoValues.js';
 import { buildFilterConfig, readSavedFilters, removeSavedFilter, sameFilterConfig, saveFilterPreset } from './logic/savedFilters.js';
 import { readSavedLocations, removeSavedLocation, saveLocation } from './logic/savedLocations.js';
 import { hasFilterConditions } from './logic/areaFilterMatch.js';
-import { appliedFilterItems } from './logic/appliedFilters.js';
 import { aggregateWindow, buildAggregateTable, DEFAULTDAYRANGE, limitsForWindow, windowToDates, TYPE_TO_VARIABLE } from './logic/filterAggregate.js';
 import { scoreStations, scoreByCode } from './logic/boletEngine.js';
 import { MCSC_LEGEND, MCSC_WATER_COLOR, MCSC_WATER_ENTRY } from './logic/mcscLegend.js';
@@ -41,9 +40,6 @@ import { detectWebGL2, isGPUInitializationError } from './logic/webgl2.js';
 import FilterPanel from './comps/FilterPanel.jsx';
 import DirectionsModal, { ROUTE_RADIUS_DEFAULT } from './comps/DirectionsModal.jsx';
 import MapUnavailable from './comps/MapUnavailable.jsx';
-import SavedFiltersPanel from './comps/SavedFiltersPanel.jsx';
-import SavedLocationsPanel from './comps/SavedLocationsPanel.jsx';
-import HeaderStatus from './comps/HeaderStatus.jsx';
 import StationPanel from './comps/StationPanel.jsx';
 
 // Catalonia — the app never leaves it. CATALONIA_BOUNDS constrains the
@@ -260,13 +256,21 @@ const App = ()  => {
   const [routePoint, setRoutePoint] = useState(null); // picked directions point: { lat, lng, elevation, pending } | null
   const [routeRadius, setRouteRadius] = useState(ROUTE_RADIUS_DEFAULT); // area radius (m) analysed around the picked point — see directions modal
   const [showFilter, setShowFilter] = useState(false); // filter panel open state
-  const [showBasket, setShowBasket] = useState(false); // saved-filter basket open state (only one top panel at a time)
-  const [showLocations, setShowLocations] = useState(false); // saved-locations panel open state (same one-panel rule)
   const [savedFilters, setSavedFilters] = useState(() => readSavedFilters()); // named presets from localStorage, newest first
   const [savedLocations, setSavedLocations] = useState(() => readSavedLocations()); // saved places from localStorage, newest first
   const [reliefRange, setReliefRange] = useState(null); // applied altitude band [lo, hi]; null = off
   const [aspectSectors, setAspectSectors] = useState(null); // applied slope-aspect sectors (sorted keys) | null = off
-  const [meteoFilters, setMeteoFilters] = useState([]); // [{ id, type, from, to, range }] — one per meteo filter instance
+  // Single filters muted from their panel eye toggle, by key ('relief',
+  // 'forest', 'geo', 'bolet', 'aspect'). A muted filter keeps its value; only
+  // its effect is switched off. Meteo instances carry their own `enabled`.
+  const [mutedFilters, setMutedFilters] = useState(() => new Set());
+  const unmute = useCallback((key) => setMutedFilters(prev => {
+    if (!prev.has(key)) return prev;
+    const next = new Set(prev);
+    next.delete(key);
+    return next;
+  }), []);
+  const [meteoFilters, setMeteoFilters] = useState([]); // [{ id, type, from, to, range, enabled }] — one per meteo filter instance
   const [nextFilterId, setNextFilterId] = useState(1);
   const [boletFilter, setBoletFilter] = useState(null); // { species, threshold } | null — mushroom rule filter (test)
   const [forestByCode, setForestByCode] = useState({});  // stationCodi → MCSC forestType from forest_types.json
@@ -360,11 +364,12 @@ const App = ()  => {
   // gate all modes too. Any change here regenerates the painted terrain
   // tiles.
   const terrainState = useMemo(() => {
-    const off = [...mcscOff].sort();
-    const altActive = !!reliefRange && !!altLimits &&
+    const off = mutedFilters.has('forest') ? [] : [...mcscOff].sort();
+    const altActive = !mutedFilters.has('relief') && !!reliefRange && !!altLimits &&
       (reliefRange[0] !== altLimits[0] || reliefRange[1] !== altLimits[1]);
     const filters = [];
     for (const f of meteoFilters) {
+      if (f.enabled === false) continue; // muted instance never gates a pixel
       const variable = TYPE_TO_VARIABLE[f.type];
       if (!variable) continue;
       const span = agg?.days.length ? limitsForWindow(agg, f.type, f.from, f.to) : null;
@@ -387,7 +392,7 @@ const App = ()  => {
     // modes. The orientation selection is inert when every sector is picked
     // (OR within the selection, AND with everything else), so all-8 collapses
     // to null (off) exactly like a full-span band.
-    const aspect = aspectSectors && aspectSectors.length && aspectSectors.length < 8
+    const aspect = !mutedFilters.has('aspect') && aspectSectors && aspectSectors.length && aspectSectors.length < 8
       ? [...aspectSectors].sort()
       : null;
     return {
@@ -396,9 +401,9 @@ const App = ()  => {
       alt: altActive ? [reliefRange[0], reliefRange[1]] : null,
       aspect,
       filters,
-      geoOff: [...geoOff].sort(),
+      geoOff: mutedFilters.has('geo') ? [] : [...geoOff].sort(),
     };
-  }, [mcscOff, reliefRange, altLimits, meteoFilters, agg, refDay, geoOff, terrainMode, aspectSectors]);
+  }, [mcscOff, reliefRange, altLimits, meteoFilters, agg, refDay, geoOff, terrainMode, aspectSectors, mutedFilters]);
 
   // Terrain tile URL — the state signature token changes whenever any filter
   // does, so setTiles() re-requests and the protocol repaints.
@@ -1051,20 +1056,27 @@ const App = ()  => {
     );
   }, []);
 
-  // "My location" marker on the map (basket.png), always visible once the
-  // browser location is known. A plain MapLibre Marker avoids adding a GeoJSON
-  // source/layer for a single point; unmounting removes it with the map.
+  // "My location" marker on the map: a round .map-icon badge holding the Noun
+  // Project boots glyph, always visible once the browser location is known. A
+  // plain MapLibre Marker avoids adding a GeoJSON source/layer for a single
+  // point; the element is imperative (MapLibre owns it), so a small React root
+  // renders the icon into it and unmounting tears both down.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !mapLoaded || !userLoc) return;
-    const el = document.createElement('img');
-    el.src = basketImg;
-    el.alt = 'La meva ubicaci\u00f3';
-    el.className = 'user-location-marker';
+    const el = document.createElement('div');
+    el.className = 'map-icon';
+    el.setAttribute('role', 'img');
+    el.setAttribute('aria-label', 'La meva ubicaci\u00f3');
+    const root = createRoot(el);
+    root.render(<BootsIcon className="noun-icon" />);
     const marker = new Marker({ element: el, anchor: 'center' })
       .setLngLat([userLoc.lng, userLoc.lat])
       .addTo(map);
-    return () => marker.remove();
+    return () => {
+      marker.remove();
+      root.unmount();
+    };
   }, [userLoc, mapLoaded]);
 
   // Straight-line distance from "my location" to the picked point (km), or
@@ -1229,7 +1241,7 @@ const App = ()  => {
   const addFilter = (type) => {
     const from = maxDays > 0 ? Math.min(DEFAULTDAYRANGE, maxDays - 1) : 0;
     const span = agg?.days.length ? limitsForWindow(agg, type, from, 0) : null;
-    const inst = { id: `f${nextFilterId}`, type, from, to: 0, range: span ? [span[0], span[1]] : [0, 0] };
+    const inst = { id: `f${nextFilterId}`, type, from, to: 0, range: span ? [span[0], span[1]] : [0, 0], enabled: true };
     setMeteoFilters(prev => [...prev, inst]);
     setNextFilterId(n => n + 1);
     return inst;
@@ -1249,7 +1261,8 @@ const App = ()  => {
     forestOff: mcscOff,
     geoOff,
     boletFilter,
-  }), [reliefRange, meteoFilters, mcscOff, geoOff, boletFilter]);
+    muted: mutedFilters,
+  }), [reliefRange, meteoFilters, mcscOff, geoOff, boletFilter, mutedFilters]);
 
   // Named filter presets (localStorage): App owns every filter state, so the
   // snapshot is built here and only the NAME comes from the panel. Saving is
@@ -1267,21 +1280,6 @@ const App = ()  => {
     const hit = savedFilters.find(p => sameFilterConfig(p.config, currentFilterConfig));
     return hit ? hit.name : null;
   }, [savedFilters, currentFilterConfig]);
-
-  // The header ticker: the applied preset's name followed by one line per
-  // ACTIVE condition (appliedFilters.appliedFilterItems). Derived from the
-  // live filter state, so it needs no bookkeeping in the apply handlers and
-  // falls back to no header at all when nothing filters.
-  const headerFilterItems = useMemo(() => appliedFilterItems({
-    presetName: activePresetName,
-    meteoFilters,
-    agg,
-    reliefRange,
-    altLimits,
-    forestCount: mcscOff.size,
-    geoCount: geoOff.size,
-    boletSpecies: boletFilter?.species ?? null,
-  }), [activePresetName, meteoFilters, agg, reliefRange, altLimits, mcscOff, geoOff, boletFilter]);
 
   // Delete a saved preset (basket row ✕). Removing a preset never touches the
   // live filters — it only shrinks the basket.
@@ -1302,21 +1300,79 @@ const App = ()  => {
     }));
   }, [routePoint]);
 
-  // Delete a saved location (panel row ✕) — the map never moves.
+  // Map-marker click: fly the map to the saved point AND open its info panel
+  // (the directions modal) so the place's details and its delete action are
+  // reachable — saved places live only as map markers now. The stored DEM
+  // height is reused when known; otherwise it is sampled like a manual pick.
+  const goToSavedLocation = useCallback((location) => {
+    if (!Number.isFinite(location?.lat) || !Number.isFinite(location?.lng)) return;
+    const map = mapRef.current;
+    if (map) map.flyTo({ center: [location.lng, location.lat], zoom: Math.max(map.getZoom(), 13) });
+    const knownElevation = Number.isFinite(location.elevation);
+    const reqId = ++routeReqRef.current;
+    setRoutePoint({
+      lat: location.lat,
+      lng: location.lng,
+      elevation: knownElevation ? location.elevation : null,
+      pending: !knownElevation,
+    });
+    setRouteRadius(ROUTE_RADIUS_DEFAULT);
+    if (knownElevation) return;
+    sampleElevation(location.lng, location.lat).then(elev => {
+      if (reqId !== routeReqRef.current) return;
+      setRoutePoint(prev => (prev ? { ...prev, elevation: elev, pending: false } : prev));
+    });
+  }, []);
+
+  // Saved place matching the open directions point, or null. Derived from the
+  // live point + list, so deleting it (or opening any other point) drops the
+  // match with no bookkeeping — the modal shows its delete action only while
+  // this is set.
+  const activeLocation = useMemo(() => {
+    if (!routePoint) return null;
+    return savedLocations.find(
+      l => l.lat === routePoint.lat && l.lng === routePoint.lng,
+    ) ?? null;
+  }, [savedLocations, routePoint]);
+
+  // Delete a saved place (the info panel's own action). The panel is showing
+  // that place, so it closes with it — its marker disappears from the map.
   const deleteSavedLocation = (name) => {
     setSavedLocations(removeSavedLocation(name));
+    setRoutePoint(null);
   };
 
-  // Panel row button: fly the map back to the saved point and close the panel
-  // so the spot is actually visible. A saved spot is a destination, so it is
-  // zoomed in closer than the region overview.
-  const goToSavedLocation = useCallback((location) => {
+  // One marker per saved location: the same round .map-icon badge as "my
+  // location", but with the mushroom glyph and clickable — tapping one flies
+  // to that point. Like the boot marker these
+  // are imperative (MapLibre owns the elements), so each gets its own React
+  // root and the cleanup tears every marker + root down when the list changes.
+  useEffect(() => {
     const map = mapRef.current;
-    if (map && Number.isFinite(location?.lat) && Number.isFinite(location?.lng)) {
-      map.flyTo({ center: [location.lng, location.lat], zoom: Math.max(map.getZoom(), 13) });
-    }
-    setShowLocations(false);
-  }, []);
+    if (!map || !mapLoaded || savedLocations.length === 0) return;
+    const markers = savedLocations.map(location => {
+      const el = document.createElement('div');
+      el.className = 'map-icon clickable';
+      el.setAttribute('role', 'button');
+      el.setAttribute('aria-label', location.name || 'Ubicaci\u00f3 desada');
+      el.title = location.name || '';
+      const onClick = () => goToSavedLocation(location);
+      el.addEventListener('click', onClick);
+      const root = createRoot(el);
+      root.render(<MushroomIcon className="noun-icon" />);
+      const marker = new Marker({ element: el, anchor: 'center' })
+        .setLngLat([location.lng, location.lat])
+        .addTo(map);
+      return { marker, root, el, onClick };
+    });
+    return () => {
+      markers.forEach(({ marker, root, el, onClick }) => {
+        el.removeEventListener('click', onClick);
+        marker.remove();
+        root.unmount();
+      });
+    };
+  }, [savedLocations, mapLoaded, goToSavedLocation]);
 
   // Everything the directions modal's area analysis needs beyond the point
   // itself: the meteo context that rebuilds the map's own grids (aggregate
@@ -1332,18 +1388,7 @@ const App = ()  => {
     savedPresets: savedFilters,
   }), [agg, geoWithData, refDay, lithoGrid, currentFilterConfig, savedFilters]);
 
-  // Saved location matching the currently picked point (null when the modal is
-  // closed or the point was never saved) — derived so the panel marks it
-  // without any bookkeeping, exactly like the active filter preset.
-  const activeLocationName = useMemo(() => {
-    if (!routePoint) return null;
-    const hit = savedLocations.find(
-      l => l.lat === routePoint.lat && l.lng === routePoint.lng,
-    );
-    return hit ? hit.name : null;
-  }, [savedLocations, routePoint]);
-
-  // Apply a saved preset (basket button): replace the WHOLE filter stack at
+  // Apply a saved preset (selector accordion): replace the WHOLE filter stack at
   // once behind a single repaint gate — calling the individual apply handlers
   // would be refused after the first (beginRepaint locks while a repaint is in
   // flight). Instance ids are re-minted from the live counter so a loaded
@@ -1363,6 +1408,7 @@ const App = ()  => {
       from: clampOffset(f.from),
       to: clampOffset(f.to),
       range: [f.range[0], f.range[1]],
+      enabled: f.enabled !== false,
     }));
     setNextFilterId(n => n + filters.length);
     setMeteoFilters(filters);
@@ -1370,7 +1416,7 @@ const App = ()  => {
     setMcscOff(new Set(config.forestOff ?? []));
     setGeoOff(new Set(config.geoOff ?? []));
     setBoletFilter(config.boletFilter ? { ...config.boletFilter } : null);
-    setShowBasket(false);
+    setMutedFilters(new Set(config.muted ?? []));
   };
 
   // Gated versions of every filter trigger that repaints the painted areas.
@@ -1380,6 +1426,7 @@ const App = ()  => {
     if (samePair(range, reliefRange)) return;      // nothing changes
     if (!beginRepaint()) return;
     setReliefRange(range);
+    unmute('relief');                              // a fresh value is live
   };
   const applyAspectSectors = (sectors) => {
     const next = sectors && sectors.length ? [...sectors].sort() : null;
@@ -1389,35 +1436,78 @@ const App = ()  => {
     if (same) return;                              // nothing changes
     if (!beginRepaint()) return;
     setAspectSectors(next);
+    unmute('aspect');                              // a fresh selection is live
   };
   const applyForestCodes = (codes) => {
     if (sameSet(codes, mcscOff)) return;           // nothing changes
     if (!beginRepaint()) return;
     setMcscOff(codes);
+    unmute('forest');
   };
   const applyGeoFamilies = (families) => {
     if (sameSet(families, geoOff)) return;         // nothing changes
     if (!beginRepaint()) return;
     setGeoOff(families);
+    unmute('geo');
+  };
+  const applyBoletFilter = (filter) => {
+    setBoletFilter(filter);
+    unmute('bolet');
+  };
+  // Mute / unmute one SINGLE filter (relief / forest / geo / bolet / aspect)
+  // from its panel eye toggle. The value is kept, so unmuting restores exactly
+  // the same filter — only the map repaint is gated.
+  const applyToggleMuted = (key) => {
+    const applied = {
+      relief: reliefRange != null,
+      forest: mcscOff.size > 0,
+      geo: geoOff.size > 0,
+      bolet: boletFilter != null,
+      aspect: (aspectSectors?.length ?? 0) > 0,
+    }[key];
+    if (!applied) return;
+    if (!beginRepaint()) return;
+    setMutedFilters(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
   };
   const applyFilterUpdate = (id, patch) => {
     const inst = meteoFilters.find(f => f.id === id);
     if (inst && patch.from === inst.from && patch.to === inst.to && samePair(patch.range, inst.range)) {
       return; // nothing changes
     }
+    // Editing an instance always brings it back to life (it may have been
+    // muted from the eye toggle).
+    const full = { ...patch, enabled: true };
     // Inert → inert (e.g. full-span windows) never repaint: allow freely.
-    if (inertInstance(inst) && inertInstance({ ...inst, ...patch })) {
-      updateFilter(id, patch);
+    if (inertInstance(inst) && inertInstance({ ...inst, ...full })) {
+      updateFilter(id, full);
       return;
     }
     if (!beginRepaint()) return;
-    updateFilter(id, patch);
+    updateFilter(id, full);
   };
   const applyRemoveFilter = (id) => {
     // Removing an inert (full-span) instance doesn't repaint the map.
     const inst = meteoFilters.find(f => f.id === id);
     if (!inertInstance(inst) && !beginRepaint()) return;
     removeFilter(id);
+  };
+  // Mute / unmute one instance (visible ↔ hidden eye). The window and band are
+  // kept, so unmuting restores exactly the same filter. Repaints only when the
+  // change alters the map: a muting that was contributing, or an unmuting
+  // whose band is narrowed.
+  const applyToggleFilter = (id) => {
+    const inst = meteoFilters.find(f => f.id === id);
+    if (!inst) return;
+    const enabled = inst.enabled === false; // the new value
+    const wasFiltering = inst.enabled !== false && !inertInstance(inst);
+    const willFilter = enabled && !inertInstance(inst);
+    if (wasFiltering !== willFilter && !beginRepaint()) return;
+    updateFilter(id, { enabled });
   };
 
   // Station value day ranges follow the filters: for each variable, the LAST
@@ -1432,7 +1522,7 @@ const App = ()  => {
       // Active = band narrower than its window's full span (the same
       // full-span-means-off contract as inertInstance / terrainState).
       const active = meteoFilters.filter(f => {
-        if (f.type !== type) return false;
+        if (f.type !== type || f.enabled === false) return false;
         const span = agg?.days.length ? limitsForWindow(agg, f.type, f.from, f.to) : null;
         return span != null && (f.range[0] !== span[0] || f.range[1] !== span[1]);
       });
@@ -1487,67 +1577,21 @@ const App = ()  => {
   return (
     <div className={`app${mapUnavailable ? ' no-webgl' : ''}`}>
       <img className='logo' src={logo} alt="MeteoSeps" />
-      {/* Header: nothing but the applied-filter ticker (HeaderStatus) — the
-          preset name and each active condition, one at a time. */}
-      <HeaderStatus items={headerFilterItems} />
       {data && (
         <div className="top-buttons">
-          {/* Three buttons share one row (saved places, saved filters, filter);
-              their panels open below, one at a time — opening one closes the
-              others. */}
+          {/* Single entry point: the Filtres panel holds everything — the live
+              filter stack plus the saved-'reCeta' selector (load / delete).
+              Saved places have no panel: they are the mushroom markers on the
+              map (click one to fly there). */}
           <div className="top-button-row">
-            <div
-              className={`sel-button filter-button${showLocations ? ' on' : ''}`}
-              title="Llocs desats"
-              onClick={() => {
-                setShowLocations(v => !v);
-                setShowBasket(false);
-                setShowFilter(false);
-              }}
-            >
-              <TreasureMapIcon className="noun-icon" />
-            </div>
-            <div
-              className={`sel-button filter-button${showBasket ? ' on' : ''}`}
-              title="Filtres desats"
-              onClick={() => {
-                setShowBasket(v => !v);
-                setShowFilter(false);
-                setShowLocations(false);
-              }}
-            >
-              <BasketIcon className="noun-icon" />
-            </div>
             <div
               className={`sel-button filter-button${showFilter ? ' on' : ''}`}
               title="Filtres"
-              onClick={() => {
-                setShowFilter(v => !v);
-                setShowBasket(false);
-                setShowLocations(false);
-              }}
+              onClick={() => setShowFilter(v => !v)}
             >
-              <FilterIcon className="noun-icon" />
+              <BinocularIcon className="noun-icon" />
             </div>
           </div>
-          {showLocations && (
-            <SavedLocationsPanel
-              locations={savedLocations}
-              activeName={activeLocationName}
-              onSelect={goToSavedLocation}
-              onDelete={deleteSavedLocation}
-              onClose={() => setShowLocations(false)}
-            />
-          )}
-          {showBasket && (
-            <SavedFiltersPanel
-              presets={savedFilters}
-              activeName={activePresetName}
-              onApply={applyFilterPreset}
-              onDelete={deleteFilterPreset}
-              onClose={() => setShowBasket(false)}
-            />
-          )}
           {showFilter && (
             <FilterPanel
               onClose={() => setShowFilter(false)}
@@ -1556,10 +1600,13 @@ const App = ()  => {
               onApplyRelief={applyReliefRange}
               aspectSectors={aspectSectors}
               onApplyAspect={applyAspectSectors}
+              mutedFilters={mutedFilters}
+              onToggleMuted={applyToggleMuted}
               meteoFilters={meteoFilters}
               onAddFilter={addFilter}
               onUpdateFilter={applyFilterUpdate}
               onRemoveFilter={applyRemoveFilter}
+              onToggleFilter={applyToggleFilter}
               agg={agg}
               refDay={refDay}
               maxDays={maxDays}
@@ -1574,8 +1621,12 @@ const App = ()  => {
               geoOff={geoOff}
               onApplyGeo={applyGeoFamilies}
               boletFilter={boletFilter}
-              onApplyBolet={setBoletFilter}
+              onApplyBolet={applyBoletFilter}
               onSaveFilter={saveCurrentFilter}
+              presets={savedFilters}
+              activeName={activePresetName}
+              onApplyPreset={applyFilterPreset}
+              onDeletePreset={deleteFilterPreset}
             />
           )}
         </div>
@@ -1723,6 +1774,8 @@ const App = ()  => {
         onClose={() => setRoutePoint(null)}
         onNavigate={openRouteDirections}
         onSaveLocation={saveRouteLocation}
+        savedLocation={activeLocation}
+        onDeleteLocation={deleteSavedLocation}
       />
       {selectedStation && <StationPanel
         station={stationObj}
@@ -1749,7 +1802,6 @@ const App = ()  => {
             </>
           ) : terrainMode === 'substrate' && lithoGrid ? (
             <>
-              <div className="mcsc-legend-title">Substrat geològic (1:50.000)</div>
               {/* Info-only legend of the substrate rendering mode: dimming
                   families is done from the filter panel (Substrat), so these
                   rows are not interactive. Dimmed families show grey. */}
@@ -1765,11 +1817,9 @@ const App = ()  => {
                   </div>
                 );
               })}
-              <div className="mcsc-legend-footer">Mapa geològic 1:50.000 v3.0 — ICGC · CC BY 4.0</div>
             </>
           ) : (
             <>
-              <div className="mcsc-legend-title">Cobertes del sòl (MCSC)</div>
               {/* Info-only legend: dimming terrain types is done from the filter
                   panel (Bosc), so these rows are not interactive. They still show
                   the current map state — dimmed classes appear as a grey swatch. */}
@@ -1785,7 +1835,6 @@ const App = ()  => {
                   </div>
                 );
               })}
-              <div className="mcsc-legend-footer">ICGC &amp; CREAF · CC BY 4.0</div>
             </>
           )}
         </div>
